@@ -2,6 +2,8 @@
 
 A lightweight macOS menu bar app that displays animated Pokémon sprites running across your menu bar. The animation speed is tied to your CPU usage — the harder your Mac works, the faster your Pokémon runs.
 
+![MenuPet Screenshot](screenshot/screenshot.jpg)
+
 ## Features
 
 - **26 Pokémon** to choose from — Pikachu, Jigglypuff, Snorlax, and more
