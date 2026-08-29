@@ -296,7 +296,6 @@ class SpriteRenderer {
         let orange = NSColor(red: 1.0, green: 0.5, blue: 0.1, alpha: 1.0)
         let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.3, alpha: 1.0)
         let blue = NSColor(red: 0.4, green: 0.6, blue: 1.0, alpha: 1.0)
-        let black = NSColor.black
         let red = NSColor(red: 1.0, green: 0.3, blue: 0.1, alpha: 1.0)
 
         // Head
@@ -337,7 +336,6 @@ class SpriteRenderer {
         let teal = NSColor(red: 0.35, green: 0.65, blue: 0.55, alpha: 1.0)
         let green = NSColor(red: 0.3, green: 0.75, blue: 0.2, alpha: 1.0)
         let red = NSColor(red: 0.8, green: 0.2, blue: 0.15, alpha: 1.0)
-        let black = NSColor.black
 
         // Bulb on back
         for x in 6...9 { setPixel(&grid, x: x, y: 1, color: green) }
@@ -555,7 +553,6 @@ class SpriteRenderer {
         let pink = NSColor(red: 1.0, green: 0.6, blue: 0.7, alpha: 1.0)
         let lightPink = NSColor(red: 1.0, green: 0.75, blue: 0.8, alpha: 1.0)
         let blue = NSColor(red: 0.4, green: 0.7, blue: 1.0, alpha: 1.0)
-        let black = NSColor.black
 
         // Ears
         setPixel(&grid, x: 6, y: 0, color: pink)
@@ -641,7 +638,6 @@ class SpriteRenderer {
         let orange = NSColor(red: 1.0, green: 0.6, blue: 0.2, alpha: 1.0)
         let green = NSColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1.0)
         let blue = NSColor(red: 0.3, green: 0.5, blue: 1.0, alpha: 1.0)
-        let black = NSColor.black
 
         // Antenna
         setPixel(&grid, x: 6, y: 0, color: green)
@@ -682,44 +678,51 @@ class SpriteRenderer {
         }
     }
 
-    // MARK: - Gyarados
+    // MARK: - Gyarados (serpentine undulation animation)
     private func drawGyarados(grid: inout [[NSColor]], frame: Int) {
         let blue = NSColor(red: 0.3, green: 0.45, blue: 0.85, alpha: 1.0)
         let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.2, alpha: 1.0)
         let red = NSColor(red: 0.9, green: 0.2, blue: 0.15, alpha: 1.0)
-        let black = NSColor.black
+        let underside = NSColor(red: 0.85, green: 0.8, blue: 0.4, alpha: 1.0)
+
+        // Head bob based on frame
+        let headBob = frame % 2 == 0 ? 0 : 1
 
         // Head
-        for x in 3...6 { setPixel(&grid, x: x, y: 1, color: blue) }
-        for x in 2...7 { setPixel(&grid, x: x, y: 2, color: blue) }
+        for x in 3...6 { setPixel(&grid, x: x, y: 1 + headBob, color: blue) }
+        for x in 2...7 { setPixel(&grid, x: x, y: 2 + headBob, color: blue) }
 
         // Eyes
-        setPixel(&grid, x: 3, y: 1, color: red)
-        setPixel(&grid, x: 5, y: 1, color: red)
+        setPixel(&grid, x: 3, y: 1 + headBob, color: red)
+        setPixel(&grid, x: 5, y: 1 + headBob, color: red)
 
         // Crest
-        setPixel(&grid, x: 4, y: 0, color: yellow)
+        setPixel(&grid, x: 4, y: 0 + headBob, color: yellow)
 
-        // Serpentine body
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: blue) }
-        for x in 6...11 { setPixel(&grid, x: x, y: 4, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: blue) }
-        for x in 6...11 { setPixel(&grid, x: x, y: 6, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 7, color: blue) }
+        // Serpentine body with wave offset
+        let wave1 = frame % 4 == 0 ? 0 : frame % 4 == 1 ? 1 : frame % 4 == 2 ? 0 : -1
+        let wave2 = frame % 4 == 0 ? 1 : frame % 4 == 1 ? 0 : frame % 4 == 2 ? -1 : 0
+
+        // Body segments wave
+        for x in 5...10 { setPixel(&grid, x: x, y: 3 + wave1, color: blue) }
+        for x in 6...11 { setPixel(&grid, x: x, y: 4 + wave2, color: blue) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5 + wave1, color: blue) }
+        for x in 6...11 { setPixel(&grid, x: x, y: 6 + wave2, color: blue) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 7 + wave1, color: blue) }
 
         // Fins
-        setPixel(&grid, x: 8, y: 3, color: yellow)
-        setPixel(&grid, x: 8, y: 5, color: yellow)
-        setPixel(&grid, x: 8, y: 7, color: yellow)
+        setPixel(&grid, x: 8, y: 3 + wave1, color: yellow)
+        setPixel(&grid, x: 8, y: 5 + wave1, color: yellow)
+        setPixel(&grid, x: 8, y: 7 + wave1, color: yellow)
 
         // Tail fin
-        setPixel(&grid, x: 11, y: 5, color: blue)
-        setPixel(&grid, x: 12, y: 4, color: yellow)
-        setPixel(&grid, x: 12, y: 6, color: yellow)
+        setPixel(&grid, x: 11, y: 5 + wave2, color: blue)
+        setPixel(&grid, x: 12, y: 4 + wave1, color: yellow)
+        setPixel(&grid, x: 12, y: 6 + wave2, color: yellow)
 
         // Underside
-        for x in 6...10 { setPixel(&grid, x: x, y: 4, color: NSColor(red: 0.85, green: 0.8, blue: 0.4, alpha: 1.0)) }
-        for x in 6...10 { setPixel(&grid, x: x, y: 6, color: NSColor(red: 0.85, green: 0.8, blue: 0.4, alpha: 1.0)) }
+        for x in 6...10 { setPixel(&grid, x: x, y: 4 + wave2, color: underside) }
+        for x in 6...10 { setPixel(&grid, x: x, y: 6 + wave2, color: underside) }
     }
 
     // MARK: - Arcanine
@@ -768,15 +771,26 @@ class SpriteRenderer {
         setPixel(&grid, x: 13, y: 4, color: cream)
     }
 
-    // MARK: - Alakazam
+    // MARK: - Alakazam (spoon wave animation)
     private func drawAlakazam(grid: inout [[NSColor]], frame: Int) {
         let yellow = NSColor(red: 0.95, green: 0.8, blue: 0.2, alpha: 1.0)
         let purple = NSColor(red: 0.55, green: 0.2, blue: 0.65, alpha: 1.0)
         let black = NSColor.black
+        let spoonColor = NSColor(red: 0.85, green: 0.8, blue: 0.2, alpha: 1.0)
 
-        // Spoon (held up)
-        setPixel(&grid, x: 12, y: 0, color: NSColor(red: 0.85, green: 0.8, blue: 0.2, alpha: 1.0))
-        setPixel(&grid, x: 12, y: 1, color: NSColor(red: 0.85, green: 0.8, blue: 0.2, alpha: 1.0))
+        // Spoon wave animation (4 frames)
+        let spoonY: Int
+        switch frame % 4 {
+        case 0: spoonY = 0
+        case 1: spoonY = 1
+        case 2: spoonY = 2
+        case 3: spoonY = 1
+        default: spoonY = 0
+        }
+
+        // Spoon
+        setPixel(&grid, x: 12, y: spoonY, color: spoonColor)
+        setPixel(&grid, x: 12, y: spoonY + 1, color: spoonColor)
 
         // Head
         for x in 6...9 { setPixel(&grid, x: x, y: 1, color: yellow) }
@@ -795,17 +809,18 @@ class SpriteRenderer {
         for x in 4...11 { setPixel(&grid, x: x, y: 6, color: yellow) }
         for x in 4...11 { setPixel(&grid, x: x, y: 7, color: purple) }
 
-        // Arms
-        setPixel(&grid, x: 3, y: 5, color: yellow)
+        // Arms (slight movement)
+        let armOffset = frame % 2 == 0 ? 0 : 1
+        setPixel(&grid, x: 3, y: 5 + armOffset, color: yellow)
         setPixel(&grid, x: 11, y: 5, color: yellow)
-        setPixel(&grid, x: 12, y: 2, color: yellow)
+        setPixel(&grid, x: 12, y: 2 + armOffset, color: yellow)
 
         // Legs
         setPixel(&grid, x: 5, y: 8, color: yellow)
         setPixel(&grid, x: 10, y: 8, color: yellow)
     }
 
-    // MARK: - Machamp
+    // MARK: - Machamp (arm flex animation)
     private func drawMachamp(grid: inout [[NSColor]], frame: Int) {
         let gray = NSColor(red: 0.6, green: 0.6, blue: 0.65, alpha: 1.0)
         let darkGray = NSColor(red: 0.4, green: 0.4, blue: 0.45, alpha: 1.0)
@@ -826,15 +841,18 @@ class SpriteRenderer {
         for x in 4...11 { setPixel(&grid, x: x, y: 6, color: gray) }
         for x in 5...10 { setPixel(&grid, x: x, y: 7, color: gray) }
 
-        // Four arms
+        // Four arms with flex animation
+        let armFlex = frame % 2 == 0 ? 0 : 1
+        // Upper arms (always out)
         setPixel(&grid, x: 3, y: 3, color: gray)
         setPixel(&grid, x: 3, y: 4, color: gray)
         setPixel(&grid, x: 12, y: 3, color: gray)
         setPixel(&grid, x: 12, y: 4, color: gray)
-        setPixel(&grid, x: 2, y: 5, color: gray)
-        setPixel(&grid, x: 2, y: 6, color: gray)
-        setPixel(&grid, x: 13, y: 5, color: gray)
-        setPixel(&grid, x: 13, y: 6, color: gray)
+        // Lower arms (flex up/down)
+        setPixel(&grid, x: 2, y: 5 + armFlex, color: gray)
+        setPixel(&grid, x: 2, y: 6 + armFlex, color: gray)
+        setPixel(&grid, x: 13, y: 5 + armFlex, color: gray)
+        setPixel(&grid, x: 13, y: 6 + armFlex, color: gray)
 
         // Belt
         for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
@@ -844,39 +862,47 @@ class SpriteRenderer {
         setPixel(&grid, x: 10, y: 8, color: gray)
     }
 
-    // MARK: - Golem
+    // MARK: - Golem (rock shift animation)
     private func drawGolem(grid: inout [[NSColor]], frame: Int) {
         let brown = NSColor(red: 0.6, green: 0.45, blue: 0.25, alpha: 1.0)
         let gray = NSColor(red: 0.55, green: 0.55, blue: 0.55, alpha: 1.0)
         let darkGray = NSColor(red: 0.35, green: 0.35, blue: 0.35, alpha: 1.0)
         let black = NSColor.black
 
-        // Head
-        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: brown) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: brown) }
+        // Head with slight bob
+        let headBob = frame % 2 == 0 ? 0 : 1
+        for x in 6...9 { setPixel(&grid, x: x, y: 1 + headBob, color: gray) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2 + headBob, color: gray) }
 
         // Eyes
-        setPixel(&grid, x: 6, y: 1, color: black)
-        setPixel(&grid, x: 9, y: 1, color: black)
+        setPixel(&grid, x: 6, y: 1 + headBob, color: black)
+        setPixel(&grid, x: 9, y: 1 + headBob, color: black)
 
-        // Rocky body
+        // Rocky body with subtle shift
+        let bodyShift = frame % 4 == 0 ? 0 : frame % 4 == 1 ? 1 : frame % 4 == 2 ? 0 : -1
         for x in 3...12 { setPixel(&grid, x: x, y: 3, color: gray) }
-        for x in 2...13 { setPixel(&grid, x: x, y: 4, color: gray) }
+        for x in 2...13 { setPixel(&grid, x: x, y: 4 + bodyShift, color: gray) }
         for x in 2...13 { setPixel(&grid, x: x, y: 5, color: gray) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 6, color: gray) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 6 - bodyShift, color: gray) }
         for x in 4...11 { setPixel(&grid, x: x, y: 7, color: gray) }
 
-        // Cracks
-        setPixel(&grid, x: 5, y: 4, color: darkGray)
-        setPixel(&grid, x: 9, y: 5, color: darkGray)
-        setPixel(&grid, x: 7, y: 6, color: darkGray)
+        // Cracks (animate position)
+        let crackOffset = frame % 2 == 0 ? 0 : 1
+        setPixel(&grid, x: 5 + crackOffset, y: 4, color: darkGray)
+        setPixel(&grid, x: 9 - crackOffset, y: 5, color: darkGray)
+        setPixel(&grid, x: 7, y: 6 + crackOffset, color: darkGray)
 
         // Legs
-        setPixel(&grid, x: 5, y: 8, color: brown)
-        setPixel(&grid, x: 10, y: 8, color: brown)
+        if frame % 2 == 0 {
+            setPixel(&grid, x: 5, y: 8, color: brown)
+            setPixel(&grid, x: 10, y: 8, color: brown)
+        } else {
+            setPixel(&grid, x: 6, y: 8, color: brown)
+            setPixel(&grid, x: 9, y: 8, color: brown)
+        }
     }
 
-    // MARK: - Onix
+    // MARK: - Onix (body wave animation)
     private func drawOnix(grid: inout [[NSColor]], frame: Int) {
         let gray = NSColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
         let darkGray = NSColor(red: 0.35, green: 0.35, blue: 0.35, alpha: 1.0)
@@ -893,7 +919,9 @@ class SpriteRenderer {
         setPixel(&grid, x: 3, y: 2, color: black)
         setPixel(&grid, x: 5, y: 2, color: black)
 
-        // Body segments (serpentine)
+        // Body segments (connected, tail tip moves)
+        let tailWave = frame % 2 == 0 ? 0 : 1
+
         for x in 6...10 { setPixel(&grid, x: x, y: 4, color: gray) }
         for x in 8...12 { setPixel(&grid, x: x, y: 5, color: gray) }
         for x in 10...14 { setPixel(&grid, x: x, y: 6, color: gray) }
@@ -903,9 +931,9 @@ class SpriteRenderer {
         setPixel(&grid, x: 9, y: 5, color: darkGray)
         setPixel(&grid, x: 12, y: 6, color: darkGray)
 
-        // Tail
-        setPixel(&grid, x: 14, y: 5, color: gray)
-        setPixel(&grid, x: 15, y: 4, color: darkGray)
+        // Tail (animated tip)
+        setPixel(&grid, x: 14, y: 5 + tailWave, color: gray)
+        setPixel(&grid, x: 15, y: 4 + tailWave, color: darkGray)
     }
 
     // MARK: - Jolteon
@@ -1038,19 +1066,19 @@ class SpriteRenderer {
         }
     }
 
-    // MARK: - Porygon
+    // MARK: - Porygon (geometric shift animation)
     private func drawPorygon(grid: inout [[NSColor]], frame: Int) {
         let pink = NSColor(red: 0.9, green: 0.35, blue: 0.45, alpha: 1.0)
         let blue = NSColor(red: 0.3, green: 0.5, blue: 0.9, alpha: 1.0)
-        let black = NSColor.black
 
-        // Head (angular)
-        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: pink) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: pink) }
+        // Head (angular) with slight shift
+        let shift = frame % 2 == 0 ? 0 : 1
+        for x in 6...9 { setPixel(&grid, x: x, y: 1 + shift, color: pink) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2 + shift, color: pink) }
 
         // Eyes
-        setPixel(&grid, x: 6, y: 1, color: blue)
-        setPixel(&grid, x: 9, y: 1, color: blue)
+        setPixel(&grid, x: 6, y: 1 + shift, color: blue)
+        setPixel(&grid, x: 9, y: 1 + shift, color: blue)
 
         // Body (angular/geometric)
         for x in 4...11 { setPixel(&grid, x: x, y: 3, color: pink) }
@@ -1058,40 +1086,56 @@ class SpriteRenderer {
         for x in 3...12 { setPixel(&grid, x: x, y: 5, color: pink) }
         for x in 4...11 { setPixel(&grid, x: x, y: 6, color: pink) }
 
-        // Tail (triangular)
-        setPixel(&grid, x: 12, y: 4, color: pink)
-        setPixel(&grid, x: 13, y: 3, color: pink)
-        setPixel(&grid, x: 13, y: 5, color: pink)
+        // Tail (triangular) with animation
+        let tailShift = frame % 4 == 0 ? 0 : frame % 4 == 1 ? 1 : frame % 4 == 2 ? 0 : -1
+        setPixel(&grid, x: 12, y: 4 + tailShift, color: pink)
+        setPixel(&grid, x: 13, y: 3 + tailShift, color: pink)
+        setPixel(&grid, x: 13, y: 5 + tailShift, color: pink)
 
-        // Legs (angular)
-        setPixel(&grid, x: 5, y: 7, color: blue)
-        setPixel(&grid, x: 10, y: 7, color: blue)
+        // Legs (angular) with movement
+        if frame % 2 == 0 {
+            setPixel(&grid, x: 5, y: 7, color: blue)
+            setPixel(&grid, x: 10, y: 7, color: blue)
+        } else {
+            setPixel(&grid, x: 6, y: 7, color: blue)
+            setPixel(&grid, x: 9, y: 7, color: blue)
+        }
     }
 
-    // MARK: - Ditto
+    // MARK: - Ditto (wobble animation)
     private func drawDitto(grid: inout [[NSColor]], frame: Int) {
         let purple = NSColor(red: 0.75, green: 0.55, blue: 0.8, alpha: 1.0)
         let darkPurple = NSColor(red: 0.6, green: 0.4, blue: 0.65, alpha: 1.0)
         let black = NSColor.black
 
-        // Blobby body
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: purple) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: purple) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: purple) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: purple) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: purple) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 7, color: purple) }
+        // Wobble animation (4 frames)
+        let wobbleX: Int
+        switch frame % 4 {
+        case 0: wobbleX = 0
+        case 1: wobbleX = 1
+        case 2: wobbleX = 0
+        case 3: wobbleX = -1
+        default: wobbleX = 0
+        }
+
+        // Blobby body with wobble
+        for x in 5...10 { setPixel(&grid, x: x + wobbleX, y: 2, color: purple) }
+        for x in 4...11 { setPixel(&grid, x: x + wobbleX, y: 3, color: purple) }
+        for x in 3...12 { setPixel(&grid, x: x + wobbleX, y: 4, color: purple) }
+        for x in 3...12 { setPixel(&grid, x: x + wobbleX, y: 5, color: purple) }
+        for x in 4...11 { setPixel(&grid, x: x + wobbleX, y: 6, color: purple) }
+        for x in 5...10 { setPixel(&grid, x: x + wobbleX, y: 7, color: purple) }
 
         // Eyes (tiny dots)
-        setPixel(&grid, x: 7, y: 3, color: black)
-        setPixel(&grid, x: 9, y: 3, color: black)
+        setPixel(&grid, x: 7 + wobbleX, y: 3, color: black)
+        setPixel(&grid, x: 9 + wobbleX, y: 3, color: black)
 
         // Mouth
-        setPixel(&grid, x: 8, y: 4, color: darkPurple)
+        setPixel(&grid, x: 8 + wobbleX, y: 4, color: darkPurple)
 
-        // Little blobby tail
-        setPixel(&grid, x: 12, y: 5, color: purple)
-        setPixel(&grid, x: 13, y: 4, color: darkPurple)
+        // Little blobby tail with wobble
+        setPixel(&grid, x: 12 + wobbleX, y: 5, color: purple)
+        setPixel(&grid, x: 13 + wobbleX, y: 4, color: darkPurple)
     }
 
     // MARK: - Lapras
