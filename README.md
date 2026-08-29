@@ -14,7 +14,7 @@ A lightweight macOS menu bar app that displays animated Pokémon sprites running
 
 ## Install
 
-Download `MenuPet.app` directly from the repository and move it to your Applications folder.
+Download `MenuPet.dmg` from the repository, open it, and drag MenuPet.app to your Applications folder.
 
 Or build from source:
 
