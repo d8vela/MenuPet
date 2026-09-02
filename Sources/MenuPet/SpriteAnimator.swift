@@ -9,12 +9,20 @@ class SpriteAnimator {
     private var rotationTimer: Timer?
     private var onPokemonChanged: (() -> Void)?
     private(set) var rotationEnabled = UserDefaults.standard.bool(forKey: "rotationEnabled")
+    private(set) var smartRotationEnabled = UserDefaults.standard.bool(forKey: "smartRotationEnabled")
+    private var selectionCounts: [SelectableCharacter: Int] = [:]
 
-    var currentPokemon: PokemonCharacter = .jigglypuff
+    var currentPokemon: SelectableCharacter = {
+        if let saved = UserDefaults.standard.string(forKey: "lastSelectedCharacter"),
+           let character = SelectableCharacter.from(identifier: saved) {
+            return character
+        }
+        return .pokemon(.jigglypuff)
+    }()
     var speedLabel: String = "Idle"
 
     var currentFrame: NSImage {
-        return spriteRenderer.renderFrame(pokemon: currentPokemon, frame: currentFrameIndex)
+        return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex)
     }
 
     init(cpuMonitor: CPUMonitor) {
@@ -25,8 +33,10 @@ class SpriteAnimator {
         }
     }
 
-    func setPokemon(_ pokemon: PokemonCharacter) {
+    func setPokemon(_ pokemon: SelectableCharacter) {
         currentPokemon = pokemon
+        selectionCounts[pokemon, default: 0] += 1
+        UserDefaults.standard.set(pokemon.identifier, forKey: "lastSelectedCharacter")
     }
 
     func setOnPokemonChanged(_ handler: @escaping () -> Void) {
@@ -44,47 +54,103 @@ class SpriteAnimator {
         }
     }
 
+    func toggleSmartRotation() {
+        smartRotationEnabled.toggle()
+        UserDefaults.standard.set(smartRotationEnabled, forKey: "smartRotationEnabled")
+    }
+
     private func startRotation() {
+        let allCharacters: [SelectableCharacter] =
+            PokemonCharacter.allCases.map { .pokemon($0) } +
+            MarioItem.allCases.map { .marioItem($0) } +
+            MarioKartCharacter.allCases.map { .marioKart($0) } +
+            ContraCharacter.allCases.map { .contra($0) } +
+            TMNTCharacter.allCases.map { .tmnt($0) } +
+            StreetFighterCharacter.allCases.map { .streetFighter($0) } +
+            MetalSlugCharacter.allCases.map { .metalSlug($0) } +
+            OverwatchCharacter.allCases.map { .overwatch($0) } +
+            KirbyCharacter.allCases.map { .kirby($0) } +
+            ZeldaCharacter.allCases.map { .zelda($0) } +
+            MegaManCharacter.allCases.map { .megaMan($0) } +
+            MarvelCharacter.allCases.map { .marvel($0) } +
+            DCCharacter.allCases.map { .dc($0) } +
+            NarutoCharacter.allCases.map { .naruto($0) } +
+            SimpsonsCharacter.allCases.map { .simpsons($0) } +
+            MortalKombatCharacter.allCases.map { .mortalKombat($0) } +
+            MinionsCharacter.allCases.map { .minions($0) } +
+            DragonBallCharacter.allCases.map { .dragonBall($0) } +
+            GhibliCharacter.allCases.map { .ghibli($0) } +
+            GundamCharacter.allCases.map { .gundam($0) } +
+            StarWarsCharacter.allCases.map { .starWars($0) }
+
         rotationTimer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             var next = self.currentPokemon
-            while next == self.currentPokemon {
-                next = PokemonCharacter.allCases.randomElement()!
+            var attempts = 0
+            while next == self.currentPokemon && attempts < 10 {
+                if self.smartRotationEnabled && !self.selectionCounts.isEmpty {
+                    next = self.weightedRandom(from: allCharacters)
+                } else {
+                    next = allCharacters.randomElement() ?? .pokemon(.jigglypuff)
+                }
+                attempts += 1
             }
+            self.selectionCounts.removeAll()
             self.currentPokemon = next
+            UserDefaults.standard.set(next.identifier, forKey: "lastSelectedCharacter")
             self.onPokemonChanged?()
         }
     }
 
+    private func weightedRandom(from characters: [SelectableCharacter]) -> SelectableCharacter {
+        var weighted: [(SelectableCharacter, Int)] = []
+        for char in characters {
+            let count = selectionCounts[char, default: 0]
+            let weight = count > 0 ? count + 1 : 1
+            weighted.append((char, weight))
+        }
+        let totalWeight = weighted.reduce(0) { $0 + $1.1 }
+        guard totalWeight > 0 else { return characters.randomElement() ?? .pokemon(.jigglypuff) }
+        var random = Int.random(in: 0..<totalWeight)
+        for (char, weight) in weighted {
+            random -= weight
+            if random < 0 {
+                return char
+            }
+        }
+        return weighted.last?.0 ?? .pokemon(.jigglypuff)
+    }
+
     func updateSpeed(cpuUsage: Double) {
-        // Map CPU usage to animation speed
-        // Low CPU (0-25%): slow animation (0.8s per frame)
-        // Medium CPU (25-50%): medium animation (0.4s per frame)
-        // High CPU (50-75%): fast animation (0.2s per frame)
-        // Very high CPU (75-100%): very fast animation (0.1s per frame)
+        let newSpeed: TimeInterval
+        let newLabel: String
 
         switch cpuUsage {
         case 0..<10:
-            animationSpeed = 1.0
-            speedLabel = "Sleeping 💤"
+            newSpeed = 1.0
+            newLabel = "Sleeping 💤"
         case 10..<25:
-            animationSpeed = 0.7
-            speedLabel = "Walking 🚶"
+            newSpeed = 0.7
+            newLabel = "Walking 🚶"
         case 25..<50:
-            animationSpeed = 0.4
-            speedLabel = "Jogging 🏃"
+            newSpeed = 0.4
+            newLabel = "Jogging 🏃"
         case 50..<75:
-            animationSpeed = 0.2
-            speedLabel = "Running 🏃‍♂️💨"
+            newSpeed = 0.2
+            newLabel = "Running 🏃‍♂️💨"
         case 75..<90:
-            animationSpeed = 0.1
-            speedLabel = "Sprinting ⚡🏃‍♂️💨"
+            newSpeed = 0.1
+            newLabel = "Sprinting ⚡🏃‍♂️💨"
         default:
-            animationSpeed = 0.05
-            speedLabel = "Overdrive 🔥⚡🏃‍♂️💨"
+            newSpeed = 0.05
+            newLabel = "Overdrive 🔥⚡🏃‍♂️💨"
         }
 
-        restartAnimation()
+        speedLabel = newLabel
+        if abs(animationSpeed - newSpeed) > 0.001 {
+            animationSpeed = newSpeed
+            restartAnimation()
+        }
     }
 
     private func startAnimation() {

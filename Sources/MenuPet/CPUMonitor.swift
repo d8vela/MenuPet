@@ -27,11 +27,16 @@ class CPUMonitor {
                                          &numCPUs, &cpuInfo, &numCPUInfo)
         guard result == KERN_SUCCESS, let info = cpuInfo else { return }
 
+        defer {
+            let size = vm_size_t(numCPUInfo) * vm_size_t(MemoryLayout<integer_t>.size)
+            vm_deallocate(mach_task_self_, vm_address_t(bitPattern: info), size)
+        }
+
         var totalTicks: UInt64 = 0
         var idleTicks: UInt64 = 0
 
         for i in 0..<Int(numCPUs) {
-            let offset = i * Int(numCPUInfo)
+            let offset = i * Int(CPU_STATE_MAX)
             let user = UInt64(info[Int(CPU_STATE_USER) + offset])
             let system = UInt64(info[Int(CPU_STATE_SYSTEM) + offset])
             let idle = UInt64(info[Int(CPU_STATE_IDLE) + offset])
