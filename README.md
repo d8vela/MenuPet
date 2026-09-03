@@ -14,10 +14,10 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 
 ## Download
 
-**[Click here to download MenuPet.zip](https://github.com/d8vela/MenuPet/releases/latest)** (macOS 13.0+)
+**[Click here to download MenuPet.dmg](https://github.com/d8vela/MenuPet/releases/latest)** (macOS 13.0+)
 
-1. Download the `.zip` file from the latest release
-2. Unzip the file
+1. Download the `.dmg` file from the latest release
+2. Open the downloaded `MenuPet.dmg`
 3. Drag **MenuPet.app** into your **Applications** folder
 4. Open MenuPet from Applications (right-click → Open the first time to bypass Gatekeeper)
 
