@@ -234,6 +234,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let pokemonMenuItem = NSMenuItem(title: "Pokémon", action: nil, keyEquivalent: "")
         pokemonMenuItem.submenu = pokemonSubmenu
+        if case .pokemon(_) = spriteAnimator.currentPokemon {
+            pokemonMenuItem.state = .on
+        }
         menu.addItem(pokemonMenuItem)
 
         // Super Mario Bros submenu
@@ -271,6 +274,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let marioMenuItem = NSMenuItem(title: "Super Mario Bros", action: nil, keyEquivalent: "")
         marioMenuItem.submenu = marioSubmenu
+        if case .marioItem(_) = spriteAnimator.currentPokemon {
+            marioMenuItem.state = .on
+        }
         menu.addItem(marioMenuItem)
 
         // Mario Kart submenu
@@ -302,6 +308,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let kartMenuItem = NSMenuItem(title: "Mario Kart", action: nil, keyEquivalent: "")
         kartMenuItem.submenu = kartSubmenu
+        if case .marioKart(_) = spriteAnimator.currentPokemon {
+            kartMenuItem.state = .on
+        }
         menu.addItem(kartMenuItem)
 
         // Contra submenu
@@ -355,6 +364,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let contraMenuItem = NSMenuItem(title: "Contra", action: nil, keyEquivalent: "")
         contraMenuItem.submenu = contraSubmenu
+        if case .contra(_) = spriteAnimator.currentPokemon {
+            contraMenuItem.state = .on
+        }
         menu.addItem(contraMenuItem)
 
         // TMNT submenu
@@ -392,6 +404,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let tmntMenuItem = NSMenuItem(title: "TMNT", action: nil, keyEquivalent: "")
         tmntMenuItem.submenu = tmntSubmenu
+        if case .tmnt(_) = spriteAnimator.currentPokemon {
+            tmntMenuItem.state = .on
+        }
         menu.addItem(tmntMenuItem)
 
         // Street Fighter submenu
@@ -429,6 +444,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let sfMenuItem = NSMenuItem(title: "Street Fighter", action: nil, keyEquivalent: "")
         sfMenuItem.submenu = sfSubmenu
+        if case .streetFighter(_) = spriteAnimator.currentPokemon {
+            sfMenuItem.state = .on
+        }
         menu.addItem(sfMenuItem)
 
         // Metal Slug submenu
@@ -482,6 +500,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let msMenuItem = NSMenuItem(title: "Metal Slug", action: nil, keyEquivalent: "")
         msMenuItem.submenu = msSubmenu
+        if case .metalSlug(_) = spriteAnimator.currentPokemon {
+            msMenuItem.state = .on
+        }
         menu.addItem(msMenuItem)
 
         // Overwatch submenu
@@ -535,6 +556,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let owMenuItem = NSMenuItem(title: "Overwatch", action: nil, keyEquivalent: "")
         owMenuItem.submenu = owSubmenu
+        if case .overwatch(_) = spriteAnimator.currentPokemon {
+            owMenuItem.state = .on
+        }
         menu.addItem(owMenuItem)
 
         // Kirby submenu
@@ -572,6 +596,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let kirbyMenuItem = NSMenuItem(title: "Kirby", action: nil, keyEquivalent: "")
         kirbyMenuItem.submenu = kirbySubmenu
+        if case .kirby(_) = spriteAnimator.currentPokemon {
+            kirbyMenuItem.state = .on
+        }
         menu.addItem(kirbyMenuItem)
 
         // Legend of Zelda submenu
@@ -609,6 +636,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let zeldaMenuItem = NSMenuItem(title: "Legend of Zelda", action: nil, keyEquivalent: "")
         zeldaMenuItem.submenu = zeldaSubmenu
+        if case .zelda(_) = spriteAnimator.currentPokemon {
+            zeldaMenuItem.state = .on
+        }
         menu.addItem(zeldaMenuItem)
 
         // Mega Man submenu
@@ -640,6 +670,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let mmMenuItem = NSMenuItem(title: "Mega Man", action: nil, keyEquivalent: "")
         mmMenuItem.submenu = mmSubmenu
+        if case .megaMan(_) = spriteAnimator.currentPokemon {
+            mmMenuItem.state = .on
+        }
         menu.addItem(mmMenuItem)
 
         // Marvel submenu
@@ -702,6 +735,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let dcMenuItem = NSMenuItem(title: "DC Comics", action: nil, keyEquivalent: "")
         dcMenuItem.submenu = dcSubmenu
+        if case .dc(_) = spriteAnimator.currentPokemon {
+            dcMenuItem.state = .on
+        }
         menu.addItem(dcMenuItem)
 
         // Naruto submenu
@@ -733,6 +769,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let narutoMenuItem = NSMenuItem(title: "Naruto", action: nil, keyEquivalent: "")
         narutoMenuItem.submenu = narutoSubmenu
+        if case .naruto(_) = spriteAnimator.currentPokemon {
+            narutoMenuItem.state = .on
+        }
         menu.addItem(narutoMenuItem)
 
         // Simpsons submenu
@@ -764,6 +803,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let simpsonsMenuItem = NSMenuItem(title: "The Simpsons", action: nil, keyEquivalent: "")
         simpsonsMenuItem.submenu = simpsonsSubmenu
+        if case .simpsons(_) = spriteAnimator.currentPokemon {
+            simpsonsMenuItem.state = .on
+        }
         menu.addItem(simpsonsMenuItem)
 
         // Mortal Kombat submenu
@@ -795,6 +837,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let mkMenuItem = NSMenuItem(title: "Mortal Kombat", action: nil, keyEquivalent: "")
         mkMenuItem.submenu = mkSubmenu
+        if case .mortalKombat(_) = spriteAnimator.currentPokemon {
+            mkMenuItem.state = .on
+        }
         menu.addItem(mkMenuItem)
 
         // Minions submenu
@@ -810,6 +855,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let minionsMenuItem = NSMenuItem(title: "Minions", action: nil, keyEquivalent: "")
         minionsMenuItem.submenu = minionsSubmenu
+        if case .minions(_) = spriteAnimator.currentPokemon {
+            minionsMenuItem.state = .on
+        }
         menu.addItem(minionsMenuItem)
 
         // Dragon Ball submenu
@@ -825,6 +873,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let dbMenuItem = NSMenuItem(title: "Dragon Ball", action: nil, keyEquivalent: "")
         dbMenuItem.submenu = dbSubmenu
+        if case .dragonBall(_) = spriteAnimator.currentPokemon {
+            dbMenuItem.state = .on
+        }
         menu.addItem(dbMenuItem)
 
         // Ghibli submenu
@@ -870,6 +921,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let swMenuItem = NSMenuItem(title: "Star Wars", action: nil, keyEquivalent: "")
         swMenuItem.submenu = swSubmenu
+        if case .starWars(_) = spriteAnimator.currentPokemon {
+            swMenuItem.state = .on
+        }
         menu.addItem(swMenuItem)
 
         // Labubu submenu
@@ -885,6 +939,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let labubuMenuItem = NSMenuItem(title: "Labubu", action: nil, keyEquivalent: "")
         labubuMenuItem.submenu = labubuSubmenu
+        if case .labubu(_) = spriteAnimator.currentPokemon {
+            labubuMenuItem.state = .on
+        }
         menu.addItem(labubuMenuItem)
 
         menu.addItem(NSMenuItem.separator())
@@ -903,6 +960,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         smartRotationItem.state = spriteAnimator.smartRotationEnabled ? .on : .off
         smartRotationItem.isEnabled = spriteAnimator.rotationEnabled
         menu.addItem(smartRotationItem)
+
+        // History submenu
+        let historySubmenu = NSMenu()
+        if spriteAnimator.characterHistory.isEmpty {
+            let emptyItem = NSMenuItem(title: "No history yet", action: nil, keyEquivalent: "")
+            emptyItem.isEnabled = false
+            historySubmenu.addItem(emptyItem)
+        } else {
+            for character in spriteAnimator.characterHistory.prefix(20) {
+                let item = NSMenuItem(title: character.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
+                item.target = self
+                item.representedObject = character
+                if character == spriteAnimator.currentPokemon {
+                    item.state = .on
+                }
+                historySubmenu.addItem(item)
+            }
+        }
+        let historyMenuItem = NSMenuItem(title: "History", action: nil, keyEquivalent: "")
+        historyMenuItem.submenu = historySubmenu
+        menu.addItem(historyMenuItem)
 
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q"))

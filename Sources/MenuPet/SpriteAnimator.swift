@@ -11,6 +11,8 @@ class SpriteAnimator {
     private(set) var rotationEnabled = UserDefaults.standard.bool(forKey: "rotationEnabled")
     private(set) var smartRotationEnabled = UserDefaults.standard.bool(forKey: "smartRotationEnabled")
     private var selectionCounts: [SelectableCharacter: Int] = [:]
+    private(set) var characterHistory: [SelectableCharacter] = []
+    private let maxHistorySize = 20
 
     var currentPokemon: SelectableCharacter = {
         if let saved = UserDefaults.standard.string(forKey: "lastSelectedCharacter"),
@@ -27,6 +29,7 @@ class SpriteAnimator {
 
     init(cpuMonitor: CPUMonitor) {
         self.cpuMonitor = cpuMonitor
+        loadHistory()
         startAnimation()
         if rotationEnabled {
             startRotation()
@@ -36,11 +39,32 @@ class SpriteAnimator {
     func setPokemon(_ pokemon: SelectableCharacter) {
         currentPokemon = pokemon
         selectionCounts[pokemon, default: 0] += 1
+        addToHistory(pokemon)
         UserDefaults.standard.set(pokemon.identifier, forKey: "lastSelectedCharacter")
     }
 
     func setOnPokemonChanged(_ handler: @escaping () -> Void) {
         onPokemonChanged = handler
+    }
+
+    private func addToHistory(_ character: SelectableCharacter) {
+        characterHistory.removeAll { $0 == character }
+        characterHistory.insert(character, at: 0)
+        if characterHistory.count > maxHistorySize {
+            characterHistory = Array(characterHistory.prefix(maxHistorySize))
+        }
+        saveHistory()
+    }
+
+    private func saveHistory() {
+        let identifiers = characterHistory.map { $0.identifier }
+        UserDefaults.standard.set(identifiers, forKey: "characterHistory")
+    }
+
+    private func loadHistory() {
+        if let saved = UserDefaults.standard.stringArray(forKey: "characterHistory") {
+            characterHistory = saved.compactMap { SelectableCharacter.from(identifier: $0) }
+        }
     }
 
     func toggleRotation() {
