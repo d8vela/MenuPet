@@ -998,6 +998,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             } else if item.tag == 300 {
                 item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName)"
             }
+            // Update checkmarks for category menus
+            if let submenu = item.submenu {
+                updateCheckmarks(in: submenu)
+            }
+        }
+    }
+
+    private func updateCheckmarks(in menu: NSMenu) {
+        for item in menu.items {
+            if let submenu = item.submenu {
+                updateCheckmarks(in: submenu)
+            } else if let character = item.representedObject as? SelectableCharacter {
+                item.state = (character == spriteAnimator.currentPokemon) ? .on : .off
+            }
         }
     }
 

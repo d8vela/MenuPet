@@ -121,6 +121,7 @@ class SpriteAnimator {
             }
             self.selectionCounts.removeAll()
             self.currentPokemon = next
+            self.addToHistory(next)
             UserDefaults.standard.set(next.identifier, forKey: "lastSelectedCharacter")
             self.onPokemonChanged?()
         }
