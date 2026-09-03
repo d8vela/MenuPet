@@ -23,6 +23,8 @@ enum SelectableCharacter: Equatable, Hashable {
     case gundam(GundamCharacter)
     case starWars(StarWarsCharacter)
     case labubu(LabubuCharacter)
+    case kingOfTheHill(KingOfTheHillCharacter)
+    case familyGuy(FamilyGuyCharacter)
 
     var identifier: String {
         switch self {
@@ -48,6 +50,8 @@ enum SelectableCharacter: Equatable, Hashable {
         case .gundam(let g): return "gundam_\(g.rawValue)"
         case .starWars(let s): return "starWars_\(s.rawValue)"
         case .labubu(let l): return "labubu_\(l.rawValue)"
+        case .kingOfTheHill(let k): return "kingOfTheHill_\(k.rawValue)"
+        case .familyGuy(let f): return "familyGuy_\(f.rawValue)"
         }
     }
 
@@ -79,6 +83,8 @@ enum SelectableCharacter: Equatable, Hashable {
         case "gundam": return GundamCharacter(rawValue: value).map { .gundam($0) }
         case "starWars": return StarWarsCharacter(rawValue: value).map { .starWars($0) }
         case "labubu": return LabubuCharacter(rawValue: value).map { .labubu($0) }
+        case "kingOfTheHill": return KingOfTheHillCharacter(rawValue: value).map { .kingOfTheHill($0) }
+        case "familyGuy": return FamilyGuyCharacter(rawValue: value).map { .familyGuy($0) }
         default: return nil
         }
     }
@@ -107,6 +113,8 @@ enum SelectableCharacter: Equatable, Hashable {
         case .gundam(let g): return g.displayName
         case .starWars(let s): return s.displayName
         case .labubu(let l): return l.displayName
+        case .kingOfTheHill(let k): return k.displayName
+        case .familyGuy(let f): return f.displayName
         }
     }
 
@@ -134,6 +142,8 @@ enum SelectableCharacter: Equatable, Hashable {
         case .gundam(let g): return g.emoji
         case .starWars(let s): return s.emoji
         case .labubu(let l): return l.emoji
+        case .kingOfTheHill(let k): return k.emoji
+        case .familyGuy(let f): return f.emoji
         }
     }
 }

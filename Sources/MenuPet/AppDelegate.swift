@@ -179,6 +179,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         .labubu, .labubuPink, .labubuGray, .labubuBrown, .labubuWhite, .labubuGolden
     ]
 
+    let kingOfTheHillFamily: [KingOfTheHillCharacter] = [
+        .hank, .peggy, .bobby, .luanne, .cotton, .ladybird
+    ]
+
+    let kingOfTheHillFriends: [KingOfTheHillCharacter] = [
+        .dale, .bill, .boomhauer, .kahn, .johnRedcorn, .buckStrickland
+    ]
+
+    let familyGuyFamily: [FamilyGuyCharacter] = [
+        .peter, .lois, .stewie, .brian, .chris, .meg
+    ]
+
+    let familyGuyFriends: [FamilyGuyCharacter] = [
+        .quagmire, .cleveland, .joe, .adamWest, .herbert, .tomTucker
+    ]
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
@@ -943,6 +959,74 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             labubuMenuItem.state = .on
         }
         menu.addItem(labubuMenuItem)
+
+        // King of the Hill submenu
+        let kothSubmenu = NSMenu()
+        let kothFamilyHeader = NSMenuItem(title: "The Hills", action: nil, keyEquivalent: "")
+        kothFamilyHeader.isEnabled = false
+        kothSubmenu.addItem(kothFamilyHeader)
+        for char in kingOfTheHillFamily {
+            let item = NSMenuItem(title: "  \(char.displayName)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = SelectableCharacter.kingOfTheHill(char)
+            if case .kingOfTheHill(let k) = spriteAnimator.currentPokemon, k == char {
+                item.state = .on
+            }
+            kothSubmenu.addItem(item)
+        }
+        kothSubmenu.addItem(NSMenuItem.separator())
+        let kothFriendsHeader = NSMenuItem(title: "Friends & Neighbors", action: nil, keyEquivalent: "")
+        kothFriendsHeader.isEnabled = false
+        kothSubmenu.addItem(kothFriendsHeader)
+        for char in kingOfTheHillFriends {
+            let item = NSMenuItem(title: "  \(char.displayName)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = SelectableCharacter.kingOfTheHill(char)
+            if case .kingOfTheHill(let k) = spriteAnimator.currentPokemon, k == char {
+                item.state = .on
+            }
+            kothSubmenu.addItem(item)
+        }
+        let kothMenuItem = NSMenuItem(title: "King of the Hill", action: nil, keyEquivalent: "")
+        kothMenuItem.submenu = kothSubmenu
+        if case .kingOfTheHill(_) = spriteAnimator.currentPokemon {
+            kothMenuItem.state = .on
+        }
+        menu.addItem(kothMenuItem)
+
+        // Family Guy submenu
+        let fgSubmenu = NSMenu()
+        let fgFamilyHeader = NSMenuItem(title: "The Griffins", action: nil, keyEquivalent: "")
+        fgFamilyHeader.isEnabled = false
+        fgSubmenu.addItem(fgFamilyHeader)
+        for char in familyGuyFamily {
+            let item = NSMenuItem(title: "  \(char.displayName)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = SelectableCharacter.familyGuy(char)
+            if case .familyGuy(let f) = spriteAnimator.currentPokemon, f == char {
+                item.state = .on
+            }
+            fgSubmenu.addItem(item)
+        }
+        fgSubmenu.addItem(NSMenuItem.separator())
+        let fgFriendsHeader = NSMenuItem(title: "Quahog Residents", action: nil, keyEquivalent: "")
+        fgFriendsHeader.isEnabled = false
+        fgSubmenu.addItem(fgFriendsHeader)
+        for char in familyGuyFriends {
+            let item = NSMenuItem(title: "  \(char.displayName)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = SelectableCharacter.familyGuy(char)
+            if case .familyGuy(let f) = spriteAnimator.currentPokemon, f == char {
+                item.state = .on
+            }
+            fgSubmenu.addItem(item)
+        }
+        let fgMenuItem = NSMenuItem(title: "Family Guy", action: nil, keyEquivalent: "")
+        fgMenuItem.submenu = fgSubmenu
+        if case .familyGuy(_) = spriteAnimator.currentPokemon {
+            fgMenuItem.state = .on
+        }
+        menu.addItem(fgMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 

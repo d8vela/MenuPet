@@ -6,7 +6,7 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 
 ## Features
 
-- **100+ characters** across 19 categories — Pokémon, Mario, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, and Labubu
+- **120+ characters** across 21 categories — Pokémon, Mario, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, and Family Guy
 - **CPU-reactive animation** — sprite speed adjusts based on system load
 - **Random rotation** — automatically cycles to a random character every 10 minutes
 - **Lightweight** — pure Swift, no dependencies, minimal resource usage
@@ -60,6 +60,8 @@ cp .build/release/MenuPet /usr/local/bin/
 | Minions | Kevin, Stuart, Bob |
 | Gundam | RX-78-2, Char's Zaku, Wing Zero, Unicorn |
 | Labubu | Labubu, Pink, Gray, Brown, White, Golden |
+| King of the Hill | Hank Hill, Peggy, Bobby, Dale, Bill, Boomhauer, Luanne, Cotton, Kahn, Ladybird, John Redcorn, Buck Strickland |
+| Family Guy | Peter Griffin, Lois, Stewie, Brian, Chris, Meg, Quagmire, Cleveland, Joe, Mayor Adam West, Herbert, Tom Tucker |
 
 ## Requirements
 

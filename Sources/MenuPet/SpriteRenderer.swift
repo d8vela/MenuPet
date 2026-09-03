@@ -429,6 +429,36 @@ class SpriteRenderer {
             case .labubuWhite: drawLabubu(grid: &grid, frame: frame, colorScheme: 4)
             case .labubuGolden: drawLabubu(grid: &grid, frame: frame, colorScheme: 5)
             }
+        case .kingOfTheHill(let kChar):
+            switch kChar {
+            case .hank: drawKOTHHank(grid: &grid, frame: frame)
+            case .peggy: drawKOTHPeggy(grid: &grid, frame: frame)
+            case .bobby: drawKOTHBobby(grid: &grid, frame: frame)
+            case .dale: drawKOTHDale(grid: &grid, frame: frame)
+            case .bill: drawKOTHBill(grid: &grid, frame: frame)
+            case .boomhauer: drawKOTHBoomhauer(grid: &grid, frame: frame)
+            case .luanne: drawKOTHLuanne(grid: &grid, frame: frame)
+            case .cotton: drawKOTHCotton(grid: &grid, frame: frame)
+            case .kahn: drawKOTHKahn(grid: &grid, frame: frame)
+            case .ladybird: drawKOTHLadybird(grid: &grid, frame: frame)
+            case .johnRedcorn: drawKOTHJohnRedcorn(grid: &grid, frame: frame)
+            case .buckStrickland: drawKOTHBuckStrickland(grid: &grid, frame: frame)
+            }
+        case .familyGuy(let fChar):
+            switch fChar {
+            case .peter: drawFamilyGuyPeter(grid: &grid, frame: frame)
+            case .lois: drawFamilyGuyLois(grid: &grid, frame: frame)
+            case .stewie: drawFamilyGuyStewie(grid: &grid, frame: frame)
+            case .brian: drawFamilyGuyBrian(grid: &grid, frame: frame)
+            case .chris: drawFamilyGuyChris(grid: &grid, frame: frame)
+            case .meg: drawFamilyGuyMeg(grid: &grid, frame: frame)
+            case .quagmire: drawFamilyGuyQuagmire(grid: &grid, frame: frame)
+            case .cleveland: drawFamilyGuyCleveland(grid: &grid, frame: frame)
+            case .joe: drawFamilyGuyJoe(grid: &grid, frame: frame)
+            case .adamWest: drawFamilyGuyAdamWest(grid: &grid, frame: frame)
+            case .herbert: drawFamilyGuyHerbert(grid: &grid, frame: frame)
+            case .tomTucker: drawFamilyGuyTomTucker(grid: &grid, frame: frame)
+            }
         }
 
         return grid
