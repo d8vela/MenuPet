@@ -818,7 +818,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func searchCharacter(_ sender: NSMenuItem) {
         let characterName = spriteAnimator.currentPokemon.displayName
         let query = characterName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? characterName
-        if let url = URL(string: "https://www.google.com/search?q=\(query)") {
+        if let url = URL(string: "https://www.google.com/search?tbm=isch&q=\(query)") {
             NSWorkspace.shared.open(url)
         }
     }
