@@ -238,8 +238,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func buildMenu() {
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: "MenuPet", action: nil, keyEquivalent: ""))
-        let currentPokemonItem = NSMenuItem(title: "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)", action: nil, keyEquivalent: "")
+        let currentPokemonItem = NSMenuItem(title: "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)", action: #selector(searchCharacter(_:)), keyEquivalent: "")
         currentPokemonItem.tag = 300
+        currentPokemonItem.target = self
         menu.addItem(currentPokemonItem)
         menu.addItem(NSMenuItem.separator())
 
@@ -812,6 +813,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func toggleSmartRotation() {
         spriteAnimator.toggleSmartRotation()
         buildMenu()
+    }
+
+    @objc func searchCharacter(_ sender: NSMenuItem) {
+        let characterName = spriteAnimator.currentPokemon.displayName
+        let query = characterName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? characterName
+        if let url = URL(string: "https://www.google.com/search?q=\(query)") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     @objc func checkForUpdates() {
