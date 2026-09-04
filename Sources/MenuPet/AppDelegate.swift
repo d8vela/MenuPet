@@ -1067,6 +1067,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(historyMenuItem)
 
         menu.addItem(NSMenuItem.separator())
+
+        let checkUpdateItem = NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "")
+        checkUpdateItem.target = self
+        menu.addItem(checkUpdateItem)
+
+        let versionItem = NSMenuItem(title: "Version \(UpdateChecker.shared.currentVersion)", action: nil, keyEquivalent: "")
+        versionItem.isEnabled = false
+        menu.addItem(versionItem)
+
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q"))
 
         statusItem.menu = menu
@@ -1115,6 +1125,47 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         buildMenu()
     }
 
+    @objc func checkForUpdates() {
+        UpdateChecker.shared.onUpdateAvailable = { [weak self] version, downloadURL in
+            DispatchQueue.main.async {
+                let alert = NSAlert()
+                alert.messageText = "Update Available"
+                alert.informativeText = "A new version (v\(version)) is available. Would you like to download and install it?"
+                alert.addButton(withTitle: "Install Update")
+                alert.addButton(withTitle: "Cancel")
+                
+                if alert.runModal() == .alertFirstButtonReturn {
+                    self?.downloadAndInstall(from: downloadURL)
+                }
+            }
+        }
+        
+        UpdateChecker.shared.onCheckComplete = { available, message in
+            DispatchQueue.main.async {
+                if !available {
+                    let alert = NSAlert()
+                    alert.messageText = "No Updates Available"
+                    alert.informativeText = "You're running the latest version (v\(UpdateChecker.shared.currentVersion))."
+                    alert.alertStyle = .informational
+                    alert.addButton(withTitle: "OK")
+                    alert.runModal()
+                }
+            }
+        }
+        
+        UpdateChecker.shared.checkForUpdates()
+    }
+    
+    private func downloadAndInstall(from url: String) {
+        let alert = NSAlert()
+        alert.messageText = "Downloading Update"
+        alert.informativeText = "Please wait while the update is being downloaded..."
+        alert.addButton(withTitle: "Cancel")
+        alert.runModal()
+        
+        UpdateChecker.shared.downloadAndInstallUpdate(from: url)
+    }
+    
     @objc func quitApp() {
         NSApplication.shared.terminate(nil)
     }
