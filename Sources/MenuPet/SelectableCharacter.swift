@@ -146,4 +146,33 @@ enum SelectableCharacter: Equatable, Hashable {
         case .familyGuy(let f): return f.emoji
         }
     }
+
+    var category: String {
+        switch self {
+        case .pokemon: return "Pokémon"
+        case .marioItem: return "Super Mario Bros"
+        case .marioKart: return "Mario Kart"
+        case .contra: return "Contra"
+        case .tmnt: return "TMNT"
+        case .streetFighter: return "Street Fighter"
+        case .metalSlug: return "Metal Slug"
+        case .overwatch: return "Overwatch"
+        case .kirby: return "Kirby"
+        case .zelda: return "Legend of Zelda"
+        case .megaMan: return "Mega Man"
+        case .marvel: return "Marvel"
+        case .dc: return "DC Comics"
+        case .naruto: return "Naruto"
+        case .simpsons: return "The Simpsons"
+        case .mortalKombat: return "Mortal Kombat"
+        case .minions: return "Minions"
+        case .dragonBall: return "Dragon Ball"
+        case .ghibli: return "Studio Ghibli"
+        case .gundam: return "Gundam"
+        case .starWars: return "Star Wars"
+        case .labubu: return "Labubu"
+        case .kingOfTheHill: return "King of the Hill"
+        case .familyGuy: return "Family Guy"
+        }
+    }
 }

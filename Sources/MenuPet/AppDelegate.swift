@@ -228,7 +228,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func buildMenu() {
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: "MenuPet", action: nil, keyEquivalent: ""))
-        let currentPokemonItem = NSMenuItem(title: "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName)", action: nil, keyEquivalent: "")
+        let currentPokemonItem = NSMenuItem(title: "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)", action: nil, keyEquivalent: "")
         currentPokemonItem.tag = 300
         menu.addItem(currentPokemonItem)
         menu.addItem(NSMenuItem.separator())
@@ -1090,7 +1090,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             } else if item.tag == 200 {
                 item.title = "Speed: \(spriteAnimator.speedLabel)"
             } else if item.tag == 300 {
-                item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName)"
+                item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)"
             }
             // Update checkmarks for category menus
             if let submenu = item.submenu {
