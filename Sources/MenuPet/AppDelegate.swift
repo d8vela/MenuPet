@@ -802,6 +802,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func selectCharacter(_ sender: NSMenuItem) {
         guard let character = sender.representedObject as? SelectableCharacter else { return }
         spriteAnimator.setPokemon(character)
+        spriteAnimator.resetRotationTimer()
         buildMenu()
     }
 

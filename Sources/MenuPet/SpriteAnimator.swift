@@ -78,6 +78,12 @@ class SpriteAnimator {
         }
     }
 
+    func resetRotationTimer() {
+        guard rotationEnabled else { return }
+        rotationTimer?.invalidate()
+        startRotation()
+    }
+
     func toggleSmartRotation() {
         smartRotationEnabled.toggle()
         UserDefaults.standard.set(smartRotationEnabled, forKey: "smartRotationEnabled")
