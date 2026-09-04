@@ -4,6 +4,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var cpuMonitor: CPUMonitor!
     var spriteAnimator: SpriteAnimator!
+    var updateCheckTimer: Timer?
 
     let pokemonList: [PokemonCharacter] = [
         .jigglypuff, .pikachu, .psyduck, .snorlax, .charmander, .bulbasaur, .squirtle,
@@ -227,6 +228,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         buildMenu()
         cpuMonitor.start()
+
+        checkForUpdatesInBackground()
+        updateCheckTimer = Timer.scheduledTimer(withTimeInterval: 86400, repeats: true) { [weak self] _ in
+            self?.checkForUpdatesInBackground()
+        }
     }
 
     func buildMenu() {
@@ -834,6 +840,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     alert.runModal()
                 }
             }
+        }
+        
+        UpdateChecker.shared.checkForUpdates()
+    }
+    
+    private func checkForUpdatesInBackground() {
+        UpdateChecker.shared.onUpdateAvailable = { [weak self] version, downloadURL in
+            DispatchQueue.main.async {
+                let alert = NSAlert()
+                alert.messageText = "Update Available"
+                alert.informativeText = "A new version (v\(version)) is available. Would you like to download and install it?"
+                alert.addButton(withTitle: "Install Update")
+                alert.addButton(withTitle: "Cancel")
+                
+                if alert.runModal() == .alertFirstButtonReturn {
+                    self?.downloadAndInstall(from: downloadURL)
+                }
+            }
+        }
+        
+        UpdateChecker.shared.onCheckComplete = { available, message in
+            // Silently ignore - no alert for background checks
         }
         
         UpdateChecker.shared.checkForUpdates()
