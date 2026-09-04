@@ -840,13 +840,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func downloadAndInstall(from url: String) {
-        let alert = NSAlert()
-        alert.messageText = "Downloading Update"
-        alert.informativeText = "Please wait while the update is being downloaded..."
-        alert.addButton(withTitle: "Cancel")
-        alert.runModal()
-        
-        UpdateChecker.shared.downloadAndInstallUpdate(from: url)
+        let progressWindow = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 140),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        progressWindow.title = "Downloading Update"
+        progressWindow.isReleasedWhenClosed = false
+        progressWindow.center()
+
+        let label = NSTextField(labelWithString: "Downloading update...")
+        label.frame = NSRect(x: 20, y: 90, width: 280, height: 20)
+        label.font = NSFont.systemFont(ofSize: 13)
+
+        let progress = NSProgressIndicator(frame: NSRect(x: 20, y: 55, width: 280, height: 20))
+        progress.style = .bar
+        progress.isIndeterminate = false
+        progress.minValue = 0
+        progress.maxValue = 100
+        progress.doubleValue = 0
+
+        let statusLabel = NSTextField(labelWithString: "0%")
+        statusLabel.frame = NSRect(x: 20, y: 30, width: 280, height: 18)
+        statusLabel.font = NSFont.systemFont(ofSize: 11)
+        statusLabel.textColor = .secondaryLabelColor
+
+        progressWindow.contentView?.addSubview(label)
+        progressWindow.contentView?.addSubview(progress)
+        progressWindow.contentView?.addSubview(statusLabel)
+        progressWindow.makeKeyAndOrderFront(nil)
+
+        UpdateChecker.shared.downloadAndInstallUpdate(from: url, progressWindow: progressWindow, progressIndicator: progress, statusLabel: statusLabel)
     }
     
     @objc func quitApp() {

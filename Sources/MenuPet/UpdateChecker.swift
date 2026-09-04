@@ -83,7 +83,7 @@ class UpdateChecker {
         return false
     }
     
-    func downloadAndInstallUpdate(from urlString: String) {
+    func downloadAndInstallUpdate(from urlString: String, progressWindow: NSWindow? = nil, progressIndicator: NSProgressIndicator? = nil, statusLabel: NSTextField? = nil) {
         guard let url = URL(string: urlString) else { return }
         
         let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("MenuPetUpdate")
@@ -92,15 +92,13 @@ class UpdateChecker {
         
         let dmgPath = tempDir.appendingPathComponent("MenuPet.dmg")
         
-        DispatchQueue.main.async {
-            NSWorkspace.shared.notificationCenter.post(name: .downloadStarted, object: nil)
-        }
-        
-        let task = URLSession.shared.downloadTask(with: url) { [weak self] tempURL, response, error in
+        let session = URLSession(configuration: .default, delegate: DownloadDelegate(progressIndicator: progressIndicator, statusLabel: statusLabel), delegateQueue: .main)
+        let task = session.downloadTask(with: url) { [weak self] tempURL, response, error in
             guard let self = self else { return }
             
             if let error = error {
                 DispatchQueue.main.async {
+                    progressWindow?.close()
                     self.showError("Download failed: \(error.localizedDescription)")
                 }
                 return
@@ -108,6 +106,7 @@ class UpdateChecker {
             
             guard let tempURL = tempURL else {
                 DispatchQueue.main.async {
+                    progressWindow?.close()
                     self.showError("Download failed: No data received")
                 }
                 return
@@ -115,9 +114,13 @@ class UpdateChecker {
             
             do {
                 try FileManager.default.moveItem(at: tempURL, to: dmgPath)
+                DispatchQueue.main.async {
+                    progressWindow?.close()
+                }
                 self.installUpdate(from: dmgPath)
             } catch {
                 DispatchQueue.main.async {
+                    progressWindow?.close()
                     self.showError("Failed to save update: \(error.localizedDescription)")
                 }
             }
@@ -196,6 +199,26 @@ class UpdateChecker {
         alert.alertStyle = .warning
         alert.addButton(withTitle: "OK")
         alert.runModal()
+    }
+}
+
+class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
+    private weak var progressIndicator: NSProgressIndicator?
+    private weak var statusLabel: NSTextField?
+    
+    init(progressIndicator: NSProgressIndicator?, statusLabel: NSTextField?) {
+        self.progressIndicator = progressIndicator
+        self.statusLabel = statusLabel
+    }
+    
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {}
+    
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
+        DispatchQueue.main.async {
+            self.progressIndicator?.doubleValue = progress
+            self.statusLabel?.stringValue = "\\(Int(progress))%"
+        }
     }
 }
 
