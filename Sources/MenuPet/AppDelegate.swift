@@ -501,7 +501,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if case .overwatch(_) = spriteAnimator.currentPokemon { owMI.state = .on }
         gamesMenu.addItem(owMI)
 
-        let gamesMI = NSMenuItem(title: "Video Games", action: nil, keyEquivalent: "")
+        let gamesMI = NSMenuItem(title: "🎮 Video Games", action: nil, keyEquivalent: "")
         gamesMI.submenu = gamesMenu
         menu.addItem(gamesMI)
 
@@ -578,7 +578,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if case .labubu(_) = spriteAnimator.currentPokemon { labMI.state = .on }
         animeMenu.addItem(labMI)
 
-        let animeMI = NSMenuItem(title: "Anime & Manga", action: nil, keyEquivalent: "")
+        let animeMI = NSMenuItem(title: "⛩️ Anime & Manga", action: nil, keyEquivalent: "")
         animeMI.submenu = animeMenu
         menu.addItem(animeMI)
 
@@ -692,7 +692,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
 
-        let moviesTVMI = NSMenuItem(title: "Movies & TV", action: nil, keyEquivalent: "")
+        let moviesTVMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
         moviesTVMI.submenu = moviesTVMenu
         menu.addItem(moviesTVMI)
 
@@ -721,7 +721,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             historySubmenu.addItem(emptyItem)
         } else {
             for character in spriteAnimator.characterHistory.prefix(20) {
-                let item = NSMenuItem(title: character.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
+                let item = NSMenuItem(title: "\(character.displayName) — \(character.category)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
                 item.target = self
                 item.representedObject = character
                 if character == spriteAnimator.currentPokemon {
