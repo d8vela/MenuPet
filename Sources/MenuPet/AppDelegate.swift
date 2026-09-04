@@ -901,7 +901,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         UpdateChecker.shared.downloadAndInstallUpdate(from: url, progressWindow: progressWindow, progressIndicator: progress, statusLabel: statusLabel)
     }
-    
+
     @objc func quitApp() {
         NSApplication.shared.terminate(nil)
     }
