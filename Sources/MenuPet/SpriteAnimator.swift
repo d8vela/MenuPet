@@ -108,7 +108,8 @@ class SpriteAnimator {
             StarWarsCharacter.allCases.map { .starWars($0) } +
             LabubuCharacter.allCases.map { .labubu($0) } +
             KingOfTheHillCharacter.allCases.map { .kingOfTheHill($0) } +
-            FamilyGuyCharacter.allCases.map { .familyGuy($0) }
+            FamilyGuyCharacter.allCases.map { .familyGuy($0) } +
+            FuturamaCharacter.allCases.map { .futurama($0) }
 
         rotationTimer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true) { [weak self] _ in
             guard let self = self else { return }

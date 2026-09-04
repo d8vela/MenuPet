@@ -195,6 +195,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         .quagmire, .cleveland, .joe, .adamWest, .herbert, .tomTucker
     ]
 
+    let futuramaCharacters: [FuturamaCharacter] = [
+        .fry, .leela, .bender, .amy, .farnsworth, .hermes, .zoidberg, .cubert, .ndnd, .zapp
+    ]
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
@@ -690,7 +694,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if case .minions(_) = spriteAnimator.currentPokemon { minMI.state = .on }
         moviesTVMenu.addItem(minMI)
 
-
+        // Futurama
+        let futSub = NSMenu()
+        for c in futuramaCharacters {
+            let i = NSMenuItem(title: c.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
+            i.target = self; i.representedObject = SelectableCharacter.futurama(c)
+            if case .futurama(let x) = spriteAnimator.currentPokemon, x == c { i.state = .on }
+            futSub.addItem(i)
+        }
+        let futMI = NSMenuItem(title: "Futurama", action: nil, keyEquivalent: "")
+        futMI.submenu = futSub
+        if case .futurama(_) = spriteAnimator.currentPokemon { futMI.state = .on }
+        moviesTVMenu.addItem(futMI)
 
         let moviesTVMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
         moviesTVMI.submenu = moviesTVMenu

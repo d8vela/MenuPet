@@ -459,6 +459,19 @@ class SpriteRenderer {
             case .herbert: drawFamilyGuyHerbert(grid: &grid, frame: frame)
             case .tomTucker: drawFamilyGuyTomTucker(grid: &grid, frame: frame)
             }
+        case .futurama(let fChar):
+            switch fChar {
+            case .fry: drawFuturamaFry(grid: &grid, frame: frame)
+            case .leela: drawFuturamaLeela(grid: &grid, frame: frame)
+            case .bender: drawFuturamaBender(grid: &grid, frame: frame)
+            case .amy: drawFuturamaAmy(grid: &grid, frame: frame)
+            case .farnsworth: drawFuturamaFarnsworth(grid: &grid, frame: frame)
+            case .hermes: drawFuturamaHermes(grid: &grid, frame: frame)
+            case .zoidberg: drawFuturamaZoidberg(grid: &grid, frame: frame)
+            case .cubert: drawFuturamaCubert(grid: &grid, frame: frame)
+            case .ndnd: drawFuturamaNdnd(grid: &grid, frame: frame)
+            case .zapp: drawFuturamaZapp(grid: &grid, frame: frame)
+            }
         }
 
         return grid
@@ -8963,6 +8976,275 @@ class SpriteRenderer {
                 default: break
                 }
             }
+        }
+    }
+
+    // MARK: - Futurama Characters
+    private func drawFuturamaFry(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.85, green: 0.2, blue: 0.15, alpha: 1.0)
+        let brown = NSColor(red: 0.55, green: 0.3, blue: 0.1, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let white = NSColor.white
+        let blue = NSColor(red: 0.2, green: 0.4, blue: 0.8, alpha: 1.0)
+        let anim = frame % 2
+        // Hair
+        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: brown) }
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: skin) }
+        // Eyes
+        setPixel(&grid, x: 6, y: 3, color: white); setPixel(&grid, x: 9, y: 3, color: white)
+        setPixel(&grid, x: 6, y: 3, color: black); setPixel(&grid, x: 9, y: 3, color: black)
+        // Jacket
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: red) }
+        // Shirt
+        for x in 6...9 { setPixel(&grid, x: x, y: 6, color: white) }
+        // Pants
+        for x in 5...10 { setPixel(&grid, x: x, y: 7, color: blue) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 8, color: blue); setPixel(&grid, x: 9, y: 8, color: blue)
+        } else {
+            setPixel(&grid, x: 5, y: 8, color: blue); setPixel(&grid, x: 10, y: 8, color: blue)
+        }
+    }
+
+    private func drawFuturamaLeela(grid: inout [[NSColor]], frame: Int) {
+        let pink = NSColor(red: 0.95, green: 0.7, blue: 0.8, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let white = NSColor.white
+        let purple = NSColor(red: 0.6, green: 0.3, blue: 0.7, alpha: 1.0)
+        let anim = frame % 2
+        // Hair (ponytail)
+        setPixel(&grid, x: 10, y: 1, color: pink); setPixel(&grid, x: 10, y: 2, color: pink)
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: pink) }
+        // Head
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: skin) }
+        // Big single eye
+        setPixel(&grid, x: 7, y: 3, color: white); setPixel(&grid, x: 8, y: 3, color: white)
+        setPixel(&grid, x: 7, y: 4, color: white); setPixel(&grid, x: 8, y: 4, color: white)
+        setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 4, color: black)
+        // Outfit
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: purple) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: purple) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 7, color: purple); setPixel(&grid, x: 9, y: 7, color: purple)
+        } else {
+            setPixel(&grid, x: 5, y: 7, color: purple); setPixel(&grid, x: 10, y: 7, color: purple)
+        }
+    }
+
+    private func drawFuturamaBender(grid: inout [[NSColor]], frame: Int) {
+        let gray = NSColor(red: 0.7, green: 0.7, blue: 0.72, alpha: 1.0)
+        let darkGray = NSColor(red: 0.5, green: 0.5, blue: 0.52, alpha: 1.0)
+        let black = NSColor.black
+        let white = NSColor.white
+        let red = NSColor(red: 0.85, green: 0.2, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+        // Antenna
+        setPixel(&grid, x: 7, y: 0, color: gray); setPixel(&grid, x: 8, y: 0, color: gray)
+        // Head
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: gray) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: gray) }
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 9, y: 1, color: white)
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 9, y: 1, color: black)
+        // Mouth
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 7, y: 2, color: black)
+        setPixel(&grid, x: 8, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        // Body
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: gray) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: gray) }
+        // Door
+        setPixel(&grid, x: 7, y: 3, color: darkGray); setPixel(&grid, x: 8, y: 3, color: darkGray)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 5, color: gray); setPixel(&grid, x: 9, y: 5, color: gray)
+        } else {
+            setPixel(&grid, x: 5, y: 5, color: gray); setPixel(&grid, x: 10, y: 5, color: gray)
+        }
+    }
+
+    private func drawFuturamaAmy(grid: inout [[NSColor]], frame: Int) {
+        let pink = NSColor(red: 0.95, green: 0.6, blue: 0.7, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let red = NSColor(red: 0.85, green: 0.2, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+        // Hair
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: pink) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: pink) }
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: skin) }
+        // Eyes
+        setPixel(&grid, x: 6, y: 3, color: black); setPixel(&grid, x: 9, y: 3, color: black)
+        // Glasses
+        setPixel(&grid, x: 5, y: 3, color: red); setPixel(&grid, x: 10, y: 3, color: red)
+        // Outfit
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: red) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 7, color: skin); setPixel(&grid, x: 9, y: 7, color: skin)
+        } else {
+            setPixel(&grid, x: 5, y: 7, color: skin); setPixel(&grid, x: 10, y: 7, color: skin)
+        }
+    }
+
+    private func drawFuturamaFarnsworth(grid: inout [[NSColor]], frame: Int) {
+        let yellow = NSColor(red: 0.95, green: 0.85, blue: 0.4, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let gray = NSColor(red: 0.7, green: 0.7, blue: 0.72, alpha: 1.0)
+        let anim = frame % 2
+        // Glasses
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: yellow) }
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 9, y: 1, color: white)
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 9, y: 1, color: black)
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: yellow) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: yellow) }
+        // Lab coat
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: white) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: white) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: gray); setPixel(&grid, x: 9, y: 6, color: gray)
+        } else {
+            setPixel(&grid, x: 5, y: 6, color: gray); setPixel(&grid, x: 10, y: 6, color: gray)
+        }
+    }
+
+    private func drawFuturamaHermes(grid: inout [[NSColor]], frame: Int) {
+        let brown = NSColor(red: 0.55, green: 0.3, blue: 0.1, alpha: 1.0)
+        let skin = NSColor(red: 0.65, green: 0.45, blue: 0.25, alpha: 1.0)
+        let black = NSColor.black
+        let white = NSColor.white
+        let green = NSColor(red: 0.2, green: 0.6, blue: 0.3, alpha: 1.0)
+        let anim = frame % 2
+        // Hair
+        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: brown) }
+        // Head
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Eyes
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        // Shirt
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: green) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: green); setPixel(&grid, x: 9, y: 6, color: green)
+        } else {
+            setPixel(&grid, x: 5, y: 6, color: green); setPixel(&grid, x: 10, y: 6, color: green)
+        }
+    }
+
+    private func drawFuturamaZoidberg(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.85, green: 0.3, blue: 0.25, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let pink = NSColor(red: 0.95, green: 0.6, blue: 0.65, alpha: 1.0)
+        let anim = frame % 2
+        // Head (tentacles)
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
+        setPixel(&grid, x: 5, y: 0, color: red); setPixel(&grid, x: 10, y: 0, color: red)
+        // Body
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: red) }
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 9, y: 1, color: white)
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 9, y: 1, color: black)
+        // Coat
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: white) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: white) }
+        // Claws
+        if anim == 0 {
+            setPixel(&grid, x: 4, y: 4, color: pink); setPixel(&grid, x: 11, y: 4, color: pink)
+        } else {
+            setPixel(&grid, x: 3, y: 4, color: pink); setPixel(&grid, x: 12, y: 4, color: pink)
+        }
+    }
+
+    private func drawFuturamaCubert(grid: inout [[NSColor]], frame: Int) {
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let gray = NSColor(red: 0.6, green: 0.6, blue: 0.62, alpha: 1.0)
+        let anim = frame % 2
+        // Glasses
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: gray) }
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 9, y: 1, color: black)
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Body
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: gray) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: gray) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: gray); setPixel(&grid, x: 9, y: 6, color: gray)
+        } else {
+            setPixel(&grid, x: 5, y: 6, color: gray); setPixel(&grid, x: 10, y: 6, color: gray)
+        }
+    }
+
+    private func drawFuturamaNdnd(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1.0)
+        let black = NSColor.black
+        let white = NSColor.white
+        let anim = frame % 2
+        // Antenna
+        setPixel(&grid, x: 7, y: 0, color: green); setPixel(&grid, x: 8, y: 0, color: green)
+        // Head
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: green) }
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 9, y: 1, color: white)
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 9, y: 1, color: black)
+        // Body
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 5, color: green); setPixel(&grid, x: 10, y: 5, color: green)
+        } else {
+            setPixel(&grid, x: 4, y: 5, color: green); setPixel(&grid, x: 11, y: 5, color: green)
+        }
+    }
+
+    private func drawFuturamaZapp(grid: inout [[NSColor]], frame: Int) {
+        let beige = NSColor(red: 0.85, green: 0.75, blue: 0.55, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let white = NSColor.white
+        let gold = NSColor(red: 0.9, green: 0.8, blue: 0.2, alpha: 1.0)
+        let anim = frame % 2
+        // Chest hair
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: beige) }
+        // Head
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Eyes
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        // Uniform
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: beige) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: beige) }
+        // Medal
+        setPixel(&grid, x: 7, y: 4, color: gold); setPixel(&grid, x: 8, y: 4, color: gold)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: beige); setPixel(&grid, x: 9, y: 6, color: beige)
+        } else {
+            setPixel(&grid, x: 5, y: 6, color: beige); setPixel(&grid, x: 10, y: 6, color: beige)
         }
     }
 
