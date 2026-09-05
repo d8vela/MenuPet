@@ -298,6 +298,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         sleepItem.target = self
         menu.addItem(sleepItem)
 
+        menu.addItem(NSMenuItem.separator())
+
         // ===== Grouped Categories =====
         let gamesMenu = NSMenu()
         let animeMenu = NSMenu()

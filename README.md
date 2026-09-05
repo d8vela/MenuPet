@@ -6,7 +6,8 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 
 ## Features
 
-- **140+ characters** across 24 categories — Pokémon, Mario, Mario Kart, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama
+- **140+ characters** across 25 categories — Pokémon, Mario, Mario Kart, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama
+- **Pet care** — Tamagotchi-style system: Feed, Play, Clean, Sleep; stats decay over time
 - **CPU-reactive animation** — sprite speed adjusts based on system load
 - **Random rotation** — automatically cycles to a random character with configurable interval (0.01s to hours)
 - **Smart rotation** — prefer characters you interact with most
@@ -48,7 +49,7 @@ cp .build/release/MenuPet /usr/local/bin/
 
 | Category | Characters |
 |----------|------------|
-| Pokémon | Pikachu, Jigglypuff, Snorlax, Charizard, Mew, Gengar, Bulbasaur, Squirtle, Eevee, Psyduck |
+| Pokémon | Pikachu, Jigglypuff, Snorlax, Charizard, Mew, Gengar, Bulbasaur, Squirtle, Eevee, Psyduck, Pokeball, Great Ball, Ultra Ball, Master Ball |
 | Mario | Mario, Luigi, Peach, Toad, Bowser, Yoshi, Donkey Kong, Wario, Waluigi, Boo |
 | Mario Kart | Mario, Luigi, Peach, Bowser, Toad, Yoshi, Donkey Kong |
 | Zelda | Link, Zelda, Ganondorf, Epona, Navi |
