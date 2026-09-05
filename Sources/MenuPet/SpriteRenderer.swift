@@ -7713,41 +7713,48 @@ class SpriteRenderer {
     // MARK: - Kirby Characters
 
     private func drawKirbyKirby(grid: inout [[NSColor]], frame: Int) {
-        let pink = NSColor(red: 1.0, green: 0.5, blue: 0.6, alpha: 1.0)
-        let darkPink = NSColor(red: 0.9, green: 0.3, blue: 0.45, alpha: 1.0)
+        let pink = NSColor(red: 1.0, green: 0.55, blue: 0.65, alpha: 1.0)
+        let darkPink = NSColor(red: 0.9, green: 0.35, blue: 0.5, alpha: 1.0)
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
         let black = NSColor.black
-        let blue = NSColor(red: 0.2, green: 0.5, blue: 0.9, alpha: 1.0)
+        let white = NSColor.white
+        let anim = frame % 2
 
-        // Round body
+        // Round body (pink with black outline)
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: black) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 3, color: black) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: black) }
+        // Fill
         for x in 5...10 { setPixel(&grid, x: x, y: 1, color: pink) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: pink) }
         for x in 4...11 { setPixel(&grid, x: x, y: 2, color: pink) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 3, color: pink) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: pink) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: pink) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: pink) }
         for x in 4...11 { setPixel(&grid, x: x, y: 5, color: pink) }
         for x in 5...10 { setPixel(&grid, x: x, y: 6, color: pink) }
 
-        // Eyes (big, cute)
-        setPixel(&grid, x: 6, y: 3, color: blue)
-        setPixel(&grid, x: 9, y: 3, color: blue)
-        setPixel(&grid, x: 6, y: 3, color: black)
-        setPixel(&grid, x: 9, y: 3, color: black)
+        // Eyes (big, black with white highlight)
+        setPixel(&grid, x: 6, y: 3, color: black); setPixel(&grid, x: 6, y: 4, color: black)
+        setPixel(&grid, x: 9, y: 3, color: black); setPixel(&grid, x: 9, y: 4, color: black)
+        setPixel(&grid, x: 6, y: 3, color: white); setPixel(&grid, x: 9, y: 3, color: white)
 
-        // Cheeks
-        setPixel(&grid, x: 5, y: 4, color: red)
-        setPixel(&grid, x: 10, y: 4, color: red)
+        // Cheeks (pink, subtle)
+        setPixel(&grid, x: 5, y: 4, color: darkPink)
+        setPixel(&grid, x: 10, y: 4, color: darkPink)
 
-        // Mouth
-        setPixel(&grid, x: 7, y: 4, color: darkPink)
-        setPixel(&grid, x: 8, y: 4, color: darkPink)
+        // Mouth (small smile)
+        setPixel(&grid, x: 7, y: 5, color: black); setPixel(&grid, x: 8, y: 5, color: black)
 
-        // Feet (animated)
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 5, y: 7, color: red)
-            setPixel(&grid, x: 10, y: 7, color: red)
+        // Feet (red, animated)
+        if anim == 0 {
+            setPixel(&grid, x: 4, y: 7, color: red); setPixel(&grid, x: 5, y: 7, color: red)
+            setPixel(&grid, x: 10, y: 7, color: red); setPixel(&grid, x: 11, y: 7, color: red)
         } else {
-            setPixel(&grid, x: 6, y: 7, color: red)
-            setPixel(&grid, x: 9, y: 7, color: red)
+            setPixel(&grid, x: 3, y: 7, color: red); setPixel(&grid, x: 4, y: 7, color: red)
+            setPixel(&grid, x: 11, y: 7, color: red); setPixel(&grid, x: 12, y: 7, color: red)
         }
     }
 
