@@ -8889,97 +8889,89 @@ class SpriteRenderer {
     private func drawLabubu(grid: inout [[NSColor]], frame: Int, colorScheme: Int) {
         let outlineColor: NSColor
         let suitColor: NSColor
-        let zipperColor: NSColor
-        let eyeIrisColor: NSColor
+        let earPink: NSColor
+        let cheekPink: NSColor
 
         switch colorScheme {
         case 1: // Pink Labubu
-            outlineColor = NSColor(red: 0.75, green: 0.29, blue: 0.45, alpha: 1.0)
-            suitColor = NSColor(red: 0.97, green: 0.65, blue: 0.75, alpha: 1.0)
-            zipperColor = NSColor(red: 0.65, green: 0.22, blue: 0.37, alpha: 1.0)
-            eyeIrisColor = NSColor(red: 0.78, green: 0.27, blue: 0.47, alpha: 1.0)
+            outlineColor = NSColor(red: 0.15, green: 0.12, blue: 0.12, alpha: 1.0)
+            suitColor = NSColor(red: 0.95, green: 0.82, blue: 0.65, alpha: 1.0)
+            earPink = NSColor(red: 0.93, green: 0.55, blue: 0.58, alpha: 1.0)
+            cheekPink = NSColor(red: 0.95, green: 0.60, blue: 0.65, alpha: 1.0)
         case 2: // Gray Labubu
-            outlineColor = NSColor(red: 0.37, green: 0.41, blue: 0.45, alpha: 1.0)
-            suitColor = NSColor(red: 0.75, green: 0.78, blue: 0.80, alpha: 1.0)
-            zipperColor = NSColor(red: 0.29, green: 0.33, blue: 0.37, alpha: 1.0)
-            eyeIrisColor = NSColor(red: 0.31, green: 0.55, blue: 0.51, alpha: 1.0)
+            outlineColor = NSColor(red: 0.15, green: 0.12, blue: 0.12, alpha: 1.0)
+            suitColor = NSColor(red: 0.78, green: 0.80, blue: 0.82, alpha: 1.0)
+            earPink = NSColor(red: 0.85, green: 0.50, blue: 0.55, alpha: 1.0)
+            cheekPink = NSColor(red: 0.90, green: 0.55, blue: 0.60, alpha: 1.0)
         case 3: // Brown Labubu
-            outlineColor = NSColor(red: 0.45, green: 0.29, blue: 0.18, alpha: 1.0)
-            suitColor = NSColor(red: 0.80, green: 0.61, blue: 0.37, alpha: 1.0)
-            zipperColor = NSColor(red: 0.35, green: 0.22, blue: 0.12, alpha: 1.0)
-            eyeIrisColor = NSColor(red: 0.51, green: 0.61, blue: 0.24, alpha: 1.0)
+            outlineColor = NSColor(red: 0.15, green: 0.12, blue: 0.12, alpha: 1.0)
+            suitColor = NSColor(red: 0.82, green: 0.65, blue: 0.42, alpha: 1.0)
+            earPink = NSColor(red: 0.88, green: 0.52, blue: 0.50, alpha: 1.0)
+            cheekPink = NSColor(red: 0.92, green: 0.58, blue: 0.55, alpha: 1.0)
         case 4: // White Labubu
-            outlineColor = NSColor(red: 0.61, green: 0.64, blue: 0.67, alpha: 1.0)
-            suitColor = NSColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1.0)
-            zipperColor = NSColor(red: 0.49, green: 0.52, blue: 0.55, alpha: 1.0)
-            eyeIrisColor = NSColor(red: 0.33, green: 0.59, blue: 0.88, alpha: 1.0)
+            outlineColor = NSColor(red: 0.15, green: 0.12, blue: 0.12, alpha: 1.0)
+            suitColor = NSColor(red: 0.97, green: 0.96, blue: 0.95, alpha: 1.0)
+            earPink = NSColor(red: 0.90, green: 0.55, blue: 0.58, alpha: 1.0)
+            cheekPink = NSColor(red: 0.95, green: 0.60, blue: 0.65, alpha: 1.0)
         case 5: // Golden Labubu
-            outlineColor = NSColor(red: 0.69, green: 0.51, blue: 0.10, alpha: 1.0)
-            suitColor = NSColor(red: 1.00, green: 0.83, blue: 0.24, alpha: 1.0)
-            zipperColor = NSColor(red: 0.55, green: 0.39, blue: 0.06, alpha: 1.0)
-            eyeIrisColor = NSColor(red: 0.25, green: 0.63, blue: 0.35, alpha: 1.0)
-        default: // Classic Green Labubu
-            outlineColor = NSColor(red: 0.29, green: 0.62, blue: 0.25, alpha: 1.0)
-            suitColor = NSColor(red: 0.72, green: 0.87, blue: 0.29, alpha: 1.0)
-            zipperColor = NSColor(red: 0.21, green: 0.49, blue: 0.16, alpha: 1.0)
-            eyeIrisColor = NSColor(red: 0.30, green: 0.63, blue: 0.24, alpha: 1.0)
+            outlineColor = NSColor(red: 0.15, green: 0.12, blue: 0.12, alpha: 1.0)
+            suitColor = NSColor(red: 1.00, green: 0.85, blue: 0.30, alpha: 1.0)
+            earPink = NSColor(red: 0.95, green: 0.55, blue: 0.50, alpha: 1.0)
+            cheekPink = NSColor(red: 0.98, green: 0.60, blue: 0.55, alpha: 1.0)
+        default: // Classic Tan Labubu
+            outlineColor = NSColor(red: 0.15, green: 0.12, blue: 0.12, alpha: 1.0)
+            suitColor = NSColor(red: 0.92, green: 0.80, blue: 0.60, alpha: 1.0)
+            earPink = NSColor(red: 0.92, green: 0.50, blue: 0.52, alpha: 1.0)
+            cheekPink = NSColor(red: 0.95, green: 0.58, blue: 0.62, alpha: 1.0)
         }
 
-        let skinLight = NSColor(red: 0.95, green: 0.85, blue: 0.75, alpha: 1.0)
-        let skinTan = NSColor(red: 0.88, green: 0.72, blue: 0.55, alpha: 1.0)
-        let blushPink = NSColor(red: 0.95, green: 0.65, blue: 0.72, alpha: 1.0)
-        let noseDark = NSColor(red: 0.85, green: 0.15, blue: 0.15, alpha: 1.0)
-        let eyeBlack = NSColor(red: 0.12, green: 0.12, blue: 0.12, alpha: 1.0)
+        let skinTan = NSColor(red: 0.88, green: 0.74, blue: 0.56, alpha: 1.0)
+        let skinLight = NSColor(red: 0.93, green: 0.82, blue: 0.66, alpha: 1.0)
+        let noseRed = NSColor(red: 0.88, green: 0.12, blue: 0.15, alpha: 1.0)
+        let eyeBlack = NSColor(red: 0.10, green: 0.10, blue: 0.10, alpha: 1.0)
         let white = NSColor.white
-        let earTan = NSColor(red: 0.92, green: 0.78, blue: 0.58, alpha: 1.0)
+        let black = NSColor.black
 
         let anim = frame % 4
-        let ox = 4
+        let ox = 3
         let oy = 0
 
-        // E = ear pink, e = ear tan, O = outline, S = suit, s = skin light, t = skin tan
-        // b = blush, P = nose red, K = eye black, w = white, Z = zipper
+        // O = outline, S = suit/tan, s = skin light, t = skin tan, E = ear pink
+        // b = blush pink, P = nose red, K = eye black, w = white, H = hand pink
 
         let rows: [String] = [
-            "...EE.....EE....",  // 0 - ear tips
-            "..EeeE...EeeE...",  // 1 - ear upper
-            "..EeeE...EeeE...",  // 2 - ear mid
-            "..EeeE...EeeE...",  // 3 - ear lower
-            "..EeeEOOOOeeE...",  // 4 - ear base + head top
-            "..EEEESSSSSEEE..",  // 5 - head top
-            ".OOSSSSSSSSSSSO.",  // 6 - head
-            "OSSSSSSSSSSSSSSO",  // 7 - head
-            "OSSStttttttttSSSO", // 8 - face top
-            "OSSstttttttttsSSO", // 9 - face
-            "OSSstwKttttKwtsSSO", // 10 - eyes
-            "OSSstwKttttKwtsSSO", // 11 - eyes
-            "OSStttttPPtttSSO",  // 12 - nose
-            "OSSttttttttttSSO",  // 13 - mouth
-            "OSSttwwwwwwttSSO",  // 14 - teeth
-            ".OSSttttttttSSO.",  // 15
-            ".OOSSSSSSSSSSO.",   // 16 - neck
-            "..OSSSSSSSSSO..",  // 17 - body
-            "..OSSSSSSSSSO..",  // 18
-            "..OSSSSZSSSSO..",  // 19 - zipper
-            "..OSSSSZSSSSO..",  // 20
-            "..OSSSSZSSSSO..",  // 21
-            ".sOSSSSSSSSSOs.",  // 22 - arms
-            ".ssOSSSSSSSOss.",  // 23
-            "..OSSSSSSSSSO..",  // 24
-            "..OSSSSSSSSSO..",  // 25
-            "..OSSSOOOSSSO..",  // 26 - legs split
-            "...OSSO.OSSO...",  // 27
-            "...OSSO.OSSO...",  // 28
-            "...OeEO.OeEO...",  // 29 - feet
+            "..OEEEOEEEO..",
+            "..OEOEOEOEO..",
+            "..OEOEOEOEO..",
+            "..OEEEOOEEO..",
+            ".OOSSSSSSSSOO",
+            "OSSSSSSSSSSSO",
+            "OSSSSSSSSSSSO",
+            "OSSttttttttSO",
+            "OSsttttttttSO",
+            "OSsttKtttKttSO",
+            "OSstwKtttKttwSO",
+            "OSStttPPtttSO",
+            "OSSttttttttSO",
+            "OSSttwwwwttSO",
+            ".OSSttttttSO.",
+            ".OSSSSSSSSSO.",
+            ".OSSSSSSSSSO.",
+            "HOSSSSSSSSSOH",
+            "HHOSSSSSSSOHH",
+            ".OSSSSSSSSSO.",
+            ".OSSSOOOSSSO.",
+            "..OSSO.OSSO..",
+            "..OeeO.OeeO..",
         ]
 
         for (rIdx, row) in rows.enumerated() {
             var rowChars = Array(row)
             let y = oy + rIdx
 
-            if anim == 1 && rIdx == 10 {
+            if anim == 1 && rIdx == 9 {
                 rowChars[6] = "w"; rowChars[7] = "K"
-            } else if anim == 1 && rIdx == 11 {
+            } else if anim == 1 && rIdx == 10 {
                 rowChars[6] = "K"; rowChars[7] = "w"
             }
 
@@ -8988,15 +8980,15 @@ class SpriteRenderer {
                 switch ch {
                 case "O": setPixel(&grid, x: x, y: y, color: outlineColor)
                 case "S": setPixel(&grid, x: x, y: y, color: suitColor)
-                case "Z": setPixel(&grid, x: x, y: y, color: zipperColor)
                 case "s": setPixel(&grid, x: x, y: y, color: skinLight)
                 case "t": setPixel(&grid, x: x, y: y, color: skinTan)
-                case "b": setPixel(&grid, x: x, y: y, color: blushPink)
+                case "b": setPixel(&grid, x: x, y: y, color: cheekPink)
                 case "w": setPixel(&grid, x: x, y: y, color: white)
-                case "P": setPixel(&grid, x: x, y: y, color: noseDark)
+                case "P": setPixel(&grid, x: x, y: y, color: noseRed)
                 case "K": setPixel(&grid, x: x, y: y, color: eyeBlack)
-                case "E": setPixel(&grid, x: x, y: y, color: suitColor)
-                case "e": setPixel(&grid, x: x, y: y, color: earTan)
+                case "E": setPixel(&grid, x: x, y: y, color: earPink)
+                case "e": setPixel(&grid, x: x, y: y, color: earPink)
+                case "H": setPixel(&grid, x: x, y: y, color: cheekPink)
                 default: break
                 }
             }
