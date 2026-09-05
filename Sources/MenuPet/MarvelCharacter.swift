@@ -19,6 +19,7 @@ enum MarvelCharacter: String, CaseIterable {
     case sheHulk
     case juggernaut
     case loki
+    case venom
 
     var displayName: String {
         switch self {
@@ -40,6 +41,7 @@ enum MarvelCharacter: String, CaseIterable {
         case .sheHulk: return "She-Hulk"
         case .juggernaut: return "Juggernaut"
         case .loki: return "Loki"
+        case .venom: return "Venom"
         }
     }
 
@@ -63,6 +65,7 @@ enum MarvelCharacter: String, CaseIterable {
         case .sheHulk: return "💚"
         case .juggernaut: return "🔴"
         case .loki: return "🐍"
+        case .venom: return "🖤"
         }
     }
 }

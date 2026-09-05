@@ -291,6 +291,7 @@ class SpriteRenderer {
             case .sheHulk: drawMVSheHulk(grid: &grid, frame: frame)
             case .juggernaut: drawMVJuggernaut(grid: &grid, frame: frame)
             case .loki: drawMVLoki(grid: &grid, frame: frame)
+            case .venom: drawMVVenom(grid: &grid, frame: frame)
             }
         case .dc(let dcChar):
             switch dcChar {

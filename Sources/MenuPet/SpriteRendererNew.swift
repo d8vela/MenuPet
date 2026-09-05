@@ -2177,6 +2177,55 @@ extension SpriteRenderer {
         }
     }
 
+    func drawMVVenom(grid: inout [[NSColor]], frame: Int) {
+        let black = NSColor.black
+        let darkGray = NSColor(red: 0.25, green: 0.25, blue: 0.28, alpha: 1.0)
+        let white = NSColor.white
+        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
+        let pink = NSColor(red: 0.9, green: 0.35, blue: 0.45, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head (big, black, with tendrils)
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: black) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 2, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: black) }
+
+        // Eyes (big, white, angular)
+        setPixel(&grid, x: 5, y: 1, color: white); setPixel(&grid, x: 5, y: 2, color: white)
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 6, y: 2, color: white)
+        setPixel(&grid, x: 9, y: 1, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        setPixel(&grid, x: 10, y: 1, color: white); setPixel(&grid, x: 10, y: 2, color: white)
+        // Eye pupils (small black)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+
+        // Mouth (big, red tongue)
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: red) }
+        setPixel(&grid, x: 5, y: 4, color: pink); setPixel(&grid, x: 10, y: 4, color: pink)
+        setPixel(&grid, x: 6, y: 4, color: red); setPixel(&grid, x: 7, y: 4, color: red)
+        setPixel(&grid, x: 8, y: 4, color: red); setPixel(&grid, x: 9, y: 4, color: red)
+        // Teeth
+        setPixel(&grid, x: 6, y: 3, color: white); setPixel(&grid, x: 8, y: 3, color: white)
+
+        // Body (black, muscular)
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: black) }
+        // Spider symbol on chest (white)
+        setPixel(&grid, x: 7, y: 5, color: white); setPixel(&grid, x: 8, y: 5, color: white)
+        setPixel(&grid, x: 6, y: 5, color: darkGray); setPixel(&grid, x: 9, y: 5, color: darkGray)
+
+        // Arms (big, black)
+        setPixel(&grid, x: 3, y: 5, color: black); setPixel(&grid, x: 3, y: 6, color: black)
+        setPixel(&grid, x: 12, y: 5, color: black); setPixel(&grid, x: 12, y: 6, color: black)
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 7, color: black); setPixel(&grid, x: 10, y: 7, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 7, color: black); setPixel(&grid, x: 11, y: 7, color: black)
+        }
+    }
+
     func drawDCBatman(grid: inout [[NSColor]], frame: Int) {
         let gray = NSColor(red: 0.6, green: 0.6, blue: 0.65, alpha: 1.0)
         let black = NSColor(red: 0.1, green: 0.1, blue: 0.12, alpha: 1.0)
