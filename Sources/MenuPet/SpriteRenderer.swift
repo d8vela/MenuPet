@@ -112,7 +112,6 @@ class SpriteRenderer {
             case .wario: drawWario(grid: &grid, frame: frame)
             case .waluigi: drawWaluigi(grid: &grid, frame: frame)
             case .boo: drawBoo(grid: &grid, frame: frame)
-            case .babyYoshi: drawBabyYoshi(grid: &grid, frame: frame)
             case .superMushroom: drawSuperMushroom(grid: &grid, frame: frame)
             case .fireFlower: drawFireFlower(grid: &grid, frame: frame)
             case .starman: drawStarman(grid: &grid, frame: frame)
@@ -1990,41 +1989,6 @@ class SpriteRenderer {
         } else {
             setPixel(&grid, x: 3, y: 8, color: red); setPixel(&grid, x: 4, y: 8, color: red)
             setPixel(&grid, x: 10, y: 8, color: red); setPixel(&grid, x: 11, y: 8, color: red)
-        }
-    }
-
-    // MARK: - Baby Yoshi (small, cute, green)
-    private func drawBabyYoshi(grid: inout [[NSColor]], frame: Int) {
-        let green = NSColor(red: 0.3, green: 0.8, blue: 0.3, alpha: 1.0)
-        let darkGreen = NSColor(red: 0.2, green: 0.6, blue: 0.2, alpha: 1.0)
-        let white = NSColor.white
-        let black = NSColor.black
-        let orange = NSColor(red: 0.9, green: 0.5, blue: 0.1, alpha: 1.0)
-        let anim = frame % 2
-
-        // Nose
-        setPixel(&grid, x: 5, y: 2, color: green); setPixel(&grid, x: 6, y: 2, color: green)
-        setPixel(&grid, x: 5, y: 3, color: green); setPixel(&grid, x: 6, y: 3, color: green)
-
-        // Eyes
-        setPixel(&grid, x: 7, y: 2, color: black); setPixel(&grid, x: 8, y: 2, color: black)
-
-        // Head
-        for x in 7...10 { setPixel(&grid, x: x, y: 2, color: green) }
-        for x in 7...10 { setPixel(&grid, x: x, y: 3, color: green) }
-
-        // Body
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: green) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: green) }
-
-        // White belly
-        setPixel(&grid, x: 6, y: 4, color: white); setPixel(&grid, x: 7, y: 4, color: white)
-
-        // Orange boots
-        if anim == 0 {
-            setPixel(&grid, x: 5, y: 6, color: orange); setPixel(&grid, x: 9, y: 6, color: orange)
-        } else {
-            setPixel(&grid, x: 4, y: 6, color: orange); setPixel(&grid, x: 10, y: 6, color: orange)
         }
     }
 

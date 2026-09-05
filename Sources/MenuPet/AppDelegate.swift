@@ -15,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     ]
 
     let marioCharacters: [MarioItem] = [
-        .mario, .luigi, .peach, .toad, .bowser, .yoshi, .donkeyKong, .wario, .waluigi, .boo, .babyYoshi
+        .mario, .luigi, .peach, .toad, .bowser, .yoshi, .donkeyKong, .wario, .waluigi, .boo
     ]
 
     let marioItems: [MarioItem] = [
