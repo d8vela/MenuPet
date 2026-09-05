@@ -478,6 +478,23 @@ class SpriteRenderer {
             case .ndnd: drawFuturamaNdnd(grid: &grid, frame: frame)
             case .zapp: drawFuturamaZapp(grid: &grid, frame: frame)
             }
+        case .batman(let bChar):
+            switch bChar {
+            case .joker: drawBatmanJoker(grid: &grid, frame: frame)
+            case .bane: drawBatmanBane(grid: &grid, frame: frame)
+            case .riddler: drawBatmanRiddler(grid: &grid, frame: frame)
+            case .penguin: drawBatmanPenguin(grid: &grid, frame: frame)
+            case .harleyQuinn: drawBatmanHarleyQuinn(grid: &grid, frame: frame)
+            case .scarecrow: drawBatmanScarecrow(grid: &grid, frame: frame)
+            case .killerCroc: drawBatmanKillerCroc(grid: &grid, frame: frame)
+            case .poisonIvy: drawBatmanPoisonIvy(grid: &grid, frame: frame)
+            case .catwoman: drawBatmanCatwoman(grid: &grid, frame: frame)
+            case .twoFace: drawBatmanTwoFace(grid: &grid, frame: frame)
+            case .mrFreeze: drawBatmanMrFreeze(grid: &grid, frame: frame)
+            case .redHood: drawBatmanRedHood(grid: &grid, frame: frame)
+            case .rasAlGhul: drawBatmanRasAlGhul(grid: &grid, frame: frame)
+            case .deathstroke: drawBatmanDeathstroke(grid: &grid, frame: frame)
+            }
         }
 
         return grid
@@ -8982,6 +8999,327 @@ class SpriteRenderer {
                 default: break
                 }
             }
+        }
+    }
+
+    // MARK: - Batman Characters
+    private func drawBatmanJoker(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.2, green: 0.7, blue: 0.2, alpha: 1.0)
+        let purple = NSColor(red: 0.55, green: 0.15, blue: 0.65, alpha: 1.0)
+        let white = NSColor.white
+        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let skin = NSColor(red: 0.95, green: 0.85, blue: 0.75, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: white) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: white) }
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        setPixel(&grid, x: 6, y: 3, color: red); setPixel(&grid, x: 7, y: 3, color: red)
+        setPixel(&grid, x: 8, y: 3, color: red); setPixel(&grid, x: 9, y: 3, color: red)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: purple) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: purple) }
+        setPixel(&grid, x: 7, y: 4, color: green); setPixel(&grid, x: 8, y: 4, color: green)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: purple); setPixel(&grid, x: 10, y: 6, color: purple)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: purple); setPixel(&grid, x: 11, y: 6, color: purple)
+        }
+    }
+
+    private func drawBatmanBane(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.3, green: 0.55, blue: 0.25, alpha: 1.0)
+        let brown = NSColor(red: 0.5, green: 0.3, blue: 0.15, alpha: 1.0)
+        let black = NSColor.black
+        let darkGreen = NSColor(red: 0.2, green: 0.4, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: brown) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: green) }
+        setPixel(&grid, x: 5, y: 1, color: black); setPixel(&grid, x: 10, y: 1, color: black)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: darkGreen) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: darkGreen); setPixel(&grid, x: 10, y: 6, color: darkGreen)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: darkGreen); setPixel(&grid, x: 11, y: 6, color: darkGreen)
+        }
+    }
+
+    private func drawBatmanRiddler(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.2, green: 0.6, blue: 0.25, alpha: 1.0)
+        let yellow = NSColor(red: 0.92, green: 0.82, blue: 0.2, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        setPixel(&grid, x: 7, y: 0, color: yellow); setPixel(&grid, x: 8, y: 0, color: yellow)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: green) }
+        setPixel(&grid, x: 7, y: 4, color: yellow); setPixel(&grid, x: 8, y: 5, color: yellow)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: green); setPixel(&grid, x: 10, y: 6, color: green)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: green); setPixel(&grid, x: 11, y: 6, color: green)
+        }
+    }
+
+    private func drawBatmanPenguin(grid: inout [[NSColor]], frame: Int) {
+        let black = NSColor.black
+        let white = NSColor.white
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        setPixel(&grid, x: 7, y: 4, color: white); setPixel(&grid, x: 8, y: 4, color: white)
+        setPixel(&grid, x: 3, y: 5, color: gray); setPixel(&grid, x: 12, y: 5, color: gray)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black); setPixel(&grid, x: 10, y: 6, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: black); setPixel(&grid, x: 11, y: 6, color: black)
+        }
+    }
+
+    private func drawBatmanHarleyQuinn(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let white = NSColor.white
+        let skin = NSColor(red: 0.95, green: 0.85, blue: 0.75, alpha: 1.0)
+        let pink = NSColor(red: 0.95, green: 0.4, blue: 0.55, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 4, y: 1, color: black); setPixel(&grid, x: 11, y: 1, color: black)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        setPixel(&grid, x: 7, y: 3, color: red); setPixel(&grid, x: 8, y: 3, color: red)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black); setPixel(&grid, x: 10, y: 6, color: red)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: red); setPixel(&grid, x: 11, y: 6, color: black)
+        }
+    }
+
+    private func drawBatmanScarecrow(grid: inout [[NSColor]], frame: Int) {
+        let brown = NSColor(red: 0.45, green: 0.28, blue: 0.12, alpha: 1.0)
+        let darkBrown = NSColor(red: 0.3, green: 0.18, blue: 0.08, alpha: 1.0)
+        let skin = NSColor(red: 0.85, green: 0.7, blue: 0.55, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: brown) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 5, y: 1, color: darkBrown); setPixel(&grid, x: 10, y: 1, color: darkBrown)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkBrown) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: brown); setPixel(&grid, x: 10, y: 6, color: brown)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: brown); setPixel(&grid, x: 11, y: 6, color: brown)
+        }
+    }
+
+    private func drawBatmanKillerCroc(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.35, green: 0.55, blue: 0.3, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.25, green: 0.4, blue: 0.2, alpha: 1.0)
+        let brown = NSColor(red: 0.4, green: 0.25, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: green) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: green) }
+        setPixel(&grid, x: 5, y: 1, color: darkGreen); setPixel(&grid, x: 10, y: 1, color: darkGreen)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: brown) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: brown) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: darkGreen); setPixel(&grid, x: 10, y: 6, color: darkGreen)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: darkGreen); setPixel(&grid, x: 11, y: 6, color: darkGreen)
+        }
+    }
+
+    private func drawBatmanPoisonIvy(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.2, green: 0.65, blue: 0.25, alpha: 1.0)
+        let red = NSColor(red: 0.8, green: 0.15, blue: 0.1, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 4, y: 1, color: green); setPixel(&grid, x: 11, y: 1, color: green)
+        setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.2, green: 0.5, blue: 0.2, alpha: 1.0))
+        setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.2, green: 0.5, blue: 0.2, alpha: 1.0))
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: green) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: green); setPixel(&grid, x: 10, y: 6, color: green)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: green); setPixel(&grid, x: 11, y: 6, color: green)
+        }
+    }
+
+    private func drawBatmanCatwoman(grid: inout [[NSColor]], frame: Int) {
+        let black = NSColor.black
+        let darkGray = NSColor(red: 0.25, green: 0.25, blue: 0.28, alpha: 1.0)
+        let brown = NSColor(red: 0.45, green: 0.25, blue: 0.1, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let anim = frame % 2
+
+        setPixel(&grid, x: 4, y: 0, color: black); setPixel(&grid, x: 11, y: 0, color: black)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.2, green: 0.6, blue: 0.3, alpha: 1.0))
+        setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.2, green: 0.6, blue: 0.3, alpha: 1.0))
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black); setPixel(&grid, x: 10, y: 6, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: black); setPixel(&grid, x: 11, y: 6, color: black)
+        }
+    }
+
+    private func drawBatmanTwoFace(grid: inout [[NSColor]], frame: Int) {
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let purple = NSColor(red: 0.55, green: 0.15, blue: 0.65, alpha: 1.0)
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.7, alpha: 1.0)
+        let black = NSColor.black
+        let red = NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 5, y: 2, color: skin); setPixel(&grid, x: 6, y: 2, color: skin)
+        setPixel(&grid, x: 7, y: 2, color: red); setPixel(&grid, x: 8, y: 2, color: red)
+        setPixel(&grid, x: 9, y: 2, color: red); setPixel(&grid, x: 10, y: 2, color: red)
+        for x in 4...7 { setPixel(&grid, x: x, y: 4, color: blue) }
+        for x in 8...11 { setPixel(&grid, x: x, y: 4, color: purple) }
+        for x in 4...7 { setPixel(&grid, x: x, y: 5, color: blue) }
+        for x in 8...11 { setPixel(&grid, x: x, y: 5, color: purple) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: purple)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: purple)
+        }
+    }
+
+    private func drawBatmanMrFreeze(grid: inout [[NSColor]], frame: Int) {
+        let blue = NSColor(red: 0.3, green: 0.5, blue: 0.85, alpha: 1.0)
+        let lightBlue = NSColor(red: 0.5, green: 0.7, blue: 0.95, alpha: 1.0)
+        let silver = NSColor(red: 0.75, green: 0.75, blue: 0.8, alpha: 1.0)
+        let black = NSColor.black
+        let red = NSColor(red: 0.85, green: 0.12, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: lightBlue) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: lightBlue) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: blue) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: blue) }
+        setPixel(&grid, x: 6, y: 2, color: red); setPixel(&grid, x: 9, y: 2, color: red)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: silver) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: silver) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: blue)
+        }
+    }
+
+    private func drawBatmanRedHood(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.85, green: 0.12, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let darkGray = NSColor(red: 0.2, green: 0.2, blue: 0.22, alpha: 1.0)
+        let brown = NSColor(red: 0.45, green: 0.25, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: black) }
+        setPixel(&grid, x: 6, y: 2, color: red); setPixel(&grid, x: 9, y: 2, color: red)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: darkGray) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: darkGray); setPixel(&grid, x: 10, y: 6, color: darkGray)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: darkGray); setPixel(&grid, x: 11, y: 6, color: darkGray)
+        }
+    }
+
+    private func drawBatmanRasAlGhul(grid: inout [[NSColor]], frame: Int) {
+        let white = NSColor.white
+        let black = NSColor.black
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let green = NSColor(red: 0.15, green: 0.45, blue: 0.2, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 5, y: 1, color: white); setPixel(&grid, x: 10, y: 1, color: white)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        setPixel(&grid, x: 7, y: 3, color: white); setPixel(&grid, x: 8, y: 3, color: white)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: green) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: green); setPixel(&grid, x: 10, y: 6, color: green)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: green); setPixel(&grid, x: 11, y: 6, color: green)
+        }
+    }
+
+    private func drawBatmanDeathstroke(grid: inout [[NSColor]], frame: Int) {
+        let orange = NSColor(red: 0.9, green: 0.55, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let darkGray = NSColor(red: 0.2, green: 0.2, blue: 0.22, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: orange) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: orange) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: black) }
+        setPixel(&grid, x: 6, y: 2, color: orange); setPixel(&grid, x: 9, y: 2, color: orange)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: orange) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: darkGray); setPixel(&grid, x: 10, y: 6, color: darkGray)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: darkGray); setPixel(&grid, x: 11, y: 6, color: darkGray)
         }
     }
 

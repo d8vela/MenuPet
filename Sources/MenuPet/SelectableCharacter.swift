@@ -26,6 +26,7 @@ enum SelectableCharacter: Equatable, Hashable {
     case kingOfTheHill(KingOfTheHillCharacter)
     case familyGuy(FamilyGuyCharacter)
     case futurama(FuturamaCharacter)
+    case batman(BatmanCharacter)
 
     var identifier: String {
         switch self {
@@ -54,6 +55,7 @@ enum SelectableCharacter: Equatable, Hashable {
         case .kingOfTheHill(let k): return "kingOfTheHill_\(k.rawValue)"
         case .familyGuy(let f): return "familyGuy_\(f.rawValue)"
         case .futurama(let f): return "futurama_\(f.rawValue)"
+        case .batman(let b): return "batman_\(b.rawValue)"
         }
     }
 
@@ -88,6 +90,7 @@ enum SelectableCharacter: Equatable, Hashable {
         case "kingOfTheHill": return KingOfTheHillCharacter(rawValue: value).map { .kingOfTheHill($0) }
         case "familyGuy": return FamilyGuyCharacter(rawValue: value).map { .familyGuy($0) }
         case "futurama": return FuturamaCharacter(rawValue: value).map { .futurama($0) }
+        case "batman": return BatmanCharacter(rawValue: value).map { .batman($0) }
         default: return nil
         }
     }
@@ -119,6 +122,7 @@ enum SelectableCharacter: Equatable, Hashable {
         case .kingOfTheHill(let k): return k.displayName
         case .familyGuy(let f): return f.displayName
         case .futurama(let f): return f.displayName
+        case .batman(let b): return b.displayName
         }
     }
 
@@ -149,6 +153,7 @@ enum SelectableCharacter: Equatable, Hashable {
         case .kingOfTheHill(let k): return k.emoji
         case .familyGuy(let f): return f.emoji
         case .futurama(let f): return f.emoji
+        case .batman(let b): return b.emoji
         }
     }
 
@@ -179,6 +184,7 @@ enum SelectableCharacter: Equatable, Hashable {
         case .kingOfTheHill: return "King of the Hill"
         case .familyGuy: return "Family Guy"
         case .futurama: return "Futurama"
+        case .batman: return "Batman"
         }
     }
 }

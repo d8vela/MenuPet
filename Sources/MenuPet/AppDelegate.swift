@@ -197,6 +197,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         .fry, .leela, .bender, .amy, .farnsworth, .hermes, .zoidberg, .cubert, .ndnd, .zapp
     ]
 
+    let batmanCharacters: [BatmanCharacter] = [
+        .joker, .bane, .riddler, .penguin, .harleyQuinn, .scarecrow, .killerCroc, .poisonIvy,
+        .catwoman, .twoFace, .mrFreeze, .redHood, .rasAlGhul, .deathstroke
+    ]
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
@@ -703,6 +708,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         futMI.submenu = futSub
         if case .futurama(_) = spriteAnimator.currentPokemon { futMI.state = .on }
         moviesTVMenu.addItem(futMI)
+
+        // Batman
+        let batSub = NSMenu()
+        for c in batmanCharacters {
+            let i = NSMenuItem(title: c.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
+            i.target = self; i.representedObject = SelectableCharacter.batman(c)
+            if case .batman(let x) = spriteAnimator.currentPokemon, x == c { i.state = .on }
+            batSub.addItem(i)
+        }
+        let batMI = NSMenuItem(title: "Batman Rogues", action: nil, keyEquivalent: "")
+        batMI.submenu = batSub
+        if case .batman(_) = spriteAnimator.currentPokemon { batMI.state = .on }
+        moviesTVMenu.addItem(batMI)
 
         let moviesTVMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
         moviesTVMI.submenu = moviesTVMenu
