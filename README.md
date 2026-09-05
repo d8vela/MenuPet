@@ -50,7 +50,7 @@ cp .build/release/MenuPet /usr/local/bin/
 | Contra | Bill, Lance |
 | TMNT | Leonardo, Donatello, Raphael, Michelangelo |
 | Ghibli | Totoro, No-Face, Kiki, Calcifer, Ponyo, Satsuki, Mei, Howl, Sophie, Append, Jiro, Chihiro |
-| Marvel | Iron Man, Spider-Man, Captain America, Hulk, Thor, Deadpool, Black Panther, Doctor Strange, Thanos, Loki |
+| Marvel | Iron Man, Captain America, Thor, Hulk, Spider-Man, Wolverine, Black Panther, Daredevil, Black Widow, Hawkeye, Vision, Scarlet Witch, War Machine, Spider-Woman, Cyclops, She-Hulk, Juggernaut, Loki |
 | DC | Wonder Woman, Batman, Superman, The Flash, Aquaman, Green Lantern |
 | Star Wars | Luke, Vader, Yoda, Boba Fett, Chewbacca, R2-D2, C-3PO |
 | Street Fighter | Ryu, Ken, Chun-Li, Guile, Dhalsim, Zangief, Blanka |
