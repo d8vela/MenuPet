@@ -1936,48 +1936,56 @@ class SpriteRenderer {
 
     // MARK: - Yoshi (green body, big nose, saddle)
     private func drawYoshi(grid: inout [[NSColor]], frame: Int) {
-        let green = NSColor(red: 0.2, green: 0.7, blue: 0.2, alpha: 1.0)
+        let green = NSColor(red: 0.25, green: 0.75, blue: 0.25, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.15, green: 0.55, blue: 0.15, alpha: 1.0)
         let white = NSColor.white
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
-        let orange = NSColor(red: 1.0, green: 0.55, blue: 0.1, alpha: 1.0)
         let black = NSColor.black
+        let orange = NSColor(red: 0.9, green: 0.5, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // Nose (big, round)
-        for x in 3...6 { setPixel(&grid, x: x, y: 2, color: green) }
-        for x in 2...6 { setPixel(&grid, x: x, y: 3, color: green) }
+        // Nose (big, round, green)
+        for x in 2...5 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 1...5 { setPixel(&grid, x: x, y: 3, color: green) }
+        for x in 2...5 { setPixel(&grid, x: x, y: 4, color: green) }
 
         // Eyes (on top of head)
-        setPixel(&grid, x: 7, y: 1, color: white)
-        setPixel(&grid, x: 8, y: 1, color: white)
-        setPixel(&grid, x: 7, y: 2, color: black)
-        setPixel(&grid, x: 8, y: 2, color: black)
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 7, y: 1, color: white)
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 7, y: 2, color: white)
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 7, y: 2, color: black)
 
-        // Head
-        for x in 7...11 { setPixel(&grid, x: x, y: 2, color: green) }
-        for x in 7...11 { setPixel(&grid, x: x, y: 3, color: green) }
+        // Head (green)
+        for x in 6...10 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 6...10 { setPixel(&grid, x: x, y: 3, color: green) }
+        for x in 7...10 { setPixel(&grid, x: x, y: 4, color: green) }
 
-        // Saddle
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: red) }
+        // Saddle (orange/brown on back)
+        setPixel(&grid, x: 9, y: 3, color: orange); setPixel(&grid, x: 10, y: 3, color: orange)
+        setPixel(&grid, x: 9, y: 4, color: orange); setPixel(&grid, x: 10, y: 4, color: orange)
 
-        // Body
+        // Body (green with white belly)
         for x in 4...11 { setPixel(&grid, x: x, y: 5, color: green) }
         for x in 4...11 { setPixel(&grid, x: x, y: 6, color: green) }
         for x in 4...11 { setPixel(&grid, x: x, y: 7, color: green) }
+        // White belly
+        for x in 5...9 { setPixel(&grid, x: x, y: 5, color: white) }
+        for x in 5...9 { setPixel(&grid, x: x, y: 6, color: white) }
+        for x in 5...9 { setPixel(&grid, x: x, y: 7, color: white) }
 
-        // Belly
-        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: white) }
+        // Dark green spots on body
+        setPixel(&grid, x: 10, y: 5, color: darkGreen); setPixel(&grid, x: 11, y: 5, color: darkGreen)
+        setPixel(&grid, x: 10, y: 6, color: darkGreen); setPixel(&grid, x: 11, y: 6, color: darkGreen)
 
         // Tail
-        setPixel(&grid, x: 12, y: 6, color: green)
-        setPixel(&grid, x: 13, y: 5, color: orange)
+        setPixel(&grid, x: 12, y: 6, color: green); setPixel(&grid, x: 12, y: 7, color: green)
 
-        // Legs
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 5, y: 8, color: orange)
-            setPixel(&grid, x: 10, y: 8, color: orange)
+        // Red boots
+        if anim == 0 {
+            setPixel(&grid, x: 4, y: 8, color: red); setPixel(&grid, x: 5, y: 8, color: red)
+            setPixel(&grid, x: 9, y: 8, color: red); setPixel(&grid, x: 10, y: 8, color: red)
         } else {
-            setPixel(&grid, x: 6, y: 8, color: orange)
-            setPixel(&grid, x: 9, y: 8, color: orange)
+            setPixel(&grid, x: 3, y: 8, color: red); setPixel(&grid, x: 4, y: 8, color: red)
+            setPixel(&grid, x: 10, y: 8, color: red); setPixel(&grid, x: 11, y: 8, color: red)
         }
     }
 
