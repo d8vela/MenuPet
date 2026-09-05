@@ -5,6 +5,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var cpuMonitor: CPUMonitor!
     var spriteAnimator: SpriteAnimator!
     var updateCheckTimer: Timer?
+    var petDecayTimer: Timer?
 
     let pokemonList: [PokemonCharacter] = [
         .jigglypuff, .pikachu, .psyduck, .snorlax, .charmander, .bulbasaur, .squirtle,
@@ -235,6 +236,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         updateCheckTimer = Timer.scheduledTimer(withTimeInterval: 86400, repeats: true) { [weak self] _ in
             self?.checkForUpdatesInBackground()
         }
+
+        petDecayTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            PetState.shared.decay()
+            self?.updatePetMenu()
+        }
     }
 
     func buildMenu() {
@@ -249,6 +255,48 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let cpuItem = NSMenuItem(title: "CPU Usage: \(Int(cpuMonitor.currentCPU))%", action: nil, keyEquivalent: "")
         cpuItem.tag = 100
         menu.addItem(cpuItem)
+
+        let petStatus = NSMenuItem(title: "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood)", action: nil, keyEquivalent: "")
+        petStatus.tag = 200
+        menu.addItem(petStatus)
+
+        let hungerItem = NSMenuItem(title: "  🍕 Hunger: \(Int(PetState.shared.hunger))%", action: nil, keyEquivalent: "")
+        hungerItem.tag = 201
+        hungerItem.isEnabled = false
+        menu.addItem(hungerItem)
+
+        let happyItem = NSMenuItem(title: "  😊 Happy: \(Int(PetState.shared.happiness))%", action: nil, keyEquivalent: "")
+        happyItem.tag = 202
+        happyItem.isEnabled = false
+        menu.addItem(happyItem)
+
+        let energyItem = NSMenuItem(title: "  ⚡ Energy: \(Int(PetState.shared.energy))%", action: nil, keyEquivalent: "")
+        energyItem.tag = 203
+        energyItem.isEnabled = false
+        menu.addItem(energyItem)
+
+        let hygieneItem = NSMenuItem(title: "  🧼 Clean: \(Int(PetState.shared.hygiene))%", action: nil, keyEquivalent: "")
+        hygieneItem.tag = 204
+        hygieneItem.isEnabled = false
+        menu.addItem(hygieneItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        let feedItem = NSMenuItem(title: "🍕 Feed", action: #selector(feedPet), keyEquivalent: "")
+        feedItem.target = self
+        menu.addItem(feedItem)
+
+        let playItem = NSMenuItem(title: "🎾 Play", action: #selector(playWithPet), keyEquivalent: "")
+        playItem.target = self
+        menu.addItem(playItem)
+
+        let cleanItem = NSMenuItem(title: "🧼 Clean", action: #selector(cleanPet), keyEquivalent: "")
+        cleanItem.target = self
+        menu.addItem(cleanItem)
+
+        let sleepItem = NSMenuItem(title: "😴 Sleep", action: #selector(letPetSleep), keyEquivalent: "")
+        sleepItem.target = self
+        menu.addItem(sleepItem)
 
         // ===== Grouped Categories =====
         let gamesMenu = NSMenu()
@@ -858,7 +906,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for item in menu.items {
             if item.tag == 100 {
                 item.title = "CPU Usage: \(Int(cpuMonitor.currentCPU))%"
-            } else if item.tag == 200 {
+            } else if item.tag == 150 {
                 item.title = "Speed: \(spriteAnimator.speedLabel)"
             } else if item.tag == 300 {
                 item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)"
@@ -1040,5 +1088,42 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func quitApp() {
         NSApplication.shared.terminate(nil)
+    }
+
+    @objc func feedPet() {
+        PetState.shared.feed()
+        buildMenu()
+    }
+
+    @objc func playWithPet() {
+        PetState.shared.play()
+        buildMenu()
+    }
+
+    @objc func cleanPet() {
+        PetState.shared.clean()
+        buildMenu()
+    }
+
+    @objc func letPetSleep() {
+        PetState.shared.sleep()
+        buildMenu()
+    }
+
+    func updatePetMenu() {
+        guard let menu = statusItem.menu else { return }
+        for item in menu.items {
+            if item.tag == 200 {
+                item.title = "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood)"
+            } else if item.tag == 201 {
+                item.title = "  🍕 Hunger: \(Int(PetState.shared.hunger))%"
+            } else if item.tag == 202 {
+                item.title = "  😊 Happy: \(Int(PetState.shared.happiness))%"
+            } else if item.tag == 203 {
+                item.title = "  ⚡ Energy: \(Int(PetState.shared.energy))%"
+            } else if item.tag == 204 {
+                item.title = "  🧼 Clean: \(Int(PetState.shared.hygiene))%"
+            }
+        }
     }
 }
