@@ -761,22 +761,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         speedItem.tag = 200
         menu.addItem(speedItem)
 
+        let rotationSub = NSMenu()
+
         let rotationItem = NSMenuItem(title: "Random Rotation (every 10 min)", action: #selector(toggleRotation), keyEquivalent: "")
         rotationItem.target = self
         rotationItem.state = spriteAnimator.rotationEnabled ? .on : .off
-        menu.addItem(rotationItem)
+        rotationSub.addItem(rotationItem)
 
         let smartRotationItem = NSMenuItem(title: "Smart Rotation (prefer favorites)", action: #selector(toggleSmartRotation), keyEquivalent: "")
         smartRotationItem.target = self
         smartRotationItem.state = spriteAnimator.smartRotationEnabled ? .on : .off
         smartRotationItem.isEnabled = spriteAnimator.rotationEnabled
-        menu.addItem(smartRotationItem)
+        rotationSub.addItem(smartRotationItem)
 
         let categoryOnlyItem = NSMenuItem(title: "Rotate Within Category Only", action: #selector(toggleCategoryOnly), keyEquivalent: "")
         categoryOnlyItem.target = self
         categoryOnlyItem.state = spriteAnimator.categoryOnlyEnabled ? .on : .off
         categoryOnlyItem.isEnabled = spriteAnimator.rotationEnabled
-        menu.addItem(categoryOnlyItem)
+        rotationSub.addItem(categoryOnlyItem)
+
+        let rotationMenuItem = NSMenuItem(title: "Rotation", action: nil, keyEquivalent: "")
+        rotationMenuItem.submenu = rotationSub
+        menu.addItem(rotationMenuItem)
 
         // History submenu
         let historySubmenu = NSMenu()

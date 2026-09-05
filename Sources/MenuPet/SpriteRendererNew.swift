@@ -210,131 +210,38 @@ extension SpriteRenderer {
         let black = NSColor.black
         let hairBlack = NSColor(red: 0.05, green: 0.05, blue: 0.08, alpha: 1.0)
 
-        // Spiky hair top
+        // Spiky hair (pointed up)
         setPixel(&grid, x: 6, y: 0, color: hairBlack)
-        setPixel(&grid, x: 7, y: 0, color: hairBlack)
         setPixel(&grid, x: 8, y: 0, color: hairBlack)
+        setPixel(&grid, x: 10, y: 0, color: hairBlack)
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: hairBlack) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: hairBlack) }
 
-        // Hair middle
-        setPixel(&grid, x: 4, y: 1, color: hairBlack)
-        setPixel(&grid, x: 5, y: 1, color: hairBlack)
-        setPixel(&grid, x: 6, y: 1, color: hairBlack)
-        setPixel(&grid, x: 7, y: 1, color: hairBlack)
-        setPixel(&grid, x: 8, y: 1, color: hairBlack)
-        setPixel(&grid, x: 9, y: 1, color: hairBlack)
-        setPixel(&grid, x: 10, y: 1, color: hairBlack)
-        setPixel(&grid, x: 11, y: 1, color: hairBlack)
+        // Head
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 3, color: black)
+        setPixel(&grid, x: 9, y: 3, color: black)
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: skin) }
+        setPixel(&grid, x: 7, y: 4, color: black)
+        setPixel(&grid, x: 8, y: 4, color: black)
 
-        // Hair wide
-        setPixel(&grid, x: 3, y: 2, color: hairBlack)
-        setPixel(&grid, x: 4, y: 2, color: hairBlack)
-        setPixel(&grid, x: 5, y: 2, color: hairBlack)
-        setPixel(&grid, x: 6, y: 2, color: hairBlack)
-        setPixel(&grid, x: 7, y: 2, color: hairBlack)
-        setPixel(&grid, x: 8, y: 2, color: hairBlack)
-        setPixel(&grid, x: 9, y: 2, color: hairBlack)
-        setPixel(&grid, x: 10, y: 2, color: hairBlack)
-        setPixel(&grid, x: 11, y: 2, color: hairBlack)
-        setPixel(&grid, x: 12, y: 2, color: hairBlack)
+        // Body (orange gi with blue undershirt)
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: orange) }
+        setPixel(&grid, x: 7, y: 5, color: blue)
+        setPixel(&grid, x: 8, y: 5, color: blue)
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: orange) }
 
-        // Hair sides + face
-        setPixel(&grid, x: 3, y: 3, color: hairBlack)
-        setPixel(&grid, x: 4, y: 3, color: hairBlack)
-        setPixel(&grid, x: 5, y: 3, color: skin)
-        setPixel(&grid, x: 6, y: 3, color: skin)
-        setPixel(&grid, x: 7, y: 3, color: skin)
-        setPixel(&grid, x: 8, y: 3, color: skin)
-        setPixel(&grid, x: 9, y: 3, color: skin)
-        setPixel(&grid, x: 10, y: 3, color: skin)
-        setPixel(&grid, x: 11, y: 3, color: hairBlack)
-        setPixel(&grid, x: 12, y: 3, color: hairBlack)
-
-        // Eyes
-        setPixel(&grid, x: 3, y: 4, color: hairBlack)
-        setPixel(&grid, x: 4, y: 4, color: skin)
-        setPixel(&grid, x: 5, y: 4, color: black)
-        setPixel(&grid, x: 6, y: 4, color: skin)
-        setPixel(&grid, x: 7, y: 4, color: skin)
-        setPixel(&grid, x: 8, y: 4, color: skin)
-        setPixel(&grid, x: 9, y: 4, color: black)
-        setPixel(&grid, x: 10, y: 4, color: skin)
-        setPixel(&grid, x: 11, y: 4, color: hairBlack)
-        setPixel(&grid, x: 12, y: 4, color: hairBlack)
-
-        // Nose + mouth
-        setPixel(&grid, x: 4, y: 5, color: skin)
-        setPixel(&grid, x: 5, y: 5, color: skin)
-        setPixel(&grid, x: 6, y: 5, color: skin)
-        setPixel(&grid, x: 7, y: 5, color: skin)
-        setPixel(&grid, x: 8, y: 5, color: skin)
-        setPixel(&grid, x: 9, y: 5, color: skin)
-        setPixel(&grid, x: 10, y: 5, color: skin)
-
-        // Chin
-        setPixel(&grid, x: 5, y: 6, color: skin)
-        setPixel(&grid, x: 6, y: 6, color: skin)
-        setPixel(&grid, x: 7, y: 6, color: skin)
-        setPixel(&grid, x: 8, y: 6, color: skin)
-        setPixel(&grid, x: 9, y: 6, color: skin)
-
-        // Neck
-        setPixel(&grid, x: 6, y: 7, color: skin)
-        setPixel(&grid, x: 7, y: 7, color: skin)
-        setPixel(&grid, x: 8, y: 7, color: skin)
-        setPixel(&grid, x: 9, y: 7, color: skin)
-
-        // Arms + gi top
-        setPixel(&grid, x: 2, y: 8, color: skin)
-        setPixel(&grid, x: 3, y: 8, color: skin)
-        setPixel(&grid, x: 4, y: 8, color: orange)
-        setPixel(&grid, x: 5, y: 8, color: orange)
-        setPixel(&grid, x: 6, y: 8, color: orange)
-        setPixel(&grid, x: 7, y: 8, color: blue)
-        setPixel(&grid, x: 8, y: 8, color: orange)
-        setPixel(&grid, x: 9, y: 8, color: orange)
-        setPixel(&grid, x: 10, y: 8, color: orange)
-        setPixel(&grid, x: 11, y: 8, color: orange)
-        setPixel(&grid, x: 12, y: 8, color: skin)
-        setPixel(&grid, x: 13, y: 8, color: skin)
-
-        // Gi middle + belt
-        setPixel(&grid, x: 2, y: 9, color: skin)
-        setPixel(&grid, x: 3, y: 9, color: skin)
-        setPixel(&grid, x: 4, y: 9, color: orange)
-        setPixel(&grid, x: 5, y: 9, color: orange)
-        setPixel(&grid, x: 6, y: 9, color: orange)
-        setPixel(&grid, x: 7, y: 9, color: blue)
-        setPixel(&grid, x: 8, y: 9, color: orange)
-        setPixel(&grid, x: 9, y: 9, color: orange)
-        setPixel(&grid, x: 10, y: 9, color: orange)
-        setPixel(&grid, x: 11, y: 9, color: orange)
-        setPixel(&grid, x: 12, y: 9, color: skin)
-        setPixel(&grid, x: 13, y: 9, color: skin)
-
-        // Gi lower
-        setPixel(&grid, x: 4, y: 10, color: orange)
-        setPixel(&grid, x: 5, y: 10, color: orange)
-        setPixel(&grid, x: 6, y: 10, color: orange)
-        setPixel(&grid, x: 7, y: 10, color: orange)
-        setPixel(&grid, x: 8, y: 10, color: orange)
-        setPixel(&grid, x: 9, y: 10, color: orange)
-        setPixel(&grid, x: 10, y: 10, color: orange)
+        // Belt
+        for x in 5...10 { setPixel(&grid, x: x, y: 7, color: blue) }
 
         // Legs
-        setPixel(&grid, x: 5, y: 11, color: orange)
-        setPixel(&grid, x: 6, y: 11, color: orange)
-        setPixel(&grid, x: 7, y: 11, color: black)
-        setPixel(&grid, x: 8, y: 11, color: orange)
-        setPixel(&grid, x: 9, y: 11, color: orange)
-
-        // Boots
-        setPixel(&grid, x: 4, y: 12, color: blue)
-        setPixel(&grid, x: 5, y: 12, color: blue)
-        setPixel(&grid, x: 6, y: 12, color: blue)
-        setPixel(&grid, x: 7, y: 12, color: black)
-        setPixel(&grid, x: 8, y: 12, color: blue)
-        setPixel(&grid, x: 9, y: 12, color: blue)
-        setPixel(&grid, x: 10, y: 12, color: blue)
+        if frame % 2 == 0 {
+            setPixel(&grid, x: 5, y: 8, color: orange)
+            setPixel(&grid, x: 10, y: 8, color: orange)
+        } else {
+            setPixel(&grid, x: 6, y: 8, color: orange)
+            setPixel(&grid, x: 9, y: 8, color: orange)
+        }
     }
 
     func drawDBVegeta(grid: inout [[NSColor]], frame: Int) {
