@@ -10,6 +10,7 @@ class SpriteAnimator {
     private var onPokemonChanged: (() -> Void)?
     private(set) var rotationEnabled = UserDefaults.standard.bool(forKey: "rotationEnabled")
     private(set) var smartRotationEnabled = UserDefaults.standard.bool(forKey: "smartRotationEnabled")
+    private(set) var categoryOnlyEnabled = UserDefaults.standard.bool(forKey: "categoryOnlyEnabled")
     private var selectionCounts: [SelectableCharacter: Int] = [:]
     private(set) var characterHistory: [SelectableCharacter] = []
     private let maxHistorySize = 20
@@ -89,6 +90,11 @@ class SpriteAnimator {
         UserDefaults.standard.set(smartRotationEnabled, forKey: "smartRotationEnabled")
     }
 
+    func toggleCategoryOnly() {
+        categoryOnlyEnabled.toggle()
+        UserDefaults.standard.set(categoryOnlyEnabled, forKey: "categoryOnlyEnabled")
+    }
+
     private func startRotation() {
         let allCharacters: [SelectableCharacter] =
             PokemonCharacter.allCases.map { .pokemon($0) } +
@@ -120,13 +126,19 @@ class SpriteAnimator {
 
         rotationTimer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true) { [weak self] _ in
             guard let self = self else { return }
+            let pool: [SelectableCharacter]
+            if self.categoryOnlyEnabled {
+                pool = allCharacters.filter { $0.category == self.currentPokemon.category }
+            } else {
+                pool = allCharacters
+            }
             var next = self.currentPokemon
             var attempts = 0
             while next == self.currentPokemon && attempts < 10 {
                 if self.smartRotationEnabled && !self.selectionCounts.isEmpty {
-                    next = self.weightedRandom(from: allCharacters)
+                    next = self.weightedRandom(from: pool)
                 } else {
-                    next = allCharacters.randomElement() ?? .pokemon(.jigglypuff)
+                    next = pool.randomElement() ?? .pokemon(.jigglypuff)
                 }
                 attempts += 1
             }

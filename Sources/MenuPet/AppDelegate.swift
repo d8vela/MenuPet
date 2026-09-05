@@ -516,6 +516,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let gamesMI = NSMenuItem(title: "🎮 Video Games", action: nil, keyEquivalent: "")
         gamesMI.submenu = gamesMenu
+        // Check if current character is from Video Games
+        if case .pokemon(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .marioItem(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .marioKart(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .kirby(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .zelda(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .megaMan(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .contra(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .metalSlug(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .streetFighter(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .mortalKombat(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .tmnt(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
+        if case .overwatch(_) = spriteAnimator.currentPokemon { gamesMI.state = .on }
         menu.addItem(gamesMI)
 
         // ===== Anime & Manga =====
@@ -593,6 +606,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let animeMI = NSMenuItem(title: "⛩️ Anime & Manga", action: nil, keyEquivalent: "")
         animeMI.submenu = animeMenu
+        // Check if current character is from Anime & Manga
+        if case .dragonBall(_) = spriteAnimator.currentPokemon { animeMI.state = .on }
+        if case .naruto(_) = spriteAnimator.currentPokemon { animeMI.state = .on }
+        if case .gundam(_) = spriteAnimator.currentPokemon { animeMI.state = .on }
+        if case .ghibli(_) = spriteAnimator.currentPokemon { animeMI.state = .on }
+        if case .labubu(_) = spriteAnimator.currentPokemon { animeMI.state = .on }
         menu.addItem(animeMI)
 
         // ===== Movies & TV =====
@@ -724,6 +743,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let moviesTVMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
         moviesTVMI.submenu = moviesTVMenu
+        // Check if current character is from Movies & TV
+        if case .marvel(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .dc(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .starWars(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .simpsons(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .kingOfTheHill(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .familyGuy(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .minions(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .futurama(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .batman(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
         menu.addItem(moviesTVMI)
 
         menu.addItem(NSMenuItem.separator())
@@ -742,6 +771,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         smartRotationItem.state = spriteAnimator.smartRotationEnabled ? .on : .off
         smartRotationItem.isEnabled = spriteAnimator.rotationEnabled
         menu.addItem(smartRotationItem)
+
+        let categoryOnlyItem = NSMenuItem(title: "Rotate Within Category Only", action: #selector(toggleCategoryOnly), keyEquivalent: "")
+        categoryOnlyItem.target = self
+        categoryOnlyItem.state = spriteAnimator.categoryOnlyEnabled ? .on : .off
+        categoryOnlyItem.isEnabled = spriteAnimator.rotationEnabled
+        menu.addItem(categoryOnlyItem)
 
         // History submenu
         let historySubmenu = NSMenu()
@@ -824,9 +859,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         buildMenu()
     }
 
+    @objc func toggleCategoryOnly() {
+        spriteAnimator.toggleCategoryOnly()
+        buildMenu()
+    }
+
     @objc func searchCharacter(_ sender: NSMenuItem) {
         let characterName = spriteAnimator.currentPokemon.displayName
-        let query = characterName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? characterName
+        let category = spriteAnimator.currentPokemon.category
+        let searchTerm = "\(category) \(characterName)"
+        let query = searchTerm.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? searchTerm
         if let url = URL(string: "https://www.google.com/search?tbm=isch&q=\(query)") {
             NSWorkspace.shared.open(url)
         }
