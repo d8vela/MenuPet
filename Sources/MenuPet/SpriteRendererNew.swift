@@ -1716,318 +1716,27 @@ extension SpriteRenderer {
     }
 
     // MARK: - Marvel
-    func drawMVSpiderMan(grid: inout [[NSColor]], frame: Int) {
-        let red = NSColor(red: 0.9, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.6, green: 0.05, blue: 0.05, alpha: 1.0)
-        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.8, alpha: 1.0)
-        let white = NSColor.white
-        let black = NSColor.black
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let anim = frame % 2
-
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Head fill
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: red) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: red) }
-        // Eyes (big white)
-        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 6, y: 2, color: white)
-        setPixel(&grid, x: 9, y: 1, color: white); setPixel(&grid, x: 9, y: 2, color: white)
-        // Web pattern
-        setPixel(&grid, x: 7, y: 0, color: darkRed); setPixel(&grid, x: 8, y: 0, color: darkRed)
-        setPixel(&grid, x: 7, y: 1, color: darkRed); setPixel(&grid, x: 8, y: 1, color: darkRed)
-        // Body
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: red) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: blue) }
-        // Arms
-        setPixel(&grid, x: 4, y: 4, color: red); setPixel(&grid, x: 11, y: 4, color: red)
-        // Legs
-        if anim == 0 {
-            setPixel(&grid, x: 6, y: 6, color: blue); setPixel(&grid, x: 9, y: 6, color: blue)
-        } else {
-            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
-        }
-    }
-
     func drawMVIronMan(grid: inout [[NSColor]], frame: Int) {
-        let red = NSColor(red: 0.85, green: 0.15, blue: 0.1, alpha: 1.0)
-        let gold = NSColor(red: 0.9, green: 0.75, blue: 0.2, alpha: 1.0)
+        let red = NSColor(red: 0.85, green: 0.12, blue: 0.1, alpha: 1.0)
+        let gold = NSColor(red: 0.92, green: 0.78, blue: 0.22, alpha: 1.0)
         let white = NSColor.white
         let black = NSColor.black
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let arcGlow = NSColor(red: 0.4, green: 0.8, blue: 1.0, alpha: 1.0)
+        let darkRed = NSColor(red: 0.55, green: 0.05, blue: 0.05, alpha: 1.0)
+        let arcGlow = NSColor(red: 0.5, green: 0.85, blue: 1.0, alpha: 1.0)
         let anim = frame % 2
 
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Head fill (red top, gold faceplate)
         for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: gold) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: gold) }
-        // Eyes (glowing white)
-        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
-        // Body (red with arc reactor)
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: red) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: gold) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: gold) }
+        setPixel(&grid, x: 5, y: 1, color: darkRed); setPixel(&grid, x: 10, y: 1, color: darkRed)
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 7, y: 2, color: white)
+        setPixel(&grid, x: 8, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: red) }
         setPixel(&grid, x: 7, y: 4, color: arcGlow); setPixel(&grid, x: 8, y: 4, color: arcGlow)
-        // Arms
-        setPixel(&grid, x: 4, y: 4, color: gold); setPixel(&grid, x: 11, y: 4, color: gold)
-        // Legs
-        if anim == 0 {
-            setPixel(&grid, x: 6, y: 6, color: gold); setPixel(&grid, x: 9, y: 6, color: gold)
-        } else {
-            setPixel(&grid, x: 5, y: 6, color: gold); setPixel(&grid, x: 10, y: 6, color: gold)
-        }
-    }
-
-    func drawMVCaptainAmerica(grid: inout [[NSColor]], frame: Int) {
-        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.8, alpha: 1.0)
-        let red = NSColor(red: 0.85, green: 0.15, blue: 0.1, alpha: 1.0)
-        let white = NSColor.white
-        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let anim = frame % 2
-
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Head fill (blue)
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: blue) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: blue) }
-        // "A" on forehead
-        setPixel(&grid, x: 7, y: 0, color: white); setPixel(&grid, x: 8, y: 0, color: white)
-        // Eyes (white)
-        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 9, y: 1, color: white)
-        // Body (blue)
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: blue) }
-        // Star on chest
-        setPixel(&grid, x: 7, y: 4, color: white); setPixel(&grid, x: 8, y: 4, color: white)
-        // Shield on arm (left side)
-        setPixel(&grid, x: 3, y: 4, color: red); setPixel(&grid, x: 3, y: 5, color: white)
-        setPixel(&grid, x: 3, y: 6, color: blue)
-        // Legs
-        if anim == 0 {
-            setPixel(&grid, x: 6, y: 6, color: red); setPixel(&grid, x: 9, y: 6, color: red)
-        } else {
-            setPixel(&grid, x: 5, y: 6, color: red); setPixel(&grid, x: 10, y: 6, color: red)
-        }
-    }
-
-    func drawMVThor(grid: inout [[NSColor]], frame: Int) {
-        let silver = NSColor(red: 0.75, green: 0.75, blue: 0.8, alpha: 1.0)
-        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
-        let red = NSColor(red: 0.8, green: 0.15, blue: 0.1, alpha: 1.0)
-        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let white = NSColor.white
-        let black = NSColor.black
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let gold = NSColor(red: 0.9, green: 0.75, blue: 0.2, alpha: 1.0)
-        let anim = frame % 2
-
-        // Winged helmet
-        setPixel(&grid, x: 3, y: 0, color: silver); setPixel(&grid, x: 12, y: 0, color: silver)
-        setPixel(&grid, x: 4, y: 1, color: silver); setPixel(&grid, x: 11, y: 1, color: silver)
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Helmet fill
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: silver) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: silver) }
-        // Face
-        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
-        // Eyes (blue)
-        let blue = NSColor(red: 0.2, green: 0.4, blue: 0.9, alpha: 1.0)
-        setPixel(&grid, x: 6, y: 2, color: blue); setPixel(&grid, x: 9, y: 2, color: blue)
-        // Body (armor)
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: silver) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: gray) }
-        // Red cape
-        setPixel(&grid, x: 4, y: 4, color: red); setPixel(&grid, x: 11, y: 4, color: red)
-        setPixel(&grid, x: 4, y: 5, color: red); setPixel(&grid, x: 11, y: 5, color: red)
-        // Mjolnir (right hand)
-        setPixel(&grid, x: 12, y: 5, color: gray); setPixel(&grid, x: 12, y: 6, color: gray)
-        // Legs
-        if anim == 0 {
-            setPixel(&grid, x: 6, y: 6, color: gray); setPixel(&grid, x: 9, y: 6, color: gray)
-        } else {
-            setPixel(&grid, x: 5, y: 6, color: gray); setPixel(&grid, x: 10, y: 6, color: gray)
-        }
-    }
-
-    func drawMVHulk(grid: inout [[NSColor]], frame: Int) {
-        let green = NSColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1.0)
-        let darkGreen = NSColor(red: 0.2, green: 0.5, blue: 0.2, alpha: 1.0)
-        let purple = NSColor(red: 0.5, green: 0.2, blue: 0.6, alpha: 1.0)
-        let black = NSColor.black
-        let white = NSColor.white
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let anim = frame % 2
-
-        // Head outline
-        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Head fill (big green head)
-        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: green) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: green) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: green) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: green) }
-        // Eyes (angry)
-        setPixel(&grid, x: 5, y: 1, color: black); setPixel(&grid, x: 10, y: 1, color: black)
-        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
-        // Eyebrows (angry)
-        setPixel(&grid, x: 5, y: 0, color: darkGreen); setPixel(&grid, x: 10, y: 0, color: darkGreen)
-        // Mouth
-        setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 3, color: black)
-        // Body (big green torso)
-        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: green) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: green) }
-        // Purple pants
-        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: purple) }
-        // Legs
-        if anim == 0 {
-            setPixel(&grid, x: 5, y: 7, color: purple); setPixel(&grid, x: 10, y: 7, color: purple)
-        } else {
-            setPixel(&grid, x: 4, y: 7, color: purple); setPixel(&grid, x: 11, y: 7, color: purple)
-        }
-    }
-
-    func drawMVWolverine(grid: inout [[NSColor]], frame: Int) {
-        let yellow = NSColor(red: 0.95, green: 0.85, blue: 0.2, alpha: 1.0)
-        let darkYellow = NSColor(red: 0.7, green: 0.6, blue: 0.1, alpha: 1.0)
-        let blue = NSColor(red: 0.1, green: 0.2, blue: 0.6, alpha: 1.0)
-        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let black = NSColor.black
-        let white = NSColor.white
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
-        let anim = frame % 2
-
-        // Mask wings (pointy)
-        setPixel(&grid, x: 3, y: 0, color: black); setPixel(&grid, x: 12, y: 0, color: black)
-        setPixel(&grid, x: 4, y: 1, color: black); setPixel(&grid, x: 11, y: 1, color: black)
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Head fill (yellow mask)
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: yellow) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: yellow) }
-        // Face (skin)
-        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
-        // Eyes (white, angry)
-        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
-        // Body (yellow and blue)
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: yellow) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: blue) }
-        // Claws (silver, animated)
-        if anim == 0 {
-            setPixel(&grid, x: 3, y: 4, color: silver); setPixel(&grid, x: 3, y: 5, color: silver)
-            setPixel(&grid, x: 12, y: 4, color: silver); setPixel(&grid, x: 12, y: 5, color: silver)
-        } else {
-            setPixel(&grid, x: 2, y: 4, color: silver); setPixel(&grid, x: 2, y: 5, color: silver)
-            setPixel(&grid, x: 13, y: 4, color: silver); setPixel(&grid, x: 13, y: 5, color: silver)
-        }
-        // Legs
-        if anim == 0 {
-            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
-        } else {
-            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: blue)
-        }
-    }
-
-    func drawMVNickFury(grid: inout [[NSColor]], frame: Int) {
-        let black = NSColor.black
-        let darkGray = NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1.0)
-        let skin = NSColor(red: 0.55, green: 0.35, blue: 0.2, alpha: 1.0)
-        let white = NSColor.white
-        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let anim = frame % 2
-
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Head fill (bald, dark skin)
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
-        // Eye patch (left eye)
-        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 6, y: 2, color: black)
-        // Right eye (white)
-        setPixel(&grid, x: 9, y: 1, color: white)
-        // Goatee
-        setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 3, color: black)
-        // Body (black leather)
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: darkGray) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
-        // Collar
-        setPixel(&grid, x: 5, y: 4, color: gray); setPixel(&grid, x: 10, y: 4, color: gray)
-        // Legs
-        if anim == 0 {
-            setPixel(&grid, x: 5, y: 6, color: darkGray); setPixel(&grid, x: 10, y: 6, color: darkGray)
-        } else {
-            setPixel(&grid, x: 4, y: 6, color: darkGray); setPixel(&grid, x: 11, y: 6, color: darkGray)
-        }
-    }
-
-    func drawMVLoki(grid: inout [[NSColor]], frame: Int) {
-        let green = NSColor(red: 0.2, green: 0.6, blue: 0.25, alpha: 1.0)
-        let gold = NSColor(red: 0.9, green: 0.75, blue: 0.2, alpha: 1.0)
-        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let black = NSColor.black
-        let white = NSColor.white
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkGreen = NSColor(red: 0.1, green: 0.4, blue: 0.15, alpha: 1.0)
-        let anim = frame % 2
-
-        // Horned helmet
-        setPixel(&grid, x: 4, y: 0, color: gold); setPixel(&grid, x: 11, y: 0, color: gold)
-        setPixel(&grid, x: 5, y: 1, color: gold); setPixel(&grid, x: 10, y: 1, color: gold)
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Head fill (green helmet, blonde hair)
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: gold) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: green) }
-        // Face
-        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
-        // Eyes (mischievous)
-        setPixel(&grid, x: 6, y: 2, color: green); setPixel(&grid, x: 9, y: 2, color: green)
-        // Body (green and gold)
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGreen) }
-        // Gold accents
-        setPixel(&grid, x: 7, y: 4, color: gold); setPixel(&grid, x: 8, y: 4, color: gold)
-        // Cape
-        setPixel(&grid, x: 3, y: 4, color: green); setPixel(&grid, x: 12, y: 4, color: green)
-        // Legs
+        setPixel(&grid, x: 3, y: 4, color: gold); setPixel(&grid, x: 12, y: 4, color: gold)
+        setPixel(&grid, x: 3, y: 5, color: gold); setPixel(&grid, x: 12, y: 5, color: gold)
         if anim == 0 {
             setPixel(&grid, x: 5, y: 6, color: gold); setPixel(&grid, x: 10, y: 6, color: gold)
         } else {
@@ -2035,41 +1744,436 @@ extension SpriteRenderer {
         }
     }
 
+    func drawMVCaptainAmerica(grid: inout [[NSColor]], frame: Int) {
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.8, alpha: 1.0)
+        let red = NSColor(red: 0.85, green: 0.12, blue: 0.1, alpha: 1.0)
+        let white = NSColor.white
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let darkBlue = NSColor(red: 0.1, green: 0.18, blue: 0.5, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: blue) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: blue) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 7, y: 0, color: white); setPixel(&grid, x: 8, y: 0, color: white)
+        setPixel(&grid, x: 4, y: 1, color: darkBlue); setPixel(&grid, x: 11, y: 1, color: darkBlue)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: blue) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: red) }
+        setPixel(&grid, x: 7, y: 4, color: white); setPixel(&grid, x: 8, y: 4, color: white)
+        setPixel(&grid, x: 3, y: 4, color: red); setPixel(&grid, x: 3, y: 5, color: white)
+        setPixel(&grid, x: 3, y: 6, color: blue)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: red); setPixel(&grid, x: 10, y: 6, color: red)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: red); setPixel(&grid, x: 11, y: 6, color: red)
+        }
+    }
+
+    func drawMVHawkeye(grid: inout [[NSColor]], frame: Int) {
+        let purple = NSColor(red: 0.5, green: 0.15, blue: 0.6, alpha: 1.0)
+        let darkPurple = NSColor(red: 0.3, green: 0.1, blue: 0.4, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let brown = NSColor(red: 0.5, green: 0.3, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: purple) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: purple) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 0, color: brown); setPixel(&grid, x: 7, y: 0, color: brown)
+        setPixel(&grid, x: 8, y: 0, color: brown); setPixel(&grid, x: 9, y: 0, color: brown)
+        setPixel(&grid, x: 5, y: 1, color: darkPurple); setPixel(&grid, x: 10, y: 1, color: darkPurple)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: purple) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkPurple) }
+        setPixel(&grid, x: 12, y: 4, color: brown); setPixel(&grid, x: 12, y: 5, color: brown)
+        setPixel(&grid, x: 13, y: 3, color: brown)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: purple); setPixel(&grid, x: 10, y: 6, color: purple)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: purple); setPixel(&grid, x: 11, y: 6, color: purple)
+        }
+    }
+
+    func drawMVThor(grid: inout [[NSColor]], frame: Int) {
+        let silver = NSColor(red: 0.78, green: 0.78, blue: 0.82, alpha: 1.0)
+        let red = NSColor(red: 0.82, green: 0.12, blue: 0.1, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
+        let anim = frame % 2
+
+        setPixel(&grid, x: 3, y: 0, color: silver); setPixel(&grid, x: 12, y: 0, color: silver)
+        setPixel(&grid, x: 4, y: 1, color: silver); setPixel(&grid, x: 11, y: 1, color: silver)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: silver) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: silver) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.2, green: 0.4, blue: 0.9, alpha: 1.0))
+        setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.2, green: 0.4, blue: 0.9, alpha: 1.0))
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: silver) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: gray) }
+        setPixel(&grid, x: 3, y: 4, color: red); setPixel(&grid, x: 3, y: 5, color: red)
+        setPixel(&grid, x: 12, y: 4, color: gray); setPixel(&grid, x: 12, y: 5, color: gray)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: gray); setPixel(&grid, x: 10, y: 6, color: gray)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: gray); setPixel(&grid, x: 11, y: 6, color: gray)
+        }
+    }
+
     func drawMVBlackWidow(grid: inout [[NSColor]], frame: Int) {
-        let red = NSColor(red: 0.75, green: 0.15, blue: 0.1, alpha: 1.0)
+        let orange = NSColor(red: 0.85, green: 0.4, blue: 0.1, alpha: 1.0)
         let black = NSColor.black
         let darkGray = NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1.0)
         let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let white = NSColor.white
-        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let red = NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0)
         let anim = frame % 2
 
-        // Head outline
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
-        // Hair (red, long)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: orange) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: orange) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 4, y: 2, color: orange); setPixel(&grid, x: 11, y: 2, color: orange)
+        setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.2, green: 0.5, blue: 0.8, alpha: 1.0))
+        setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.2, green: 0.5, blue: 0.8, alpha: 1.0))
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        setPixel(&grid, x: 7, y: 4, color: red); setPixel(&grid, x: 8, y: 4, color: red)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black); setPixel(&grid, x: 10, y: 6, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: black); setPixel(&grid, x: 11, y: 6, color: black)
+        }
+    }
+
+    func drawMVDaredevil(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0)
+        let darkRed = NSColor(red: 0.5, green: 0.05, blue: 0.05, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        setPixel(&grid, x: 4, y: 0, color: red); setPixel(&grid, x: 11, y: 0, color: red)
+        setPixel(&grid, x: 5, y: 1, color: red); setPixel(&grid, x: 10, y: 1, color: red)
         for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
         for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
-        setPixel(&grid, x: 4, y: 2, color: red); setPixel(&grid, x: 11, y: 2, color: red)
-        // Face
-        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
-        // Eyes (green)
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 5, y: 1, color: darkRed); setPixel(&grid, x: 10, y: 1, color: darkRed)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 7, y: 2, color: black)
+        setPixel(&grid, x: 8, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkRed) }
+        setPixel(&grid, x: 7, y: 4, color: black); setPixel(&grid, x: 8, y: 4, color: black)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: red); setPixel(&grid, x: 10, y: 6, color: red)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: red); setPixel(&grid, x: 11, y: 6, color: red)
+        }
+    }
+
+    func drawMVSpiderMan(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.9, green: 0.1, blue: 0.1, alpha: 1.0)
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.8, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let darkRed = NSColor(red: 0.6, green: 0.05, blue: 0.05, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: red) }
+        setPixel(&grid, x: 7, y: 0, color: darkRed); setPixel(&grid, x: 8, y: 0, color: darkRed)
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 6, y: 2, color: white)
+        setPixel(&grid, x: 9, y: 1, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 9, y: 1, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: blue) }
+        setPixel(&grid, x: 3, y: 4, color: red); setPixel(&grid, x: 12, y: 4, color: red)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: blue)
+        }
+    }
+
+    func drawMVWolverine(grid: inout [[NSColor]], frame: Int) {
+        let yellow = NSColor(red: 0.95, green: 0.85, blue: 0.2, alpha: 1.0)
+        let blue = NSColor(red: 0.1, green: 0.2, blue: 0.6, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.82, green: 0.82, blue: 0.85, alpha: 1.0)
+        let anim = frame % 2
+
+        setPixel(&grid, x: 3, y: 0, color: black); setPixel(&grid, x: 12, y: 0, color: black)
+        setPixel(&grid, x: 4, y: 1, color: black); setPixel(&grid, x: 11, y: 1, color: black)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: yellow) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: yellow) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 3, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: yellow) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: blue) }
+        setPixel(&grid, x: 3, y: 4, color: silver); setPixel(&grid, x: 3, y: 5, color: silver)
+        setPixel(&grid, x: 12, y: 4, color: silver); setPixel(&grid, x: 12, y: 5, color: silver)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: blue)
+        }
+    }
+
+    func drawMVBlackPanther(grid: inout [[NSColor]], frame: Int) {
+        let black = NSColor.black
+        let darkGray = NSColor(red: 0.25, green: 0.25, blue: 0.28, alpha: 1.0)
+        let silver = NSColor(red: 0.75, green: 0.75, blue: 0.8, alpha: 1.0)
+        let purple = NSColor(red: 0.5, green: 0.15, blue: 0.7, alpha: 1.0)
+        let anim = frame % 2
+
+        setPixel(&grid, x: 4, y: 0, color: black); setPixel(&grid, x: 11, y: 0, color: black)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: black) }
+        setPixel(&grid, x: 5, y: 0, color: silver); setPixel(&grid, x: 10, y: 0, color: silver)
+        setPixel(&grid, x: 6, y: 1, color: purple); setPixel(&grid, x: 9, y: 1, color: purple)
+        setPixel(&grid, x: 6, y: 2, color: purple); setPixel(&grid, x: 9, y: 2, color: purple)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: black) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        setPixel(&grid, x: 7, y: 4, color: silver); setPixel(&grid, x: 8, y: 4, color: silver)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black); setPixel(&grid, x: 10, y: 6, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: black); setPixel(&grid, x: 11, y: 6, color: black)
+        }
+    }
+
+    func drawMVHulk(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.3, green: 0.72, blue: 0.3, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.2, green: 0.5, blue: 0.2, alpha: 1.0)
+        let purple = NSColor(red: 0.5, green: 0.2, blue: 0.6, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: green) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: green) }
+        setPixel(&grid, x: 5, y: 1, color: black); setPixel(&grid, x: 10, y: 1, color: black)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 3, color: black)
+        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: purple) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 7, color: purple); setPixel(&grid, x: 10, y: 7, color: purple)
+        } else {
+            setPixel(&grid, x: 4, y: 7, color: purple); setPixel(&grid, x: 11, y: 7, color: purple)
+        }
+    }
+
+    func drawMVVision(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.3, green: 0.7, blue: 0.35, alpha: 1.0)
+        let yellow = NSColor(red: 0.92, green: 0.8, blue: 0.2, alpha: 1.0)
+        let red = NSColor(red: 0.85, green: 0.12, blue: 0.1, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: green) }
+        setPixel(&grid, x: 6, y: 2, color: yellow); setPixel(&grid, x: 9, y: 2, color: yellow)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: green) }
+        setPixel(&grid, x: 7, y: 4, color: yellow); setPixel(&grid, x: 8, y: 4, color: yellow)
+        setPixel(&grid, x: 3, y: 4, color: yellow); setPixel(&grid, x: 12, y: 4, color: yellow)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: yellow); setPixel(&grid, x: 10, y: 6, color: yellow)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: yellow); setPixel(&grid, x: 11, y: 6, color: yellow)
+        }
+    }
+
+    func drawMVScarletWitch(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.8, green: 0.1, blue: 0.15, alpha: 1.0)
+        let darkRed = NSColor(red: 0.5, green: 0.05, blue: 0.08, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let brown = NSColor(red: 0.55, green: 0.25, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 4, y: 1, color: brown); setPixel(&grid, x: 11, y: 1, color: brown)
+        setPixel(&grid, x: 4, y: 2, color: brown); setPixel(&grid, x: 11, y: 2, color: brown)
         setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.2, green: 0.6, blue: 0.3, alpha: 1.0))
         setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.2, green: 0.6, blue: 0.3, alpha: 1.0))
-        // Body (black suit)
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: darkGray) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: black) }
-        // Belt (red)
-        setPixel(&grid, x: 6, y: 4, color: red); setPixel(&grid, x: 7, y: 4, color: red)
-        setPixel(&grid, x: 8, y: 4, color: red); setPixel(&grid, x: 9, y: 4, color: red)
-        // Legs
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkRed) }
+        setPixel(&grid, x: 3, y: 4, color: red); setPixel(&grid, x: 12, y: 4, color: red)
         if anim == 0 {
-            setPixel(&grid, x: 6, y: 6, color: black); setPixel(&grid, x: 9, y: 6, color: black)
+            setPixel(&grid, x: 5, y: 6, color: darkRed); setPixel(&grid, x: 10, y: 6, color: darkRed)
         } else {
-            setPixel(&grid, x: 5, y: 6, color: black); setPixel(&grid, x: 10, y: 6, color: black)
+            setPixel(&grid, x: 4, y: 6, color: darkRed); setPixel(&grid, x: 11, y: 6, color: darkRed)
+        }
+    }
+
+    func drawMVWarMachine(grid: inout [[NSColor]], frame: Int) {
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
+        let darkGray = NSColor(red: 0.3, green: 0.3, blue: 0.33, alpha: 1.0)
+        let silver = NSColor(red: 0.78, green: 0.78, blue: 0.82, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: gray) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: gray) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: darkGray) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: darkGray) }
+        setPixel(&grid, x: 5, y: 1, color: silver); setPixel(&grid, x: 10, y: 1, color: silver)
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 7, y: 2, color: white)
+        setPixel(&grid, x: 8, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: gray) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        setPixel(&grid, x: 3, y: 4, color: silver); setPixel(&grid, x: 12, y: 4, color: silver)
+        setPixel(&grid, x: 12, y: 3, color: silver)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: darkGray); setPixel(&grid, x: 10, y: 6, color: darkGray)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: darkGray); setPixel(&grid, x: 11, y: 6, color: darkGray)
+        }
+    }
+
+    func drawMVSpiderWoman(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
+        let yellow = NSColor(red: 0.92, green: 0.8, blue: 0.2, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let brown = NSColor(red: 0.55, green: 0.25, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 4, y: 1, color: red); setPixel(&grid, x: 11, y: 1, color: red)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: yellow) }
+        setPixel(&grid, x: 3, y: 4, color: red); setPixel(&grid, x: 12, y: 4, color: red)
+        setPixel(&grid, x: 3, y: 5, color: yellow); setPixel(&grid, x: 12, y: 5, color: yellow)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: red); setPixel(&grid, x: 10, y: 6, color: red)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: red); setPixel(&grid, x: 11, y: 6, color: red)
+        }
+    }
+
+    func drawMVCyclops(grid: inout [[NSColor]], frame: Int) {
+        let blue = NSColor(red: 0.1, green: 0.2, blue: 0.65, alpha: 1.0)
+        let darkBlue = NSColor(red: 0.05, green: 0.1, blue: 0.4, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let brown = NSColor(red: 0.5, green: 0.3, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 5, y: 2, color: blue); setPixel(&grid, x: 6, y: 2, color: blue)
+        setPixel(&grid, x: 7, y: 2, color: black); setPixel(&grid, x: 8, y: 2, color: black)
+        setPixel(&grid, x: 9, y: 2, color: blue); setPixel(&grid, x: 10, y: 2, color: blue)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: blue) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkBlue) }
+        setPixel(&grid, x: 7, y: 4, color: black); setPixel(&grid, x: 8, y: 4, color: black)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: blue)
+        }
+    }
+
+    func drawMVSheHulk(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.35, green: 0.75, blue: 0.35, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.25, green: 0.55, blue: 0.25, alpha: 1.0)
+        let purple = NSColor(red: 0.5, green: 0.2, blue: 0.6, alpha: 1.0)
+        let black = NSColor.black
+        let brown = NSColor(red: 0.45, green: 0.2, blue: 0.08, alpha: 1.0)
+        let anim = frame % 2
+
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: green) }
+        setPixel(&grid, x: 4, y: 1, color: brown); setPixel(&grid, x: 11, y: 1, color: brown)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: purple) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: purple) }
+        setPixel(&grid, x: 3, y: 4, color: green); setPixel(&grid, x: 12, y: 4, color: green)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: purple); setPixel(&grid, x: 10, y: 6, color: purple)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: purple); setPixel(&grid, x: 11, y: 6, color: purple)
+        }
+    }
+
+    func drawMVJuggernaut(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.75, green: 0.1, blue: 0.1, alpha: 1.0)
+        let darkRed = NSColor(red: 0.5, green: 0.05, blue: 0.05, alpha: 1.0)
+        let brown = NSColor(red: 0.5, green: 0.3, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: brown) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: brown) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 2, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: brown) }
+        setPixel(&grid, x: 5, y: 1, color: red); setPixel(&grid, x: 10, y: 1, color: red)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: darkRed) }
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: darkRed); setPixel(&grid, x: 10, y: 6, color: darkRed)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: darkRed); setPixel(&grid, x: 11, y: 6, color: darkRed)
+        }
+    }
+
+    func drawMVLoki(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.2, green: 0.6, blue: 0.25, alpha: 1.0)
+        let gold = NSColor(red: 0.92, green: 0.78, blue: 0.22, alpha: 1.0)
+        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
+        let black = NSColor.black
+        let darkGreen = NSColor(red: 0.1, green: 0.4, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+
+        setPixel(&grid, x: 4, y: 0, color: gold); setPixel(&grid, x: 11, y: 0, color: gold)
+        setPixel(&grid, x: 5, y: 1, color: gold); setPixel(&grid, x: 10, y: 1, color: gold)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: gold) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 6, y: 2, color: green); setPixel(&grid, x: 9, y: 2, color: green)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGreen) }
+        setPixel(&grid, x: 7, y: 4, color: gold); setPixel(&grid, x: 8, y: 4, color: gold)
+        setPixel(&grid, x: 3, y: 4, color: green); setPixel(&grid, x: 12, y: 4, color: green)
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: gold); setPixel(&grid, x: 10, y: 6, color: gold)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: gold); setPixel(&grid, x: 11, y: 6, color: gold)
         }
     }
 

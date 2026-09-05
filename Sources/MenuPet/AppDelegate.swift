@@ -110,8 +110,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     ]
 
     let marvelCharacters: [MarvelCharacter] = [
-        .spiderMan, .ironMan, .captainAmerica, .thor, .hulk, .wolverine,
-        .nickFury, .loki, .blackWidow
+        .ironMan, .captainAmerica, .thor, .hulk, .spiderMan, .wolverine,
+        .blackPanther, .daredevil, .blackWidow, .hawkeye, .vision, .scarletWitch,
+        .warMachine, .spiderWoman, .cyclops, .sheHulk, .juggernaut, .loki
     ]
 
     let dcCharacters: [DCCharacter] = [

@@ -273,15 +273,24 @@ class SpriteRenderer {
             }
         case .marvel(let mvChar):
             switch mvChar {
-            case .spiderMan: drawMVSpiderMan(grid: &grid, frame: frame)
             case .ironMan: drawMVIronMan(grid: &grid, frame: frame)
             case .captainAmerica: drawMVCaptainAmerica(grid: &grid, frame: frame)
             case .thor: drawMVThor(grid: &grid, frame: frame)
             case .hulk: drawMVHulk(grid: &grid, frame: frame)
+            case .spiderMan: drawMVSpiderMan(grid: &grid, frame: frame)
             case .wolverine: drawMVWolverine(grid: &grid, frame: frame)
-            case .nickFury: drawMVNickFury(grid: &grid, frame: frame)
-            case .loki: drawMVLoki(grid: &grid, frame: frame)
+            case .blackPanther: drawMVBlackPanther(grid: &grid, frame: frame)
+            case .daredevil: drawMVDaredevil(grid: &grid, frame: frame)
             case .blackWidow: drawMVBlackWidow(grid: &grid, frame: frame)
+            case .hawkeye: drawMVHawkeye(grid: &grid, frame: frame)
+            case .vision: drawMVVision(grid: &grid, frame: frame)
+            case .scarletWitch: drawMVScarletWitch(grid: &grid, frame: frame)
+            case .warMachine: drawMVWarMachine(grid: &grid, frame: frame)
+            case .spiderWoman: drawMVSpiderWoman(grid: &grid, frame: frame)
+            case .cyclops: drawMVCyclops(grid: &grid, frame: frame)
+            case .sheHulk: drawMVSheHulk(grid: &grid, frame: frame)
+            case .juggernaut: drawMVJuggernaut(grid: &grid, frame: frame)
+            case .loki: drawMVLoki(grid: &grid, frame: frame)
             }
         case .dc(let dcChar):
             switch dcChar {
