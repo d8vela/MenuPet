@@ -11,6 +11,10 @@ class SpriteAnimator {
     private(set) var rotationEnabled = UserDefaults.standard.bool(forKey: "rotationEnabled")
     private(set) var smartRotationEnabled = UserDefaults.standard.bool(forKey: "smartRotationEnabled")
     private(set) var categoryOnlyEnabled = UserDefaults.standard.bool(forKey: "categoryOnlyEnabled")
+    private(set) var rotationInterval: TimeInterval = {
+        let saved = UserDefaults.standard.double(forKey: "rotationInterval")
+        return saved > 0 ? max(saved, 0.01) : 600
+    }()
     private var selectionCounts: [SelectableCharacter: Int] = [:]
     private(set) var characterHistory: [SelectableCharacter] = []
     private let maxHistorySize = 20
@@ -95,6 +99,27 @@ class SpriteAnimator {
         UserDefaults.standard.set(categoryOnlyEnabled, forKey: "categoryOnlyEnabled")
     }
 
+    func setRotationInterval(_ interval: TimeInterval) {
+        let clamped = max(interval, 0.01)
+        rotationInterval = clamped
+        UserDefaults.standard.set(clamped, forKey: "rotationInterval")
+        if rotationEnabled {
+            rotationTimer?.invalidate()
+            startRotation()
+        }
+    }
+
+    var rotationIntervalLabel: String {
+        let minutes = Int(rotationInterval) / 60
+        if minutes < 1 {
+            return "\(Int(rotationInterval)) sec"
+        } else if minutes == 1 {
+            return "1 min"
+        } else {
+            return "\(minutes) min"
+        }
+    }
+
     private func startRotation() {
         let allCharacters: [SelectableCharacter] =
             PokemonCharacter.allCases.map { .pokemon($0) } +
@@ -124,7 +149,7 @@ class SpriteAnimator {
             FuturamaCharacter.allCases.map { .futurama($0) } +
             BatmanCharacter.allCases.map { .batman($0) }
 
-        rotationTimer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true) { [weak self] _ in
+        rotationTimer = Timer.scheduledTimer(withTimeInterval: rotationInterval, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             let pool: [SelectableCharacter]
             if self.categoryOnlyEnabled {

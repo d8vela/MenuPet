@@ -763,7 +763,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let rotationSub = NSMenu()
 
-        let rotationItem = NSMenuItem(title: "Random Rotation (every 10 min)", action: #selector(toggleRotation), keyEquivalent: "")
+        let rotationItem = NSMenuItem(title: "Random Rotation", action: #selector(toggleRotation), keyEquivalent: "")
         rotationItem.target = self
         rotationItem.state = spriteAnimator.rotationEnabled ? .on : .off
         rotationSub.addItem(rotationItem)
@@ -779,6 +779,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         categoryOnlyItem.state = spriteAnimator.categoryOnlyEnabled ? .on : .off
         categoryOnlyItem.isEnabled = spriteAnimator.rotationEnabled
         rotationSub.addItem(categoryOnlyItem)
+
+        rotationSub.addItem(NSMenuItem.separator())
+
+        let intervalSub = NSMenu()
+        let intervals: [(String, TimeInterval)] = [
+            ("15 seconds", 15),
+            ("30 seconds", 30),
+            ("1 minute", 60),
+            ("5 minutes", 300),
+            ("10 minutes", 600),
+            ("30 minutes", 1800),
+            ("1 hour", 3600),
+        ]
+        for (label, interval) in intervals {
+            let item = NSMenuItem(title: label, action: #selector(setRotationInterval(_:)), keyEquivalent: "")
+            item.target = self
+            item.tag = Int(interval)
+            if spriteAnimator.rotationInterval == interval { item.state = .on }
+            item.isEnabled = spriteAnimator.rotationEnabled
+            intervalSub.addItem(item)
+        }
+        intervalSub.addItem(NSMenuItem.separator())
+        let customItem = NSMenuItem(title: "Custom...", action: #selector(setCustomRotationInterval), keyEquivalent: "")
+        customItem.target = self
+        customItem.isEnabled = spriteAnimator.rotationEnabled
+        intervalSub.addItem(customItem)
+        let intervalItem = NSMenuItem(title: "Rotation Interval", action: nil, keyEquivalent: "")
+        intervalItem.submenu = intervalSub
+        rotationSub.addItem(intervalItem)
 
         let rotationMenuItem = NSMenuItem(title: "Rotation", action: nil, keyEquivalent: "")
         rotationMenuItem.submenu = rotationSub
@@ -868,6 +897,44 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func toggleCategoryOnly() {
         spriteAnimator.toggleCategoryOnly()
         buildMenu()
+    }
+
+    @objc func setRotationInterval(_ sender: NSMenuItem) {
+        let interval = TimeInterval(sender.tag)
+        spriteAnimator.setRotationInterval(interval)
+        buildMenu()
+    }
+
+    @objc func setCustomRotationInterval() {
+        var running = true
+        while running {
+            let alert = NSAlert()
+            alert.messageText = "Custom Rotation Interval"
+            alert.informativeText = "Enter the interval in seconds (minimum 0.01):"
+            alert.addButton(withTitle: "OK")
+            alert.addButton(withTitle: "Cancel")
+
+            let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 100, height: 24))
+            textField.stringValue = "\(spriteAnimator.rotationInterval)"
+            alert.accessoryView = textField
+
+            if alert.runModal() == .alertFirstButtonReturn {
+                if let value = Double(textField.stringValue), value >= 0.01 {
+                    spriteAnimator.setRotationInterval(value)
+                    buildMenu()
+                    running = false
+                } else {
+                    let errorAlert = NSAlert()
+                    errorAlert.messageText = "Invalid Interval"
+                    errorAlert.informativeText = "The minimum rotation interval is 0.01 seconds."
+                    errorAlert.alertStyle = .warning
+                    errorAlert.addButton(withTitle: "OK")
+                    errorAlert.runModal()
+                }
+            } else {
+                running = false
+            }
+        }
     }
 
     @objc func searchCharacter(_ sender: NSMenuItem) {
