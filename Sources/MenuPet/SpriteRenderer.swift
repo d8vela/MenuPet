@@ -2002,40 +2002,29 @@ class SpriteRenderer {
         let orange = NSColor(red: 0.9, green: 0.5, blue: 0.1, alpha: 1.0)
         let anim = frame % 2
 
-        // Nose (small, round)
-        for x in 5...8 { setPixel(&grid, x: x, y: 2, color: green) }
-        for x in 4...8 { setPixel(&grid, x: x, y: 3, color: green) }
+        // Nose
+        setPixel(&grid, x: 5, y: 2, color: green); setPixel(&grid, x: 6, y: 2, color: green)
+        setPixel(&grid, x: 5, y: 3, color: green); setPixel(&grid, x: 6, y: 3, color: green)
 
-        // Eyes (big, cute)
-        setPixel(&grid, x: 9, y: 2, color: white); setPixel(&grid, x: 10, y: 2, color: white)
-        setPixel(&grid, x: 9, y: 2, color: black); setPixel(&grid, x: 10, y: 2, color: black)
+        // Eyes
+        setPixel(&grid, x: 7, y: 2, color: black); setPixel(&grid, x: 8, y: 2, color: black)
 
-        // Head (small)
-        for x in 9...13 { setPixel(&grid, x: x, y: 2, color: green) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 3, color: green) }
+        // Head
+        for x in 7...10 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 7...10 { setPixel(&grid, x: x, y: 3, color: green) }
 
-        // Body (small, green)
-        for x in 5...13 { setPixel(&grid, x: x, y: 4, color: green) }
-        for x in 5...13 { setPixel(&grid, x: x, y: 5, color: green) }
-        for x in 5...13 { setPixel(&grid, x: x, y: 6, color: green) }
+        // Body
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: green) }
 
         // White belly
-        for x in 6...10 { setPixel(&grid, x: x, y: 5, color: white) }
-        for x in 6...10 { setPixel(&grid, x: x, y: 6, color: white) }
-
-        // Dark green spots
-        setPixel(&grid, x: 11, y: 4, color: darkGreen); setPixel(&grid, x: 12, y: 4, color: darkGreen)
-
-        // Tail
-        setPixel(&grid, x: 14, y: 5, color: green)
+        setPixel(&grid, x: 6, y: 4, color: white); setPixel(&grid, x: 7, y: 4, color: white)
 
         // Orange boots
         if anim == 0 {
-            setPixel(&grid, x: 6, y: 7, color: orange); setPixel(&grid, x: 7, y: 7, color: orange)
-            setPixel(&grid, x: 11, y: 7, color: orange); setPixel(&grid, x: 12, y: 7, color: orange)
+            setPixel(&grid, x: 5, y: 6, color: orange); setPixel(&grid, x: 9, y: 6, color: orange)
         } else {
-            setPixel(&grid, x: 5, y: 7, color: orange); setPixel(&grid, x: 6, y: 7, color: orange)
-            setPixel(&grid, x: 12, y: 7, color: orange); setPixel(&grid, x: 13, y: 7, color: orange)
+            setPixel(&grid, x: 4, y: 6, color: orange); setPixel(&grid, x: 10, y: 6, color: orange)
         }
     }
 
