@@ -28,6 +28,9 @@ enum PokemonCharacter: String, CaseIterable {
     case marill
     case umbreon
     case pokeball
+    case greatBall
+    case ultraBall
+    case masterBall
 
     var displayName: String {
         return rawValue.capitalized
@@ -62,6 +65,9 @@ enum PokemonCharacter: String, CaseIterable {
         case .marill: return "🫧"
         case .umbreon: return "🌑"
         case .pokeball: return "🔴"
+        case .greatBall: return "🔵"
+        case .ultraBall: return "⚫"
+        case .masterBall: return "🟣"
         }
     }
 }

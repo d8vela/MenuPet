@@ -11,7 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         .meowth, .eevee, .mew, .gengar, .dragonite,
         .gyarados, .arcanine, .alakazam, .machamp, .golem, .onix,
         .jolteon, .flareon, .vaporeon, .porygon, .ditto, .lapras,
-        .marill, .umbreon, .pokeball
+        .marill, .umbreon, .pokeball, .greatBall, .ultraBall, .masterBall
     ]
 
     let marioCharacters: [MarioItem] = [
@@ -291,6 +291,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Pokémon
         let pokemonSub = NSMenu()
         for p in pokemonList {
+            if p == .pokeball {
+                pokemonSub.addItem(NSMenuItem.separator())
+            }
             let i = NSMenuItem(title: p.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
             i.target = self; i.representedObject = SelectableCharacter.pokemon(p)
             if case .pokemon(let x) = spriteAnimator.currentPokemon, x == p { i.state = .on }

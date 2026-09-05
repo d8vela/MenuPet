@@ -100,6 +100,9 @@ class SpriteRenderer {
             case .marill: drawMarill(grid: &grid, frame: frame)
             case .umbreon: drawUmbreon(grid: &grid, frame: frame)
             case .pokeball: drawPokeball(grid: &grid, frame: frame)
+            case .greatBall: drawGreatBall(grid: &grid, frame: frame)
+            case .ultraBall: drawUltraBall(grid: &grid, frame: frame)
+            case .masterBall: drawMasterBall(grid: &grid, frame: frame)
             }
         case .marioItem(let item):
             switch item {
@@ -1763,6 +1766,146 @@ class SpriteRenderer {
         if anim == 1 {
             setPixel(&grid, x: 7, y: 1, color: gray)
             setPixel(&grid, x: 8, y: 1, color: gray)
+        }
+    }
+
+    private func drawGreatBall(grid: inout [[NSColor]], frame: Int) {
+        let blue = NSColor(red: 0.15, green: 0.4, blue: 0.85, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let gray = NSColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1.0)
+        let anim = frame % 2
+
+        // Row 2: top
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: blue) }
+
+        // Row 3
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: blue) }
+
+        // Row 4: red stripes
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: blue) }
+        setPixel(&grid, x: 5, y: 4, color: red)
+        setPixel(&grid, x: 6, y: 4, color: red)
+        setPixel(&grid, x: 9, y: 4, color: red)
+        setPixel(&grid, x: 10, y: 4, color: red)
+
+        // Row 5: middle line
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        setPixel(&grid, x: 7, y: 5, color: white)
+        setPixel(&grid, x: 8, y: 5, color: white)
+
+        // Row 6: button
+        setPixel(&grid, x: 7, y: 6, color: gray)
+        setPixel(&grid, x: 8, y: 6, color: gray)
+
+        // Row 7
+        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: white) }
+
+        // Row 8
+        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: white) }
+
+        // Row 9: bottom
+        for x in 6...9 { setPixel(&grid, x: x, y: 9, color: white) }
+
+        if anim == 1 {
+            setPixel(&grid, x: 7, y: 1, color: gray)
+            setPixel(&grid, x: 8, y: 1, color: gray)
+        }
+    }
+
+    private func drawUltraBall(grid: inout [[NSColor]], frame: Int) {
+        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
+        let darkYellow = NSColor(red: 0.7, green: 0.55, blue: 0.05, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let gray = NSColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1.0)
+        let anim = frame % 2
+
+        // Row 2: top
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: black) }
+
+        // Row 3
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: black) }
+
+        // Row 4: yellow band
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: black) }
+        setPixel(&grid, x: 5, y: 4, color: yellow)
+        setPixel(&grid, x: 6, y: 4, color: yellow)
+        setPixel(&grid, x: 9, y: 4, color: yellow)
+        setPixel(&grid, x: 10, y: 4, color: yellow)
+
+        // Row 5: middle line
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        setPixel(&grid, x: 7, y: 5, color: white)
+        setPixel(&grid, x: 8, y: 5, color: white)
+
+        // Row 6: button
+        setPixel(&grid, x: 7, y: 6, color: gray)
+        setPixel(&grid, x: 8, y: 6, color: gray)
+
+        // Row 7
+        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: white) }
+
+        // Row 8
+        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: white) }
+
+        // Row 9: bottom
+        for x in 6...9 { setPixel(&grid, x: x, y: 9, color: white) }
+
+        if anim == 1 {
+            setPixel(&grid, x: 7, y: 1, color: yellow)
+            setPixel(&grid, x: 8, y: 1, color: yellow)
+        }
+    }
+
+    private func drawMasterBall(grid: inout [[NSColor]], frame: Int) {
+        let purple = NSColor(red: 0.55, green: 0.15, blue: 0.65, alpha: 1.0)
+        let pink = NSColor(red: 0.9, green: 0.4, blue: 0.55, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let gray = NSColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1.0)
+        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
+        let anim = frame % 2
+
+        // Row 2: top
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: purple) }
+
+        // Row 3: M letter
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: purple) }
+        setPixel(&grid, x: 5, y: 3, color: yellow)
+        setPixel(&grid, x: 6, y: 3, color: yellow)
+        setPixel(&grid, x: 7, y: 3, color: yellow)
+        setPixel(&grid, x: 8, y: 3, color: yellow)
+        setPixel(&grid, x: 9, y: 3, color: yellow)
+        setPixel(&grid, x: 10, y: 3, color: yellow)
+
+        // Row 4: pink spheres
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: purple) }
+        setPixel(&grid, x: 4, y: 4, color: pink)
+        setPixel(&grid, x: 11, y: 4, color: pink)
+
+        // Row 5: middle line
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        setPixel(&grid, x: 7, y: 5, color: white)
+        setPixel(&grid, x: 8, y: 5, color: white)
+
+        // Row 6: button
+        setPixel(&grid, x: 7, y: 6, color: gray)
+        setPixel(&grid, x: 8, y: 6, color: gray)
+
+        // Row 7
+        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: white) }
+
+        // Row 8
+        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: white) }
+
+        // Row 9: bottom
+        for x in 6...9 { setPixel(&grid, x: x, y: 9, color: white) }
+
+        if anim == 1 {
+            setPixel(&grid, x: 7, y: 1, color: purple)
+            setPixel(&grid, x: 8, y: 1, color: purple)
         }
     }
 
