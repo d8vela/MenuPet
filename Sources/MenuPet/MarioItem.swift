@@ -12,6 +12,7 @@ enum MarioItem: String, CaseIterable {
     case wario
     case waluigi
     case boo
+    case babyYoshi
 
     // Items
     case superMushroom
@@ -37,6 +38,7 @@ enum MarioItem: String, CaseIterable {
         case .wario: return "Wario"
         case .waluigi: return "Waluigi"
         case .boo: return "Boo"
+        case .babyYoshi: return "Baby Yoshi"
         case .superMushroom: return "Super Mushroom"
         case .fireFlower: return "Fire Flower"
         case .starman: return "Starman"
@@ -62,6 +64,7 @@ enum MarioItem: String, CaseIterable {
         case .wario: return "💜"
         case .waluigi: return "💜"
         case .boo: return "👻"
+        case .babyYoshi: return "🦕"
         case .superMushroom: return "🍄"
         case .fireFlower: return "🔥"
         case .starman: return "⭐"
@@ -77,7 +80,7 @@ enum MarioItem: String, CaseIterable {
 
     var isCharacter: Bool {
         switch self {
-        case .mario, .luigi, .peach, .toad, .bowser, .yoshi, .donkeyKong, .wario, .waluigi, .boo:
+        case .mario, .luigi, .peach, .toad, .bowser, .yoshi, .donkeyKong, .wario, .waluigi, .boo, .babyYoshi:
             return true
         default:
             return false

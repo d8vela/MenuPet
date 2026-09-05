@@ -112,6 +112,7 @@ class SpriteRenderer {
             case .wario: drawWario(grid: &grid, frame: frame)
             case .waluigi: drawWaluigi(grid: &grid, frame: frame)
             case .boo: drawBoo(grid: &grid, frame: frame)
+            case .babyYoshi: drawBabyYoshi(grid: &grid, frame: frame)
             case .superMushroom: drawSuperMushroom(grid: &grid, frame: frame)
             case .fireFlower: drawFireFlower(grid: &grid, frame: frame)
             case .starman: drawStarman(grid: &grid, frame: frame)
@@ -426,6 +427,8 @@ class SpriteRenderer {
             case .obiWan: drawStarWarsObiWan(grid: &grid, frame: frame)
             case .kyloRen: drawStarWarsKyloRen(grid: &grid, frame: frame)
             case .stormtrooper: drawStarWarsStormtrooper(grid: &grid, frame: frame)
+            case .grogu: drawStarWarsGrogu(grid: &grid, frame: frame)
+            case .mandalorian: drawStarWarsMandalorian(grid: &grid, frame: frame)
             }
         case .labubu(let lChar):
             switch lChar {
@@ -1987,6 +1990,52 @@ class SpriteRenderer {
         } else {
             setPixel(&grid, x: 3, y: 8, color: red); setPixel(&grid, x: 4, y: 8, color: red)
             setPixel(&grid, x: 10, y: 8, color: red); setPixel(&grid, x: 11, y: 8, color: red)
+        }
+    }
+
+    // MARK: - Baby Yoshi (small, cute, green)
+    private func drawBabyYoshi(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.3, green: 0.8, blue: 0.3, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.2, green: 0.6, blue: 0.2, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let orange = NSColor(red: 0.9, green: 0.5, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
+
+        // Nose (small, round)
+        for x in 5...8 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 4...8 { setPixel(&grid, x: x, y: 3, color: green) }
+
+        // Eyes (big, cute)
+        setPixel(&grid, x: 9, y: 2, color: white); setPixel(&grid, x: 10, y: 2, color: white)
+        setPixel(&grid, x: 9, y: 2, color: black); setPixel(&grid, x: 10, y: 2, color: black)
+
+        // Head (small)
+        for x in 9...13 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 9...13 { setPixel(&grid, x: x, y: 3, color: green) }
+
+        // Body (small, green)
+        for x in 5...13 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 5...13 { setPixel(&grid, x: x, y: 5, color: green) }
+        for x in 5...13 { setPixel(&grid, x: x, y: 6, color: green) }
+
+        // White belly
+        for x in 6...10 { setPixel(&grid, x: x, y: 5, color: white) }
+        for x in 6...10 { setPixel(&grid, x: x, y: 6, color: white) }
+
+        // Dark green spots
+        setPixel(&grid, x: 11, y: 4, color: darkGreen); setPixel(&grid, x: 12, y: 4, color: darkGreen)
+
+        // Tail
+        setPixel(&grid, x: 14, y: 5, color: green)
+
+        // Orange boots
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 7, color: orange); setPixel(&grid, x: 7, y: 7, color: orange)
+            setPixel(&grid, x: 11, y: 7, color: orange); setPixel(&grid, x: 12, y: 7, color: orange)
+        } else {
+            setPixel(&grid, x: 5, y: 7, color: orange); setPixel(&grid, x: 6, y: 7, color: orange)
+            setPixel(&grid, x: 12, y: 7, color: orange); setPixel(&grid, x: 13, y: 7, color: orange)
         }
     }
 

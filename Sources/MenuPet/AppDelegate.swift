@@ -15,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     ]
 
     let marioCharacters: [MarioItem] = [
-        .mario, .luigi, .peach, .toad, .bowser, .yoshi, .donkeyKong, .wario, .waluigi, .boo
+        .mario, .luigi, .peach, .toad, .bowser, .yoshi, .donkeyKong, .wario, .waluigi, .boo, .babyYoshi
     ]
 
     let marioItems: [MarioItem] = [
@@ -170,7 +170,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     let starWarsCharacters: [StarWarsCharacter] = [
         .luke, .vader, .leia, .han, .chewbacca, .yoda,
-        .maul, .bobaFett, .c3po, .r2d2, .obiWan, .kyloRen, .stormtrooper
+        .maul, .bobaFett, .c3po, .r2d2, .obiWan, .kyloRen, .stormtrooper, .grogu, .mandalorian
     ]
 
     let labubuCharacters: [LabubuCharacter] = [

@@ -14,6 +14,8 @@ enum StarWarsCharacter: String, CaseIterable {
     case obiWan
     case kyloRen
     case stormtrooper
+    case grogu
+    case mandalorian
 
     var displayName: String {
         switch self {
@@ -30,6 +32,8 @@ enum StarWarsCharacter: String, CaseIterable {
         case .obiWan: return "Obi-Wan Kenobi"
         case .kyloRen: return "Kylo Ren"
         case .stormtrooper: return "Stormtrooper"
+        case .grogu: return "Grogu"
+        case .mandalorian: return "The Mandalorian"
         }
     }
 
@@ -48,6 +52,8 @@ enum StarWarsCharacter: String, CaseIterable {
         case .obiWan: return "Ben"
         case .kyloRen: return "Ren"
         case .stormtrooper: return "Empire"
+        case .grogu: return "Baby"
+        case .mandalorian: return "Mando"
         }
     }
 }

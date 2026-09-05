@@ -52,7 +52,7 @@ cp .build/release/MenuPet /usr/local/bin/
 | Ghibli | Totoro, No-Face, Kiki, Calcifer, Ponyo, Satsuki, Mei, Howl, Sophie, Append, Jiro, Chihiro |
 | Marvel | Iron Man, Captain America, Thor, Hulk, Spider-Man, Wolverine, Black Panther, Daredevil, Black Widow, Hawkeye, Vision, Scarlet Witch, War Machine, Spider-Woman, Cyclops, She-Hulk, Juggernaut, Loki, Venom |
 | DC | Wonder Woman, Batman, Superman, The Flash, Aquaman, Green Lantern |
-| Star Wars | Luke, Vader, Yoda, Boba Fett, Chewbacca, R2-D2, C-3PO |
+| Star Wars | Luke, Vader, Yoda, Boba Fett, Chewbacca, R2-D2, C-3PO, Grogu, The Mandalorian |
 | Street Fighter | Ryu, Ken, Chun-Li, Guile, Dhalsim, Zangief, Blanka |
 | Mortal Kombat | Scorpion, Sub-Zero, Liu Kang, Raiden, Johnny Cage, Sonya Blade, Jax |
 | Overwatch | Tracer, Genji, D.Va, Winston, Mercy, Reinhardt |

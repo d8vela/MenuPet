@@ -5198,4 +5198,82 @@ extension SpriteRenderer {
             setPixel(&grid, x: 9, y: 7, color: gray)
         }
     }
+
+    func drawStarWarsGrogu(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.4, green: 0.75, blue: 0.35, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.3, green: 0.55, blue: 0.25, alpha: 1.0)
+        let brown = NSColor(red: 0.55, green: 0.35, blue: 0.15, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let anim = frame % 2
+
+        // Big ears
+        setPixel(&grid, x: 3, y: 1, color: green); setPixel(&grid, x: 3, y: 2, color: green)
+        setPixel(&grid, x: 12, y: 1, color: green); setPixel(&grid, x: 12, y: 2, color: green)
+        setPixel(&grid, x: 2, y: 2, color: darkGreen); setPixel(&grid, x: 13, y: 2, color: darkGreen)
+
+        // Head (green)
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: green) }
+
+        // Eyes (big, cute, black)
+        setPixel(&grid, x: 5, y: 1, color: black); setPixel(&grid, x: 5, y: 2, color: black)
+        setPixel(&grid, x: 10, y: 1, color: black); setPixel(&grid, x: 10, y: 2, color: black)
+
+        // Robe (brown)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: brown) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: brown) }
+
+        // Arms
+        setPixel(&grid, x: 3, y: 4, color: green); setPixel(&grid, x: 12, y: 4, color: green)
+
+        // Feet
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 7, color: brown); setPixel(&grid, x: 10, y: 7, color: brown)
+        } else {
+            setPixel(&grid, x: 4, y: 7, color: brown); setPixel(&grid, x: 11, y: 7, color: brown)
+        }
+    }
+
+    func drawStarWarsMandalorian(grid: inout [[NSColor]], frame: Int) {
+        let silver = NSColor(red: 0.7, green: 0.7, blue: 0.75, alpha: 1.0)
+        let darkGray = NSColor(red: 0.4, green: 0.4, blue: 0.43, alpha: 1.0)
+        let black = NSColor.black
+        let orange = NSColor(red: 0.85, green: 0.5, blue: 0.1, alpha: 1.0)
+        let brown = NSColor(red: 0.5, green: 0.3, blue: 0.12, alpha: 1.0)
+        let anim = frame % 2
+
+        // Helmet (silver with T-visor)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: silver) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: silver) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: silver) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: silver) }
+
+        // T-visor (black)
+        setPixel(&grid, x: 7, y: 1, color: black); setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 7, y: 2, color: black); setPixel(&grid, x: 8, y: 2, color: black)
+        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+
+        // Body (silver armor with brown cape)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: silver) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: brown) }
+
+        // Cape (brown)
+        setPixel(&grid, x: 3, y: 4, color: brown); setPixel(&grid, x: 3, y: 5, color: brown)
+        setPixel(&grid, x: 12, y: 4, color: brown); setPixel(&grid, x: 12, y: 5, color: brown)
+
+        // Belt (orange)
+        setPixel(&grid, x: 7, y: 5, color: orange); setPixel(&grid, x: 8, y: 5, color: orange)
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 7, color: darkGray); setPixel(&grid, x: 10, y: 7, color: darkGray)
+        } else {
+            setPixel(&grid, x: 4, y: 7, color: darkGray); setPixel(&grid, x: 11, y: 7, color: darkGray)
+        }
+    }
 }
