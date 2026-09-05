@@ -279,12 +279,9 @@ class SpriteRenderer {
             case .thor: drawMVThor(grid: &grid, frame: frame)
             case .hulk: drawMVHulk(grid: &grid, frame: frame)
             case .wolverine: drawMVWolverine(grid: &grid, frame: frame)
-            case .deadpool: drawMVDeadpool(grid: &grid, frame: frame)
-            case .blackPanther: drawMVBlackPanther(grid: &grid, frame: frame)
-            case .doctorStrange: drawMVDoctorStrange(grid: &grid, frame: frame)
-            case .thanos: drawMVThanos(grid: &grid, frame: frame)
+            case .nickFury: drawMVNickFury(grid: &grid, frame: frame)
             case .loki: drawMVLoki(grid: &grid, frame: frame)
-            case .magneto: drawMVMagneto(grid: &grid, frame: frame)
+            case .blackWidow: drawMVBlackWidow(grid: &grid, frame: frame)
             }
         case .dc(let dcChar):
             switch dcChar {

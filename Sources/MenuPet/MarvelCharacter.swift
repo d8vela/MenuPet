@@ -7,12 +7,9 @@ enum MarvelCharacter: String, CaseIterable {
     case thor
     case hulk
     case wolverine
-    case deadpool
-    case blackPanther
-    case doctorStrange
-    case thanos
+    case nickFury
     case loki
-    case magneto
+    case blackWidow
 
     var displayName: String {
         switch self {
@@ -22,12 +19,9 @@ enum MarvelCharacter: String, CaseIterable {
         case .thor: return "Thor"
         case .hulk: return "Hulk"
         case .wolverine: return "Wolverine"
-        case .deadpool: return "Deadpool"
-        case .blackPanther: return "Black Panther"
-        case .doctorStrange: return "Doctor Strange"
-        case .thanos: return "Thanos"
+        case .nickFury: return "Nick Fury"
         case .loki: return "Loki"
-        case .magneto: return "Magneto"
+        case .blackWidow: return "Black Widow"
         }
     }
 
@@ -38,13 +32,10 @@ enum MarvelCharacter: String, CaseIterable {
         case .captainAmerica: return "🛡️"
         case .thor: return "🔨"
         case .hulk: return "💪"
-        case .wolverine: return "🦓"
-        case .deadpool: return " Mouth"
-        case .blackPanther: return "Panther"
-        case .doctorStrange: return "🔮"
-        case .thanos: return "Infinity"
-        case .loki: return "Horned"
-        case .magneto: return "Magnet"
+        case .wolverine: return "🦴"
+        case .nickFury: return "👁️"
+        case .loki: return "🐍"
+        case .blackWidow: return "🕸️"
         }
     }
 }

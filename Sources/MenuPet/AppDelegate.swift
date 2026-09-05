@@ -111,11 +111,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     let marvelCharacters: [MarvelCharacter] = [
         .spiderMan, .ironMan, .captainAmerica, .thor, .hulk, .wolverine,
-        .deadpool, .blackPanther, .doctorStrange
-    ]
-
-    let marvelVillains: [MarvelCharacter] = [
-        .thanos, .loki, .magneto
+        .nickFury, .loki, .blackWidow
     ]
 
     let dcCharacters: [DCCharacter] = [
@@ -597,13 +593,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Marvel
         let mvSub = NSMenu()
         for c in marvelCharacters {
-            let i = NSMenuItem(title: c.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
-            i.target = self; i.representedObject = SelectableCharacter.marvel(c)
-            if case .marvel(let x) = spriteAnimator.currentPokemon, x == c { i.state = .on }
-            mvSub.addItem(i)
-        }
-        mvSub.addItem(NSMenuItem.separator())
-        for c in marvelVillains {
             let i = NSMenuItem(title: c.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
             i.target = self; i.representedObject = SelectableCharacter.marvel(c)
             if case .marvel(let x) = spriteAnimator.currentPokemon, x == c { i.state = .on }

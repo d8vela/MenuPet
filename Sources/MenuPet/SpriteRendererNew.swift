@@ -1717,2004 +1717,362 @@ extension SpriteRenderer {
 
     // MARK: - Marvel
     func drawMVSpiderMan(grid: inout [[NSColor]], frame: Int) {
-        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.55, green: 0.05, blue: 0.05, alpha: 1.0)
-        let brightRed = NSColor(red: 1.0, green: 0.2, blue: 0.15, alpha: 1.0)
-        let blue = NSColor(red: 0.1, green: 0.25, blue: 0.75, alpha: 1.0)
-        let darkBlue = NSColor(red: 0.05, green: 0.12, blue: 0.45, alpha: 1.0)
-        let brightBlue = NSColor(red: 0.2, green: 0.4, blue: 0.95, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.1, blue: 0.1, alpha: 1.0)
+        let darkRed = NSColor(red: 0.6, green: 0.05, blue: 0.05, alpha: 1.0)
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.8, alpha: 1.0)
         let white = NSColor.white
         let black = NSColor.black
-        let webLine = NSColor(red: 0.4, green: 0.05, blue: 0.05, alpha: 1.0)
-        let spiderBlack = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
-        let webWhite = NSColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
-        let brightWhite = NSColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-        let speedLine = NSColor(red: 0.7, green: 0.85, blue: 1.0, alpha: 0.6)
-        let glowBlue = NSColor(red: 0.4, green: 0.7, blue: 1.0, alpha: 0.8)
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // === WEB LINE (THICK, shooting UP - animated) ===
-        let webPhase = frame % 4
-        // Main web strand (thick)
-        setPixel(&grid, x: 2, y: 0, color: brightWhite)
-        setPixel(&grid, x: 2, y: 1, color: white)
-        setPixel(&grid, x: 1, y: 0, color: webWhite)
-        setPixel(&grid, x: 3, y: 0, color: webWhite)
-        // Web strands spreading
-        if webPhase < 2 {
-            setPixel(&grid, x: 0, y: 0, color: webWhite)
-            setPixel(&grid, x: 4, y: 0, color: webWhite)
-        }
-        // Motion trail on web
-        setPixel(&grid, x: 2, y: 2, color: speedLine)
-
-        // === HEAD (anime-style, aggressive) ===
-        for x in 7...10 { setPixel(&grid, x: x, y: 0, color: brightRed) }
-        for x in 6...11 { setPixel(&grid, x: x, y: 1, color: red) }
-        setPixel(&grid, x: 6, y: 1, color: darkRed)
-        setPixel(&grid, x: 11, y: 1, color: darkRed)
-
-        // Web pattern on mask (radial)
-        setPixel(&grid, x: 8, y: 0, color: webLine)
-        setPixel(&grid, x: 9, y: 0, color: webLine)
-        setPixel(&grid, x: 7, y: 1, color: webLine)
-        setPixel(&grid, x: 10, y: 1, color: webLine)
-
-        // Anime eyes (MASSIVE, glowing, intense)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 7, y: 2, color: black)
-        setPixel(&grid, x: 8, y: 2, color: brightWhite)
-        setPixel(&grid, x: 9, y: 2, color: brightWhite)
-        setPixel(&grid, x: 10, y: 2, color: black)
-        setPixel(&grid, x: 11, y: 2, color: black)
-        setPixel(&grid, x: 6, y: 3, color: black)
-        setPixel(&grid, x: 7, y: 3, color: brightWhite)
-        setPixel(&grid, x: 8, y: 3, color: brightWhite)
-        setPixel(&grid, x: 9, y: 3, color: brightWhite)
-        setPixel(&grid, x: 10, y: 3, color: brightWhite)
-        setPixel(&grid, x: 11, y: 3, color: black)
-        // Eye glow
-        setPixel(&grid, x: 7, y: 2, color: glowBlue)
-        setPixel(&grid, x: 10, y: 3, color: glowBlue)
-
-        // Mask lower with dense web pattern
-        for x in 6...11 { setPixel(&grid, x: x, y: 4, color: red) }
-        setPixel(&grid, x: 6, y: 4, color: webLine)
-        setPixel(&grid, x: 7, y: 4, color: webLine)
-        setPixel(&grid, x: 8, y: 4, color: webLine)
-        setPixel(&grid, x: 9, y: 4, color: webLine)
-        setPixel(&grid, x: 10, y: 4, color: webLine)
-        setPixel(&grid, x: 11, y: 4, color: webLine)
-
-        // Chin (angular, intense)
-        setPixel(&grid, x: 7, y: 5, color: darkRed)
-        setPixel(&grid, x: 8, y: 5, color: brightRed)
-        setPixel(&grid, x: 9, y: 5, color: brightRed)
-        setPixel(&grid, x: 10, y: 5, color: darkRed)
-
-        // === LEFT ARM (extended UP, muscular, shooting web) ===
-        setPixel(&grid, x: 3, y: 2, color: brightRed)
-        setPixel(&grid, x: 3, y: 3, color: red)
-        setPixel(&grid, x: 3, y: 4, color: red)
-        setPixel(&grid, x: 4, y: 2, color: red)
-        setPixel(&grid, x: 4, y: 3, color: red)
-        setPixel(&grid, x: 4, y: 4, color: darkRed)
-        // Arm web lines
-        setPixel(&grid, x: 3, y: 3, color: webLine)
-        setPixel(&grid, x: 4, y: 3, color: webLine)
-        // Gold web shooter
-        setPixel(&grid, x: 3, y: 1, color: NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0))
-        setPixel(&grid, x: 4, y: 1, color: NSColor(red: 0.85, green: 0.7, blue: 0.0, alpha: 1.0))
-
-        // === BODY (blue, muscular, dynamic twist) ===
-        // Shoulders (wide, red with web lines)
-        for x in 5...11 { setPixel(&grid, x: x, y: 6, color: red) }
-        setPixel(&grid, x: 5, y: 6, color: brightRed)
-        setPixel(&grid, x: 11, y: 6, color: brightRed)
-        setPixel(&grid, x: 6, y: 6, color: webLine)
-        setPixel(&grid, x: 10, y: 6, color: webLine)
-        // Shoulder muscle
-        setPixel(&grid, x: 5, y: 6, color: NSColor(red: 1.0, green: 0.3, blue: 0.2, alpha: 1.0))
-        setPixel(&grid, x: 11, y: 6, color: NSColor(red: 1.0, green: 0.3, blue: 0.2, alpha: 1.0))
-
-        // Chest (blue with highlights)
-        for x in 6...10 { setPixel(&grid, x: x, y: 7, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: blue) }
-        setPixel(&grid, x: 6, y: 7, color: brightBlue)
-        setPixel(&grid, x: 9, y: 7, color: brightBlue)
-        setPixel(&grid, x: 7, y: 8, color: brightBlue)
-
-        // SPIDER EMBLEM (HUGE, dramatic, spreading)
-        setPixel(&grid, x: 7, y: 7, color: spiderBlack)
-        setPixel(&grid, x: 8, y: 7, color: spiderBlack)
-        setPixel(&grid, x: 7, y: 8, color: spiderBlack)
-        setPixel(&grid, x: 8, y: 8, color: spiderBlack)
-        setPixel(&grid, x: 6, y: 7, color: spiderBlack)
-        setPixel(&grid, x: 9, y: 7, color: spiderBlack)
-        setPixel(&grid, x: 6, y: 8, color: spiderBlack)
-        setPixel(&grid, x: 9, y: 8, color: spiderBlack)
-        setPixel(&grid, x: 5, y: 7, color: spiderBlack)
-        setPixel(&grid, x: 10, y: 7, color: spiderBlack)
-        setPixel(&grid, x: 5, y: 8, color: spiderBlack)
-        setPixel(&grid, x: 10, y: 8, color: spiderBlack)
-        // Extra legs
-        setPixel(&grid, x: 6, y: 9, color: spiderBlack)
-        setPixel(&grid, x: 9, y: 9, color: spiderBlack)
-
-        // === RIGHT ARM (extended OUT, muscular) ===
-        setPixel(&grid, x: 12, y: 6, color: brightRed)
-        setPixel(&grid, x: 13, y: 6, color: red)
-        setPixel(&grid, x: 13, y: 7, color: red)
-        setPixel(&grid, x: 14, y: 7, color: red)
-        setPixel(&grid, x: 14, y: 8, color: red)
-        setPixel(&grid, x: 15, y: 8, color: red)
-        // Arm web lines
-        setPixel(&grid, x: 14, y: 7, color: webLine)
-        setPixel(&grid, x: 14, y: 8, color: webLine)
-        // Gold web shooter
-        setPixel(&grid, x: 15, y: 8, color: NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0))
-        setPixel(&grid, x: 15, y: 7, color: NSColor(red: 0.85, green: 0.7, blue: 0.0, alpha: 1.0))
-        // Muscle highlight
-        setPixel(&grid, x: 13, y: 6, color: brightRed)
-
-        // === SPEED LINES (motion trails behind body) ===
-        setPixel(&grid, x: 12, y: 5, color: speedLine)
-        setPixel(&grid, x: 13, y: 5, color: speedLine)
-        setPixel(&grid, x: 14, y: 6, color: speedLine)
-        if webPhase < 2 {
-            setPixel(&grid, x: 15, y: 7, color: speedLine)
-        }
-
-        // === WAIST (blue, tapered for action) ===
-        for x in 6...10 { setPixel(&grid, x: x, y: 9, color: darkBlue) }
-        setPixel(&grid, x: 6, y: 9, color: blue)
-        setPixel(&grid, x: 10, y: 9, color: blue)
-        setPixel(&grid, x: 7, y: 9, color: brightBlue)
-
-        // Belt (red with web pattern)
-        for x in 6...10 { setPixel(&grid, x: x, y: 10, color: red) }
-        setPixel(&grid, x: 6, y: 10, color: darkRed)
-        setPixel(&grid, x: 10, y: 10, color: darkRed)
-        setPixel(&grid, x: 7, y: 10, color: webLine)
-        setPixel(&grid, x: 8, y: 10, color: webLine)
-        setPixel(&grid, x: 9, y: 10, color: webLine)
-
-        // === LEFT LEG (extended DOWN - swinging) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 3...5 { setPixel(&grid, x: x, y: 12, color: darkBlue) }
-        for x in 3...5 { setPixel(&grid, x: x, y: 13, color: blue) }
-        setPixel(&grid, x: 4, y: 11, color: brightBlue)
-        setPixel(&grid, x: 4, y: 12, color: brightBlue)
-
-        // Left boot (red, large, angled)
-        for x in 2...5 { setPixel(&grid, x: x, y: 14, color: red) }
-        for x in 2...5 { setPixel(&grid, x: x, y: 15, color: darkRed) }
-        setPixel(&grid, x: 3, y: 14, color: brightRed)
-        setPixel(&grid, x: 3, y: 14, color: webLine)
-        setPixel(&grid, x: 4, y: 14, color: webLine)
-        // Boot highlight
-        setPixel(&grid, x: 2, y: 14, color: darkRed)
-
-        // === RIGHT LEG (bent UP - swinging) ===
-        for x in 9...11 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 10...12 { setPixel(&grid, x: x, y: 10, color: darkBlue) }
-        setPixel(&grid, x: 10, y: 11, color: brightBlue)
-        setPixel(&grid, x: 11, y: 11, color: brightBlue)
-
-        // Right boot (red, large, bent up)
-        for x in 11...13 { setPixel(&grid, x: x, y: 9, color: red) }
-        for x in 11...13 { setPixel(&grid, x: x, y: 10, color: darkRed) }
-        setPixel(&grid, x: 12, y: 9, color: brightRed)
-        setPixel(&grid, x: 12, y: 9, color: webLine)
-        setPixel(&grid, x: 11, y: 9, color: webLine)
-        // Boot highlight
-        setPixel(&grid, x: 13, y: 9, color: darkRed)
-
-        // === WEB STRANDS (flying in wind behind) ===
-        if webPhase == 0 {
-            setPixel(&grid, x: 14, y: 4, color: webWhite)
-            setPixel(&grid, x: 15, y: 3, color: webWhite)
-        } else if webPhase == 1 {
-            setPixel(&grid, x: 14, y: 5, color: webWhite)
-            setPixel(&grid, x: 15, y: 4, color: webWhite)
-        } else if webPhase == 2 {
-            setPixel(&grid, x: 15, y: 5, color: webWhite)
-            setPixel(&grid, x: 14, y: 3, color: webWhite)
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Head fill
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: red) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: red) }
+        // Eyes (big white)
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 6, y: 2, color: white)
+        setPixel(&grid, x: 9, y: 1, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        // Web pattern
+        setPixel(&grid, x: 7, y: 0, color: darkRed); setPixel(&grid, x: 8, y: 0, color: darkRed)
+        setPixel(&grid, x: 7, y: 1, color: darkRed); setPixel(&grid, x: 8, y: 1, color: darkRed)
+        // Body
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: blue) }
+        // Arms
+        setPixel(&grid, x: 4, y: 4, color: red); setPixel(&grid, x: 11, y: 4, color: red)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: blue); setPixel(&grid, x: 9, y: 6, color: blue)
         } else {
-            setPixel(&grid, x: 15, y: 2, color: webWhite)
-            setPixel(&grid, x: 14, y: 2, color: webWhite)
+            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
         }
     }
 
     func drawMVIronMan(grid: inout [[NSColor]], frame: Int) {
-        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.55, green: 0.05, blue: 0.05, alpha: 1.0)
-        let brightRed = NSColor(red: 1.0, green: 0.2, blue: 0.15, alpha: 1.0)
-        let gold = NSColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        let darkGold = NSColor(red: 0.75, green: 0.58, blue: 0.0, alpha: 1.0)
-        let brightGold = NSColor(red: 1.0, green: 0.95, blue: 0.4, alpha: 1.0)
+        let red = NSColor(red: 0.85, green: 0.15, blue: 0.1, alpha: 1.0)
+        let gold = NSColor(red: 0.9, green: 0.75, blue: 0.2, alpha: 1.0)
         let white = NSColor.white
-        let arcBlue = NSColor(red: 0.3, green: 0.7, blue: 1.0, alpha: 1.0)
-        let arcWhite = NSColor(red: 0.85, green: 0.97, blue: 1.0, alpha: 1.0)
-        let orange = NSColor(red: 1.0, green: 0.6, blue: 0.0, alpha: 1.0)
-        let yellow = NSColor(red: 1.0, green: 1.0, blue: 0.3, alpha: 1.0)
-        let hotWhite = NSColor(red: 1.0, green: 1.0, blue: 0.95, alpha: 1.0)
+        let black = NSColor.black
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let arcGlow = NSColor(red: 0.4, green: 0.8, blue: 1.0, alpha: 1.0)
+        let anim = frame % 2
 
-        // === HELMET ===
-        // Crest (bright red spike)
-        setPixel(&grid, x: 7, y: 0, color: brightRed)
-        setPixel(&grid, x: 8, y: 0, color: brightRed)
-        setPixel(&grid, x: 7, y: 1, color: red)
-        setPixel(&grid, x: 8, y: 1, color: red)
-
-        // Helmet dome (red with metallic highlight)
-        setPixel(&grid, x: 6, y: 1, color: darkRed)
-        setPixel(&grid, x: 9, y: 1, color: darkRed)
-        setPixel(&grid, x: 5, y: 2, color: darkRed)
-        setPixel(&grid, x: 6, y: 2, color: brightRed)
-        for x in 7...8 { setPixel(&grid, x: x, y: 2, color: red) }
-        setPixel(&grid, x: 9, y: 2, color: red)
-        setPixel(&grid, x: 10, y: 2, color: darkRed)
-
-        // Faceplate (gold with depth)
-        setPixel(&grid, x: 5, y: 3, color: darkRed)
-        setPixel(&grid, x: 6, y: 3, color: darkGold)
-        setPixel(&grid, x: 7, y: 3, color: gold)
-        setPixel(&grid, x: 8, y: 3, color: gold)
-        setPixel(&grid, x: 9, y: 3, color: darkGold)
-        setPixel(&grid, x: 10, y: 3, color: darkRed)
-
-        // Glowing eyes (bright white-blue)
-        setPixel(&grid, x: 7, y: 3, color: hotWhite)
-        setPixel(&grid, x: 8, y: 3, color: hotWhite)
-
-        // Jaw armor (gold, wider)
-        setPixel(&grid, x: 5, y: 4, color: darkRed)
-        setPixel(&grid, x: 6, y: 4, color: gold)
-        for x in 7...8 { setPixel(&grid, x: x, y: 4, color: brightGold) }
-        setPixel(&grid, x: 9, y: 4, color: gold)
-        setPixel(&grid, x: 10, y: 4, color: darkRed)
-
-        // === NECK & COLLAR ===
-        setPixel(&grid, x: 6, y: 5, color: darkRed)
-        setPixel(&grid, x: 7, y: 5, color: darkGold)
-        setPixel(&grid, x: 8, y: 5, color: darkGold)
-        setPixel(&grid, x: 9, y: 5, color: darkRed)
-
-        // === SHOULDERS (bulky armor) ===
-        for x in 2...5 { setPixel(&grid, x: x, y: 6, color: red) }
-        for x in 10...13 { setPixel(&grid, x: x, y: 6, color: red) }
-        setPixel(&grid, x: 2, y: 6, color: brightRed)
-        setPixel(&grid, x: 13, y: 6, color: brightRed)
-        setPixel(&grid, x: 3, y: 6, color: brightRed)
-        setPixel(&grid, x: 12, y: 6, color: brightRed)
-        // Shoulder vents (dark gold accents)
-        setPixel(&grid, x: 2, y: 6, color: darkGold)
-        setPixel(&grid, x: 13, y: 6, color: darkGold)
-
-        // === CHEST (wider, more muscular) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 7, color: red) }
-        setPixel(&grid, x: 5, y: 7, color: darkRed)
-        setPixel(&grid, x: 10, y: 7, color: darkRed)
-
-        // Arc reactor - pulsing (2x2 for bigger glow)
-        let arcIntensity = (frame % 4 < 2) ? arcBlue : arcWhite
-        let arcRing = (frame % 4 < 2) ? arcWhite : arcBlue
-        setPixel(&grid, x: 7, y: 7, color: arcRing)
-        setPixel(&grid, x: 8, y: 7, color: arcRing)
-        setPixel(&grid, x: 7, y: 8, color: arcIntensity)
-        setPixel(&grid, x: 8, y: 8, color: arcIntensity)
-
-        // === ABDOMEN (segmented armor) ===
-        for x in 6...9 { setPixel(&grid, x: x, y: 8, color: darkRed) }
-        setPixel(&grid, x: 6, y: 8, color: red)
-        setPixel(&grid, x: 9, y: 8, color: red)
-
-        // === ARMS (extended forward with repulsors) ===
-        setPixel(&grid, x: 1, y: 6, color: red)
-        setPixel(&grid, x: 14, y: 6, color: red)
-        setPixel(&grid, x: 1, y: 7, color: red)
-        setPixel(&grid, x: 14, y: 7, color: red)
-        // Forearm armor (gold)
-        setPixel(&grid, x: 1, y: 8, color: gold)
-        setPixel(&grid, x: 14, y: 8, color: gold)
-        setPixel(&grid, x: 1, y: 7, color: darkGold)
-        setPixel(&grid, x: 14, y: 7, color: darkGold)
-
-        // Repulsor beams (LARGER, more dramatic)
-        let beamPhase = frame % 4
-        switch beamPhase {
-        case 0:
-            setPixel(&grid, x: 0, y: 7, color: arcBlue)
-            setPixel(&grid, x: 15, y: 7, color: arcBlue)
-            setPixel(&grid, x: 0, y: 8, color: hotWhite)
-            setPixel(&grid, x: 15, y: 8, color: hotWhite)
-            setPixel(&grid, x: 0, y: 6, color: arcWhite)
-            setPixel(&grid, x: 15, y: 6, color: arcWhite)
-        case 1:
-            setPixel(&grid, x: 0, y: 7, color: hotWhite)
-            setPixel(&grid, x: 15, y: 7, color: hotWhite)
-            setPixel(&grid, x: 0, y: 8, color: arcBlue)
-            setPixel(&grid, x: 15, y: 8, color: arcBlue)
-        case 2:
-            setPixel(&grid, x: 0, y: 6, color: arcBlue)
-            setPixel(&grid, x: 15, y: 6, color: arcBlue)
-            setPixel(&grid, x: 0, y: 7, color: hotWhite)
-            setPixel(&grid, x: 15, y: 7, color: hotWhite)
-            setPixel(&grid, x: 0, y: 8, color: arcWhite)
-            setPixel(&grid, x: 15, y: 8, color: arcWhite)
-        default:
-            setPixel(&grid, x: 0, y: 7, color: arcWhite)
-            setPixel(&grid, x: 15, y: 7, color: arcWhite)
-            setPixel(&grid, x: 0, y: 8, color: hotWhite)
-            setPixel(&grid, x: 15, y: 8, color: hotWhite)
-        }
-
-        // === HIP ARMOR (red, wider) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 9, color: darkRed) }
-        setPixel(&grid, x: 5, y: 9, color: red)
-        setPixel(&grid, x: 10, y: 9, color: red)
-
-        // === LEGS (thick, armored) ===
-        for x in 5...6 { setPixel(&grid, x: x, y: 10, color: red) }
-        for x in 9...10 { setPixel(&grid, x: x, y: 10, color: red) }
-        // Knee armor (gold)
-        setPixel(&grid, x: 5, y: 10, color: gold)
-        setPixel(&grid, x: 10, y: 10, color: gold)
-
-        // Shin armor
-        for x in 5...6 { setPixel(&grid, x: x, y: 11, color: darkRed) }
-        for x in 9...10 { setPixel(&grid, x: x, y: 11, color: darkRed) }
-
-        // === BOOT JETS (massive flames) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 12, color: gold) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 12, color: gold) }
-        setPixel(&grid, x: 4, y: 12, color: darkGold)
-        setPixel(&grid, x: 11, y: 12, color: darkGold)
-
-        // Jet flames (4-phase animation)
-        let flamePhase = frame % 4
-        switch flamePhase {
-        case 0:
-            setPixel(&grid, x: 4, y: 13, color: orange)
-            setPixel(&grid, x: 5, y: 13, color: yellow)
-            setPixel(&grid, x: 6, y: 13, color: hotWhite)
-            setPixel(&grid, x: 9, y: 13, color: hotWhite)
-            setPixel(&grid, x: 10, y: 13, color: yellow)
-            setPixel(&grid, x: 11, y: 13, color: orange)
-        case 1:
-            setPixel(&grid, x: 5, y: 13, color: orange)
-            setPixel(&grid, x: 6, y: 13, color: yellow)
-            setPixel(&grid, x: 9, y: 13, color: yellow)
-            setPixel(&grid, x: 10, y: 13, color: orange)
-            setPixel(&grid, x: 5, y: 14, color: yellow)
-            setPixel(&grid, x: 10, y: 14, color: yellow)
-        case 2:
-            setPixel(&grid, x: 4, y: 13, color: yellow)
-            setPixel(&grid, x: 5, y: 13, color: hotWhite)
-            setPixel(&grid, x: 6, y: 13, color: orange)
-            setPixel(&grid, x: 9, y: 13, color: orange)
-            setPixel(&grid, x: 10, y: 13, color: hotWhite)
-            setPixel(&grid, x: 11, y: 13, color: yellow)
-            setPixel(&grid, x: 5, y: 14, color: orange)
-            setPixel(&grid, x: 10, y: 14, color: orange)
-        default:
-            setPixel(&grid, x: 5, y: 13, color: orange)
-            setPixel(&grid, x: 6, y: 13, color: hotWhite)
-            setPixel(&grid, x: 9, y: 13, color: hotWhite)
-            setPixel(&grid, x: 10, y: 13, color: orange)
-            setPixel(&grid, x: 5, y: 14, color: yellow)
-            setPixel(&grid, x: 6, y: 14, color: orange)
-            setPixel(&grid, x: 9, y: 14, color: orange)
-            setPixel(&grid, x: 10, y: 14, color: yellow)
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Head fill (red top, gold faceplate)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: gold) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: gold) }
+        // Eyes (glowing white)
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        // Body (red with arc reactor)
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: red) }
+        setPixel(&grid, x: 7, y: 4, color: arcGlow); setPixel(&grid, x: 8, y: 4, color: arcGlow)
+        // Arms
+        setPixel(&grid, x: 4, y: 4, color: gold); setPixel(&grid, x: 11, y: 4, color: gold)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: gold); setPixel(&grid, x: 9, y: 6, color: gold)
+        } else {
+            setPixel(&grid, x: 5, y: 6, color: gold); setPixel(&grid, x: 10, y: 6, color: gold)
         }
     }
 
     func drawMVCaptainAmerica(grid: inout [[NSColor]], frame: Int) {
-        let blue = NSColor(red: 0.1, green: 0.25, blue: 0.7, alpha: 1.0)
-        let darkBlue = NSColor(red: 0.05, green: 0.12, blue: 0.45, alpha: 1.0)
-        let brightBlue = NSColor(red: 0.2, green: 0.4, blue: 0.95, alpha: 1.0)
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.8, alpha: 1.0)
+        let red = NSColor(red: 0.85, green: 0.15, blue: 0.1, alpha: 1.0)
         let white = NSColor.white
-        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.55, green: 0.05, blue: 0.05, alpha: 1.0)
-        let brightRed = NSColor(red: 1.0, green: 0.2, blue: 0.15, alpha: 1.0)
-        let silver = NSColor(red: 0.75, green: 0.75, blue: 0.78, alpha: 1.0)
-        let black = NSColor.black
-        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let starWhite = NSColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // === HELMET (blue with wings) ===
-        // Helmet top (blue)
-        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: blue) }
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Head fill (blue)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: blue) }
         for x in 5...10 { setPixel(&grid, x: x, y: 1, color: blue) }
-        setPixel(&grid, x: 5, y: 1, color: darkBlue)
-        setPixel(&grid, x: 10, y: 1, color: darkBlue)
-
-        // Wing details (silver)
-        setPixel(&grid, x: 4, y: 0, color: silver)
-        setPixel(&grid, x: 11, y: 0, color: silver)
-        setPixel(&grid, x: 3, y: 1, color: silver)
-        setPixel(&grid, x: 12, y: 1, color: silver)
-
-        // Helmet A emblem (white)
-        setPixel(&grid, x: 7, y: 0, color: white)
-        setPixel(&grid, x: 8, y: 0, color: white)
-        setPixel(&grid, x: 7, y: 1, color: white)
-
-        // Face (skin)
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
-
-        // Eyes (blue, intense)
-        setPixel(&grid, x: 6, y: 2, color: brightBlue)
-        setPixel(&grid, x: 9, y: 2, color: brightBlue)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
-        setPixel(&grid, x: 6, y: 2, color: brightBlue)
-        setPixel(&grid, x: 9, y: 2, color: brightBlue)
-
-        // Mouth (determined)
-        setPixel(&grid, x: 7, y: 3, color: skin)
-        setPixel(&grid, x: 8, y: 3, color: skin)
-
-        // Chin strap
-        setPixel(&grid, x: 6, y: 4, color: blue)
-        setPixel(&grid, x: 7, y: 4, color: skin)
-        setPixel(&grid, x: 8, y: 4, color: skin)
-        setPixel(&grid, x: 9, y: 4, color: blue)
-
-        // === NECK (blue) ===
-        setPixel(&grid, x: 7, y: 5, color: darkBlue)
-        setPixel(&grid, x: 8, y: 5, color: darkBlue)
-
-        // === SHOULDERS (blue, muscular with scale mail) ===
-        for x in 2...5 { setPixel(&grid, x: x, y: 6, color: blue) }
-        for x in 10...13 { setPixel(&grid, x: x, y: 6, color: blue) }
-        setPixel(&grid, x: 2, y: 6, color: brightBlue)
-        setPixel(&grid, x: 13, y: 6, color: brightBlue)
-        // Scale mail pattern
-        setPixel(&grid, x: 3, y: 6, color: darkBlue)
-        setPixel(&grid, x: 12, y: 6, color: darkBlue)
-
-        // === CHEST (blue with STAR emblem) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: blue) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: blue) }
-        // Chest highlight
-        setPixel(&grid, x: 6, y: 7, color: brightBlue)
-        setPixel(&grid, x: 9, y: 7, color: brightBlue)
-
-        // STAR EMBLEM (white, large)
-        setPixel(&grid, x: 7, y: 6, color: starWhite)
-        setPixel(&grid, x: 8, y: 6, color: starWhite)
-        setPixel(&grid, x: 7, y: 7, color: starWhite)
-        setPixel(&grid, x: 8, y: 7, color: starWhite)
-        setPixel(&grid, x: 6, y: 7, color: starWhite)
-        setPixel(&grid, x: 9, y: 7, color: starWhite)
-        setPixel(&grid, x: 7, y: 8, color: starWhite)
-        setPixel(&grid, x: 8, y: 8, color: starWhite)
-
-        // === ABS (blue with scale pattern) ===
-        for x in 6...9 { setPixel(&grid, x: x, y: 8, color: darkBlue) }
-        setPixel(&grid, x: 6, y: 8, color: blue)
-        setPixel(&grid, x: 9, y: 8, color: blue)
-        // Scale pattern
-        setPixel(&grid, x: 7, y: 8, color: blue)
-        setPixel(&grid, x: 8, y: 8, color: blue)
-
-        // === LEFT ARM (holding shield) ===
-        setPixel(&grid, x: 1, y: 6, color: blue)
-        setPixel(&grid, x: 1, y: 7, color: blue)
-        setPixel(&grid, x: 1, y: 8, color: blue)
-        setPixel(&grid, x: 2, y: 7, color: darkBlue)
-        setPixel(&grid, x: 2, y: 8, color: darkBlue)
-        // Glove (red)
-        setPixel(&grid, x: 1, y: 9, color: red)
-        setPixel(&grid, x: 2, y: 9, color: red)
-
-        // SHIELD (circular, on arm - animated!)
-        let shieldPhase = frame % 4
-        switch shieldPhase {
-        case 0:
-            // Shield front (red/white rings with blue center + star)
-            setPixel(&grid, x: 0, y: 6, color: red)
-            setPixel(&grid, x: 0, y: 7, color: white)
-            setPixel(&grid, x: 0, y: 8, color: red)
-            setPixel(&grid, x: 1, y: 5, color: white)
-            setPixel(&grid, x: 1, y: 10, color: white)
-            setPixel(&grid, x: 0, y: 7, color: blue)
-        case 1:
-            setPixel(&grid, x: 0, y: 6, color: white)
-            setPixel(&grid, x: 0, y: 7, color: red)
-            setPixel(&grid, x: 0, y: 8, color: white)
-            setPixel(&grid, x: 1, y: 5, color: red)
-            setPixel(&grid, x: 1, y: 10, color: red)
-            setPixel(&grid, x: 0, y: 7, color: blue)
-        case 2:
-            setPixel(&grid, x: 0, y: 6, color: red)
-            setPixel(&grid, x: 0, y: 7, color: white)
-            setPixel(&grid, x: 0, y: 8, color: red)
-            setPixel(&grid, x: 1, y: 5, color: red)
-            setPixel(&grid, x: 1, y: 10, color: red)
-            setPixel(&grid, x: 0, y: 7, color: blue)
-        default:
-            setPixel(&grid, x: 0, y: 6, color: white)
-            setPixel(&grid, x: 0, y: 7, color: red)
-            setPixel(&grid, x: 0, y: 8, color: white)
-            setPixel(&grid, x: 1, y: 5, color: white)
-            setPixel(&grid, x: 1, y: 10, color: white)
-            setPixel(&grid, x: 0, y: 7, color: blue)
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: blue) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: blue) }
+        // "A" on forehead
+        setPixel(&grid, x: 7, y: 0, color: white); setPixel(&grid, x: 8, y: 0, color: white)
+        // Eyes (white)
+        setPixel(&grid, x: 6, y: 1, color: white); setPixel(&grid, x: 9, y: 1, color: white)
+        // Body (blue)
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: blue) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: blue) }
+        // Star on chest
+        setPixel(&grid, x: 7, y: 4, color: white); setPixel(&grid, x: 8, y: 4, color: white)
+        // Shield on arm (left side)
+        setPixel(&grid, x: 3, y: 4, color: red); setPixel(&grid, x: 3, y: 5, color: white)
+        setPixel(&grid, x: 3, y: 6, color: blue)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: red); setPixel(&grid, x: 9, y: 6, color: red)
+        } else {
+            setPixel(&grid, x: 5, y: 6, color: red); setPixel(&grid, x: 10, y: 6, color: red)
         }
-
-        // === RIGHT ARM (extended, punching) ===
-        setPixel(&grid, x: 13, y: 6, color: blue)
-        setPixel(&grid, x: 14, y: 6, color: blue)
-        setPixel(&grid, x: 14, y: 7, color: blue)
-        setPixel(&grid, x: 15, y: 7, color: blue)
-        setPixel(&grid, x: 15, y: 8, color: blue)
-        setPixel(&grid, x: 14, y: 7, color: darkBlue)
-        // Glove (red, fist)
-        setPixel(&grid, x: 15, y: 8, color: red)
-        setPixel(&grid, x: 15, y: 9, color: red)
-
-        // === WAIST (blue with belt) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 9, color: darkBlue) }
-        setPixel(&grid, x: 5, y: 9, color: blue)
-        setPixel(&grid, x: 10, y: 9, color: blue)
-
-        // Belt (brown leather)
-        for x in 5...10 { setPixel(&grid, x: x, y: 10, color: NSColor(red: 0.45, green: 0.25, blue: 0.1, alpha: 1.0)) }
-        setPixel(&grid, x: 7, y: 10, color: silver)
-        setPixel(&grid, x: 8, y: 10, color: silver)
-
-        // === LEGS (blue, muscular) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 4...6 { setPixel(&grid, x: x, y: 12, color: darkBlue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 12, color: darkBlue) }
-        setPixel(&grid, x: 4, y: 11, color: brightBlue)
-        setPixel(&grid, x: 11, y: 11, color: brightBlue)
-
-        // Knee pads (silver)
-        setPixel(&grid, x: 4, y: 12, color: silver)
-        setPixel(&grid, x: 11, y: 12, color: silver)
-
-        // === BOOTS (red, cuffed) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 13, color: red) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 13, color: red) }
-        setPixel(&grid, x: 3, y: 13, color: brightRed)
-        setPixel(&grid, x: 12, y: 13, color: brightRed)
-        // Boot cuffs
-        setPixel(&grid, x: 3, y: 12, color: darkRed)
-        setPixel(&grid, x: 12, y: 12, color: darkRed)
-        // Boot soles
-        for x in 3...6 { setPixel(&grid, x: x, y: 14, color: darkRed) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 14, color: darkRed) }
     }
 
     func drawMVThor(grid: inout [[NSColor]], frame: Int) {
-        let silver = NSColor(red: 0.75, green: 0.75, blue: 0.78, alpha: 1.0)
-        let darkSilver = NSColor(red: 0.55, green: 0.55, blue: 0.58, alpha: 1.0)
-        let brightSilver = NSColor(red: 0.9, green: 0.9, blue: 0.92, alpha: 1.0)
-        let red = NSColor(red: 0.75, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.5, green: 0.05, blue: 0.05, alpha: 1.0)
-        let brightRed = NSColor(red: 0.95, green: 0.2, blue: 0.15, alpha: 1.0)
+        let silver = NSColor(red: 0.75, green: 0.75, blue: 0.8, alpha: 1.0)
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
+        let red = NSColor(red: 0.8, green: 0.15, blue: 0.1, alpha: 1.0)
         let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
-        let darkYellow = NSColor(red: 0.8, green: 0.65, blue: 0.0, alpha: 1.0)
-        let black = NSColor.black
         let white = NSColor.white
-        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.7, alpha: 1.0)
-        let lightning = NSColor(red: 1.0, green: 1.0, blue: 0.4, alpha: 1.0)
+        let black = NSColor.black
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let gold = NSColor(red: 0.9, green: 0.75, blue: 0.2, alpha: 1.0)
+        let anim = frame % 2
 
-        // === HAMMER (Mjolnir) - in right hand, animated lightning ===
-        let hammerPhase = frame % 4
-        // Hammer handle
-        setPixel(&grid, x: 14, y: 5, color: NSColor(red: 0.45, green: 0.25, blue: 0.1, alpha: 1.0))
-        setPixel(&grid, x: 14, y: 6, color: NSColor(red: 0.45, green: 0.25, blue: 0.1, alpha: 1.0))
-        setPixel(&grid, x: 14, y: 7, color: NSColor(red: 0.45, green: 0.25, blue: 0.1, alpha: 1.0))
-        // Hammer head
-        setPixel(&grid, x: 13, y: 4, color: silver)
-        setPixel(&grid, x: 14, y: 4, color: silver)
-        setPixel(&grid, x: 15, y: 4, color: silver)
-        setPixel(&grid, x: 13, y: 5, color: darkSilver)
-        setPixel(&grid, x: 15, y: 5, color: darkSilver)
-        // Hammer highlight
-        setPixel(&grid, x: 14, y: 4, color: brightSilver)
-
-        // Lightning from hammer (animated)
-        switch hammerPhase {
-        case 0:
-            setPixel(&grid, x: 13, y: 3, color: lightning)
-            setPixel(&grid, x: 15, y: 3, color: lightning)
-            setPixel(&grid, x: 14, y: 3, color: white)
-        case 1:
-            setPixel(&grid, x: 12, y: 3, color: lightning)
-            setPixel(&grid, x: 13, y: 2, color: white)
-            setPixel(&grid, x: 15, y: 2, color: lightning)
-        case 2:
-            setPixel(&grid, x: 13, y: 3, color: white)
-            setPixel(&grid, x: 14, y: 2, color: lightning)
-            setPixel(&grid, x: 15, y: 3, color: white)
-        default:
-            setPixel(&grid, x: 12, y: 2, color: lightning)
-            setPixel(&grid, x: 14, y: 3, color: lightning)
-            setPixel(&grid, x: 15, y: 2, color: white)
-        }
-
-        // === WINGED HELMET (silver with gold wings) ===
-        // Wings
-        setPixel(&grid, x: 4, y: 0, color: white)
-        setPixel(&grid, x: 11, y: 0, color: white)
-        setPixel(&grid, x: 3, y: 1, color: white)
-        setPixel(&grid, x: 12, y: 1, color: white)
-        setPixel(&grid, x: 4, y: 1, color: silver)
-        setPixel(&grid, x: 11, y: 1, color: silver)
-
-        // Helmet (silver)
-        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: brightSilver) }
+        // Winged helmet
+        setPixel(&grid, x: 3, y: 0, color: silver); setPixel(&grid, x: 12, y: 0, color: silver)
+        setPixel(&grid, x: 4, y: 1, color: silver); setPixel(&grid, x: 11, y: 1, color: silver)
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Helmet fill
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: silver) }
         for x in 5...10 { setPixel(&grid, x: x, y: 1, color: silver) }
-        setPixel(&grid, x: 5, y: 1, color: darkSilver)
-        setPixel(&grid, x: 10, y: 1, color: darkSilver)
-
-        // === FACE ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
-
-        // Eyes (blue, intense)
-        setPixel(&grid, x: 6, y: 2, color: blue)
-        setPixel(&grid, x: 9, y: 2, color: blue)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
-        setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 1.0))
-        setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 1.0))
-
-        // Beard (blonde)
-        setPixel(&grid, x: 6, y: 4, color: yellow)
-        setPixel(&grid, x: 7, y: 4, color: yellow)
-        setPixel(&grid, x: 8, y: 4, color: yellow)
-        setPixel(&grid, x: 9, y: 4, color: yellow)
-        setPixel(&grid, x: 6, y: 3, color: yellow)
-        setPixel(&grid, x: 9, y: 3, color: yellow)
-
-        // Mouth
-        setPixel(&grid, x: 7, y: 3, color: skin)
-        setPixel(&grid, x: 8, y: 3, color: skin)
-
-        // === NECK (silver armor) ===
-        setPixel(&grid, x: 7, y: 5, color: silver)
-        setPixel(&grid, x: 8, y: 5, color: silver)
-
-        // === SHOULDERS (silver armor with red cape flowing) ===
-        for x in 2...5 { setPixel(&grid, x: x, y: 6, color: silver) }
-        for x in 10...13 { setPixel(&grid, x: x, y: 6, color: silver) }
-        setPixel(&grid, x: 2, y: 6, color: brightSilver)
-        setPixel(&grid, x: 13, y: 6, color: brightSilver)
-
-        // Red cape flowing behind
-        setPixel(&grid, x: 3, y: 5, color: red)
-        setPixel(&grid, x: 12, y: 5, color: red)
-        setPixel(&grid, x: 2, y: 5, color: darkRed)
-        setPixel(&grid, x: 13, y: 5, color: darkRed)
-
-        // === CHEST (silver armor with circles) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: silver) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: silver) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: silver) }
-
-        // Armor circles
-        setPixel(&grid, x: 6, y: 7, color: darkSilver)
-        setPixel(&grid, x: 9, y: 7, color: darkSilver)
-        setPixel(&grid, x: 6, y: 7, color: brightSilver)
-        setPixel(&grid, x: 9, y: 7, color: brightSilver)
-
-        // Chest highlight
-        setPixel(&grid, x: 7, y: 7, color: brightSilver)
-        setPixel(&grid, x: 8, y: 7, color: brightSilver)
-
-        // === LEFT ARM (holding cape) ===
-        setPixel(&grid, x: 1, y: 6, color: silver)
-        setPixel(&grid, x: 1, y: 7, color: silver)
-        setPixel(&grid, x: 1, y: 8, color: silver)
-        setPixel(&grid, x: 2, y: 7, color: darkSilver)
-        // Red glove
-        setPixel(&grid, x: 1, y: 9, color: red)
-        setPixel(&grid, x: 2, y: 9, color: red)
-
-        // === RIGHT ARM (holding hammer, extended) ===
-        setPixel(&grid, x: 13, y: 6, color: silver)
-        setPixel(&grid, x: 14, y: 6, color: silver)
-        setPixel(&grid, x: 14, y: 7, color: silver)
-        setPixel(&grid, x: 14, y: 8, color: silver)
-        // Red glove
-        setPixel(&grid, x: 14, y: 9, color: red)
-        setPixel(&grid, x: 15, y: 9, color: red)
-
-        // === WAIST (blue with belt) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 9, color: blue) }
-        setPixel(&grid, x: 5, y: 9, color: darkSilver)
-        setPixel(&grid, x: 10, y: 9, color: darkSilver)
-
-        // Belt (silver with gold buckle)
-        for x in 5...10 { setPixel(&grid, x: x, y: 10, color: silver) }
-        setPixel(&grid, x: 7, y: 10, color: yellow)
-        setPixel(&grid, x: 8, y: 10, color: yellow)
-
-        // === LEGS (blue) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 4...6 { setPixel(&grid, x: x, y: 12, color: blue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 12, color: blue) }
-
-        // Knee armor (silver)
-        setPixel(&grid, x: 4, y: 11, color: silver)
-        setPixel(&grid, x: 11, y: 11, color: silver)
-
-        // === BOOTS (silver with red) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 13, color: silver) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 13, color: silver) }
-        setPixel(&grid, x: 3, y: 13, color: brightSilver)
-        setPixel(&grid, x: 12, y: 13, color: brightSilver)
-        // Boot tops (red)
-        setPixel(&grid, x: 3, y: 12, color: red)
-        setPixel(&grid, x: 12, y: 12, color: red)
-        // Boot soles
-        for x in 3...6 { setPixel(&grid, x: x, y: 14, color: darkSilver) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 14, color: darkSilver) }
-
-        // === CAPE (red, flowing behind) ===
-        setPixel(&grid, x: 3, y: 7, color: red)
-        setPixel(&grid, x: 12, y: 7, color: red)
-        setPixel(&grid, x: 3, y: 8, color: darkRed)
-        setPixel(&grid, x: 12, y: 8, color: darkRed)
-        setPixel(&grid, x: 2, y: 7, color: darkRed)
-        setPixel(&grid, x: 13, y: 7, color: darkRed)
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Eyes (blue)
+        let blue = NSColor(red: 0.2, green: 0.4, blue: 0.9, alpha: 1.0)
+        setPixel(&grid, x: 6, y: 2, color: blue); setPixel(&grid, x: 9, y: 2, color: blue)
+        // Body (armor)
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: silver) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: gray) }
+        // Red cape
+        setPixel(&grid, x: 4, y: 4, color: red); setPixel(&grid, x: 11, y: 4, color: red)
+        setPixel(&grid, x: 4, y: 5, color: red); setPixel(&grid, x: 11, y: 5, color: red)
+        // Mjolnir (right hand)
+        setPixel(&grid, x: 12, y: 5, color: gray); setPixel(&grid, x: 12, y: 6, color: gray)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: gray); setPixel(&grid, x: 9, y: 6, color: gray)
+        } else {
+            setPixel(&grid, x: 5, y: 6, color: gray); setPixel(&grid, x: 10, y: 6, color: gray)
+        }
     }
 
     func drawMVHulk(grid: inout [[NSColor]], frame: Int) {
-        let green = NSColor(red: 0.2, green: 0.7, blue: 0.2, alpha: 1.0)
-        let darkGreen = NSColor(red: 0.1, green: 0.5, blue: 0.1, alpha: 1.0)
-        let brightGreen = NSColor(red: 0.3, green: 0.85, blue: 0.3, alpha: 1.0)
-        let highlightGreen = NSColor(red: 0.5, green: 0.95, blue: 0.5, alpha: 1.0)
-        let purple = NSColor(red: 0.5, green: 0.15, blue: 0.5, alpha: 1.0)
-        let darkPurple = NSColor(red: 0.3, green: 0.08, blue: 0.3, alpha: 1.0)
-        let brightPurple = NSColor(red: 0.65, green: 0.25, blue: 0.65, alpha: 1.0)
+        let green = NSColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.2, green: 0.5, blue: 0.2, alpha: 1.0)
+        let purple = NSColor(red: 0.5, green: 0.2, blue: 0.6, alpha: 1.0)
         let black = NSColor.black
         let white = NSColor.white
-        let angryRed = NSColor(red: 0.9, green: 0.15, blue: 0.1, alpha: 1.0)
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // === HEAD (huge, angry, green) ===
-        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: brightGreen) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: green) }
-        setPixel(&grid, x: 5, y: 1, color: darkGreen)
-        setPixel(&grid, x: 10, y: 1, color: darkGreen)
-
-        // Hair (black, messy)
-        setPixel(&grid, x: 6, y: 0, color: black)
-        setPixel(&grid, x: 7, y: 0, color: black)
-        setPixel(&grid, x: 8, y: 0, color: black)
-        setPixel(&grid, x: 9, y: 0, color: black)
-
-        // Angry eyes (red/white, intense)
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: green) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: green) }
-        setPixel(&grid, x: 6, y: 2, color: angryRed)
-        setPixel(&grid, x: 9, y: 2, color: angryRed)
-        setPixel(&grid, x: 6, y: 2, color: white)
-        setPixel(&grid, x: 9, y: 2, color: white)
-        setPixel(&grid, x: 6, y: 2, color: angryRed)
-        setPixel(&grid, x: 9, y: 2, color: angryRed)
-
-        // Angry brow
-        setPixel(&grid, x: 5, y: 2, color: darkGreen)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
-        setPixel(&grid, x: 10, y: 2, color: darkGreen)
-
-        // Mouth (growling, teeth)
-        setPixel(&grid, x: 6, y: 3, color: black)
-        setPixel(&grid, x: 7, y: 3, color: white)
-        setPixel(&grid, x: 8, y: 3, color: white)
-        setPixel(&grid, x: 9, y: 3, color: black)
-
-        // Jaw (massive)
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
-        setPixel(&grid, x: 4, y: 4, color: darkGreen)
-        setPixel(&grid, x: 11, y: 4, color: darkGreen)
-
-        // === NECK (thick, green) ===
-        for x in 6...9 { setPixel(&grid, x: x, y: 5, color: green) }
-
-        // === SHOULDERS (MASSIVE, bulging) ===
-        for x in 1...5 { setPixel(&grid, x: x, y: 6, color: green) }
-        for x in 10...14 { setPixel(&grid, x: x, y: 6, color: green) }
-        setPixel(&grid, x: 1, y: 6, color: brightGreen)
-        setPixel(&grid, x: 14, y: 6, color: brightGreen)
-        setPixel(&grid, x: 2, y: 6, color: highlightGreen)
-        setPixel(&grid, x: 13, y: 6, color: highlightGreen)
-        // Shoulder shadow
-        setPixel(&grid, x: 3, y: 6, color: darkGreen)
-        setPixel(&grid, x: 12, y: 6, color: darkGreen)
-
-        // === CHEST (massive, green, ripped) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: green) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 8, color: green) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: green) }
-
-        // Chest muscle definition
-        setPixel(&grid, x: 5, y: 7, color: brightGreen)
-        setPixel(&grid, x: 10, y: 7, color: brightGreen)
-        setPixel(&grid, x: 7, y: 8, color: highlightGreen)
-        setPixel(&grid, x: 8, y: 8, color: highlightGreen)
-        setPixel(&grid, x: 6, y: 8, color: darkGreen)
-        setPixel(&grid, x: 9, y: 8, color: darkGreen)
-
-        // Abs definition
-        setPixel(&grid, x: 6, y: 9, color: darkGreen)
-        setPixel(&grid, x: 9, y: 9, color: darkGreen)
-
-        // === LEFT ARM (massive, fist) ===
-        setPixel(&grid, x: 1, y: 7, color: green)
-        setPixel(&grid, x: 1, y: 8, color: green)
-        setPixel(&grid, x: 1, y: 9, color: green)
-        setPixel(&grid, x: 0, y: 8, color: green)
-        setPixel(&grid, x: 0, y: 9, color: green)
-        setPixel(&grid, x: 2, y: 7, color: darkGreen)
-        setPixel(&grid, x: 2, y: 8, color: darkGreen)
-        // Muscle highlight
-        setPixel(&grid, x: 1, y: 7, color: brightGreen)
-        // Fist
-        setPixel(&grid, x: 0, y: 10, color: green)
-        setPixel(&grid, x: 1, y: 10, color: green)
-        setPixel(&grid, x: 0, y: 9, color: darkGreen)
-
-        // === RIGHT ARM (smashing down, massive) ===
-        setPixel(&grid, x: 14, y: 7, color: green)
-        setPixel(&grid, x: 15, y: 7, color: green)
-        setPixel(&grid, x: 14, y: 8, color: green)
-        setPixel(&grid, x: 15, y: 8, color: green)
-        setPixel(&grid, x: 14, y: 9, color: green)
-        setPixel(&grid, x: 15, y: 9, color: green)
-        setPixel(&grid, x: 13, y: 7, color: darkGreen)
-        setPixel(&grid, x: 13, y: 8, color: darkGreen)
-        // Muscle highlight
-        setPixel(&grid, x: 15, y: 7, color: brightGreen)
-        // Fist
-        setPixel(&grid, x: 14, y: 10, color: green)
-        setPixel(&grid, x: 15, y: 10, color: green)
-        setPixel(&grid, x: 15, y: 9, color: darkGreen)
-
-        // === WAIST (purple pants, torn) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 10, color: purple) }
-        setPixel(&grid, x: 4, y: 10, color: darkPurple)
-        setPixel(&grid, x: 11, y: 10, color: darkPurple)
-
-        // Belt area (torn pants edge)
-        for x in 4...11 { setPixel(&grid, x: x, y: 11, color: purple) }
-        setPixel(&grid, x: 5, y: 11, color: brightPurple)
-        setPixel(&grid, x: 10, y: 11, color: brightPurple)
-
-        // === LEGS (massive, purple pants) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 12, color: purple) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 12, color: purple) }
-        for x in 3...6 { setPixel(&grid, x: x, y: 13, color: darkPurple) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 13, color: darkPurple) }
-
-        // Leg muscle
-        setPixel(&grid, x: 3, y: 12, color: brightPurple)
-        setPixel(&grid, x: 12, y: 12, color: brightPurple)
-
-        // === FEET (green, bare, massive) ===
-        for x in 2...6 { setPixel(&grid, x: x, y: 14, color: green) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 14, color: green) }
-        setPixel(&grid, x: 2, y: 14, color: darkGreen)
-        setPixel(&grid, x: 13, y: 14, color: darkGreen)
-        setPixel(&grid, x: 3, y: 14, color: brightGreen)
-        setPixel(&grid, x: 12, y: 14, color: brightGreen)
-        // Toes
-        setPixel(&grid, x: 2, y: 14, color: darkGreen)
-        setPixel(&grid, x: 6, y: 14, color: darkGreen)
-        setPixel(&grid, x: 9, y: 14, color: darkGreen)
-        setPixel(&grid, x: 13, y: 14, color: darkGreen)
-
-        // Ground crack effect (smash impact)
-        let smashPhase = frame % 4
-        if smashPhase == 0 {
-            setPixel(&grid, x: 2, y: 15, color: darkGreen)
-            setPixel(&grid, x: 7, y: 15, color: darkGreen)
-            setPixel(&grid, x: 8, y: 15, color: darkGreen)
-            setPixel(&grid, x: 13, y: 15, color: darkGreen)
-        } else if smashPhase == 1 {
-            setPixel(&grid, x: 3, y: 15, color: darkGreen)
-            setPixel(&grid, x: 6, y: 15, color: darkGreen)
-            setPixel(&grid, x: 9, y: 15, color: darkGreen)
-            setPixel(&grid, x: 12, y: 15, color: darkGreen)
-        } else if smashPhase == 2 {
-            setPixel(&grid, x: 1, y: 15, color: darkGreen)
-            setPixel(&grid, x: 5, y: 15, color: darkGreen)
-            setPixel(&grid, x: 10, y: 15, color: darkGreen)
-            setPixel(&grid, x: 14, y: 15, color: darkGreen)
+        // Head outline
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Head fill (big green head)
+        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: green) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: green) }
+        // Eyes (angry)
+        setPixel(&grid, x: 5, y: 1, color: black); setPixel(&grid, x: 10, y: 1, color: black)
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        // Eyebrows (angry)
+        setPixel(&grid, x: 5, y: 0, color: darkGreen); setPixel(&grid, x: 10, y: 0, color: darkGreen)
+        // Mouth
+        setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 3, color: black)
+        // Body (big green torso)
+        for x in 3...12 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: green) }
+        // Purple pants
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: purple) }
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 7, color: purple); setPixel(&grid, x: 10, y: 7, color: purple)
         } else {
-            setPixel(&grid, x: 4, y: 15, color: darkGreen)
-            setPixel(&grid, x: 7, y: 15, color: darkGreen)
-            setPixel(&grid, x: 8, y: 15, color: darkGreen)
-            setPixel(&grid, x: 11, y: 15, color: darkGreen)
+            setPixel(&grid, x: 4, y: 7, color: purple); setPixel(&grid, x: 11, y: 7, color: purple)
         }
     }
 
     func drawMVWolverine(grid: inout [[NSColor]], frame: Int) {
-        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
-        let darkYellow = NSColor(red: 0.8, green: 0.65, blue: 0.0, alpha: 1.0)
-        let brightYellow = NSColor(red: 1.0, green: 0.95, blue: 0.3, alpha: 1.0)
-        let blue = NSColor(red: 0.1, green: 0.25, blue: 0.6, alpha: 1.0)
-        let darkBlue = NSColor(red: 0.05, green: 0.12, blue: 0.4, alpha: 1.0)
-        let brightBlue = NSColor(red: 0.2, green: 0.4, blue: 0.85, alpha: 1.0)
+        let yellow = NSColor(red: 0.95, green: 0.85, blue: 0.2, alpha: 1.0)
+        let darkYellow = NSColor(red: 0.7, green: 0.6, blue: 0.1, alpha: 1.0)
+        let blue = NSColor(red: 0.1, green: 0.2, blue: 0.6, alpha: 1.0)
         let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
         let black = NSColor.black
         let white = NSColor.white
-        let silver = NSColor(red: 0.85, green: 0.85, blue: 0.88, alpha: 1.0)
-        let clawBright = NSColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let anim = frame % 2
 
-        // === MASK (yellow with black pointed ears/wings) ===
-        // Ear wings (black, pointed)
-        setPixel(&grid, x: 4, y: 0, color: black)
-        setPixel(&grid, x: 11, y: 0, color: black)
-        setPixel(&grid, x: 4, y: 1, color: black)
-        setPixel(&grid, x: 11, y: 1, color: black)
-        setPixel(&grid, x: 3, y: 2, color: black)
-        setPixel(&grid, x: 12, y: 2, color: black)
-
-        // Mask top (yellow)
-        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: brightYellow) }
+        // Mask wings (pointy)
+        setPixel(&grid, x: 3, y: 0, color: black); setPixel(&grid, x: 12, y: 0, color: black)
+        setPixel(&grid, x: 4, y: 1, color: black); setPixel(&grid, x: 11, y: 1, color: black)
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Head fill (yellow mask)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: yellow) }
         for x in 5...10 { setPixel(&grid, x: x, y: 1, color: yellow) }
-        setPixel(&grid, x: 5, y: 1, color: darkYellow)
-        setPixel(&grid, x: 10, y: 1, color: darkYellow)
-
-        // Mask brow (black, aggressive)
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: yellow) }
-        setPixel(&grid, x: 5, y: 2, color: black)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
-        setPixel(&grid, x: 10, y: 2, color: black)
-
-        // Face (skin with sideburns)
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
-        setPixel(&grid, x: 5, y: 3, color: black)
-        setPixel(&grid, x: 10, y: 3, color: black)
-        // Sideburns
-        setPixel(&grid, x: 5, y: 4, color: black)
-        setPixel(&grid, x: 10, y: 4, color: black)
-
-        // Eyes (white, feral)
-        setPixel(&grid, x: 6, y: 2, color: white)
-        setPixel(&grid, x: 7, y: 2, color: white)
-        setPixel(&grid, x: 8, y: 2, color: white)
-        setPixel(&grid, x: 9, y: 2, color: white)
-
-        // Mouth (growling)
-        setPixel(&grid, x: 7, y: 3, color: black)
-        setPixel(&grid, x: 8, y: 3, color: black)
-
-        // Chin
-        setPixel(&grid, x: 6, y: 4, color: skin)
-        setPixel(&grid, x: 7, y: 4, color: skin)
-        setPixel(&grid, x: 8, y: 4, color: skin)
-        setPixel(&grid, x: 9, y: 4, color: skin)
-
-        // === NECK (yellow) ===
-        setPixel(&grid, x: 7, y: 5, color: yellow)
-        setPixel(&grid, x: 8, y: 5, color: yellow)
-
-        // === SHOULDERS (yellow, muscular) ===
-        for x in 2...5 { setPixel(&grid, x: x, y: 6, color: yellow) }
-        for x in 10...13 { setPixel(&grid, x: x, y: 6, color: yellow) }
-        setPixel(&grid, x: 2, y: 6, color: brightYellow)
-        setPixel(&grid, x: 13, y: 6, color: brightYellow)
-        // Shoulder stripes
-        setPixel(&grid, x: 3, y: 6, color: darkYellow)
-        setPixel(&grid, x: 12, y: 6, color: darkYellow)
-
-        // === CHEST (yellow with black tiger stripes) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: yellow) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: yellow) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: yellow) }
-        // Chest highlight
-        setPixel(&grid, x: 6, y: 7, color: brightYellow)
-        setPixel(&grid, x: 9, y: 7, color: brightYellow)
-
-        // Black tiger stripes
-        setPixel(&grid, x: 6, y: 7, color: black)
-        setPixel(&grid, x: 9, y: 7, color: black)
-        setPixel(&grid, x: 5, y: 8, color: black)
-        setPixel(&grid, x: 10, y: 8, color: black)
-
-        // === LEFT ARM (with CLAWS extended) ===
-        setPixel(&grid, x: 1, y: 6, color: yellow)
-        setPixel(&grid, x: 1, y: 7, color: yellow)
-        setPixel(&grid, x: 1, y: 8, color: yellow)
-        setPixel(&grid, x: 2, y: 7, color: darkYellow)
-        setPixel(&grid, x: 2, y: 8, color: darkYellow)
-        // Glove (blue)
-        setPixel(&grid, x: 1, y: 9, color: blue)
-        setPixel(&grid, x: 2, y: 9, color: blue)
-
-        // ADAMANTIUM CLAWS (3 claws, animated slash)
-        let clawPhase = frame % 4
-        switch clawPhase {
-        case 0:
-            setPixel(&grid, x: 0, y: 8, color: clawBright)
-            setPixel(&grid, x: 0, y: 9, color: silver)
-            setPixel(&grid, x: 0, y: 10, color: silver)
-            setPixel(&grid, x: 1, y: 10, color: clawBright)
-        case 1:
-            setPixel(&grid, x: 0, y: 7, color: clawBright)
-            setPixel(&grid, x: 0, y: 8, color: silver)
-            setPixel(&grid, x: 0, y: 9, color: silver)
-            setPixel(&grid, x: 1, y: 9, color: clawBright)
-        case 2:
-            setPixel(&grid, x: 0, y: 8, color: silver)
-            setPixel(&grid, x: 0, y: 9, color: clawBright)
-            setPixel(&grid, x: 0, y: 10, color: silver)
-            setPixel(&grid, x: 1, y: 9, color: silver)
-        default:
-            setPixel(&grid, x: 0, y: 7, color: silver)
-            setPixel(&grid, x: 0, y: 8, color: clawBright)
-            setPixel(&grid, x: 0, y: 9, color: clawBright)
-            setPixel(&grid, x: 1, y: 8, color: silver)
-        }
-
-        // === RIGHT ARM (with CLAWS extended) ===
-        setPixel(&grid, x: 14, y: 6, color: yellow)
-        setPixel(&grid, x: 15, y: 6, color: yellow)
-        setPixel(&grid, x: 15, y: 7, color: yellow)
-        setPixel(&grid, x: 14, y: 7, color: darkYellow)
-        setPixel(&grid, x: 14, y: 8, color: darkYellow)
-        // Glove (blue)
-        setPixel(&grid, x: 14, y: 9, color: blue)
-        setPixel(&grid, x: 15, y: 9, color: blue)
-
-        // ADAMANTIUM CLAWS (right hand, opposite slash)
-        switch clawPhase {
-        case 0:
-            setPixel(&grid, x: 15, y: 8, color: clawBright)
-            setPixel(&grid, x: 15, y: 9, color: silver)
-            setPixel(&grid, x: 15, y: 10, color: silver)
-            setPixel(&grid, x: 14, y: 10, color: clawBright)
-        case 1:
-            setPixel(&grid, x: 15, y: 7, color: clawBright)
-            setPixel(&grid, x: 15, y: 8, color: silver)
-            setPixel(&grid, x: 15, y: 9, color: silver)
-            setPixel(&grid, x: 14, y: 9, color: clawBright)
-        case 2:
-            setPixel(&grid, x: 15, y: 8, color: silver)
-            setPixel(&grid, x: 15, y: 9, color: clawBright)
-            setPixel(&grid, x: 15, y: 10, color: silver)
-            setPixel(&grid, x: 14, y: 9, color: silver)
-        default:
-            setPixel(&grid, x: 15, y: 7, color: silver)
-            setPixel(&grid, x: 15, y: 8, color: clawBright)
-            setPixel(&grid, x: 15, y: 9, color: clawBright)
-            setPixel(&grid, x: 14, y: 8, color: silver)
-        }
-
-        // === WAIST (blue) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 9, color: blue) }
-        setPixel(&grid, x: 5, y: 9, color: darkBlue)
-        setPixel(&grid, x: 10, y: 9, color: darkBlue)
-
-        // Belt (yellow with X buckle)
-        for x in 5...10 { setPixel(&grid, x: x, y: 10, color: yellow) }
-        setPixel(&grid, x: 7, y: 10, color: black)
-        setPixel(&grid, x: 8, y: 10, color: black)
-
-        // === LEGS (blue, muscular) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 4...6 { setPixel(&grid, x: x, y: 12, color: darkBlue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 12, color: darkBlue) }
-        setPixel(&grid, x: 4, y: 11, color: brightBlue)
-        setPixel(&grid, x: 11, y: 11, color: brightBlue)
-
-        // === BOOTS (yellow with blue tops) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 13, color: yellow) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 13, color: yellow) }
-        setPixel(&grid, x: 3, y: 13, color: brightYellow)
-        setPixel(&grid, x: 12, y: 13, color: brightYellow)
-        // Boot tops (blue, pointed)
-        setPixel(&grid, x: 3, y: 12, color: blue)
-        setPixel(&grid, x: 12, y: 12, color: blue)
-        // Boot soles
-        for x in 3...6 { setPixel(&grid, x: x, y: 14, color: darkYellow) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 14, color: darkYellow) }
-    }
-
-    func drawMVDeadpool(grid: inout [[NSColor]], frame: Int) {
-        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.6, green: 0.05, blue: 0.05, alpha: 1.0)
-        let brightRed = NSColor(red: 0.95, green: 0.2, blue: 0.15, alpha: 1.0)
-        let black = NSColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.0)
-        let white = NSColor.white
-        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let silver = NSColor(red: 0.85, green: 0.85, blue: 0.88, alpha: 1.0)
-
-        // === HEAD (red mask with black eye patches) ===
-        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: red) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: red) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: red) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
-
-        // Black eye patches (angular, aggressive)
-        setPixel(&grid, x: 5, y: 2, color: black)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
-        setPixel(&grid, x: 10, y: 2, color: black)
-        setPixel(&grid, x: 5, y: 3, color: black)
-        setPixel(&grid, x: 6, y: 3, color: black)
-        setPixel(&grid, x: 9, y: 3, color: black)
-        setPixel(&grid, x: 10, y: 3, color: black)
-        setPixel(&grid, x: 6, y: 1, color: black)
-        setPixel(&grid, x: 9, y: 1, color: black)
-
-        // Eyes (white, expressive — squinting or wide based on frame)
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 6, y: 2, color: white)
-            setPixel(&grid, x: 9, y: 2, color: white)
+        // Face (skin)
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Eyes (white, angry)
+        setPixel(&grid, x: 6, y: 2, color: white); setPixel(&grid, x: 9, y: 2, color: white)
+        // Body (yellow and blue)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: yellow) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: blue) }
+        // Claws (silver, animated)
+        if anim == 0 {
+            setPixel(&grid, x: 3, y: 4, color: silver); setPixel(&grid, x: 3, y: 5, color: silver)
+            setPixel(&grid, x: 12, y: 4, color: silver); setPixel(&grid, x: 12, y: 5, color: silver)
         } else {
-            setPixel(&grid, x: 6, y: 2, color: white)
-            setPixel(&grid, x: 7, y: 2, color: white)
-            setPixel(&grid, x: 8, y: 2, color: white)
-            setPixel(&grid, x: 9, y: 2, color: white)
-            setPixel(&grid, x: 6, y: 3, color: white)
-            setPixel(&grid, x: 9, y: 3, color: white)
+            setPixel(&grid, x: 2, y: 4, color: silver); setPixel(&grid, x: 2, y: 5, color: silver)
+            setPixel(&grid, x: 13, y: 4, color: silver); setPixel(&grid, x: 13, y: 5, color: silver)
         }
-
-        // Mouth line
-        setPixel(&grid, x: 7, y: 4, color: black)
-        setPixel(&grid, x: 8, y: 4, color: black)
-        setPixel(&grid, x: 6, y: 4, color: darkRed)
-        setPixel(&grid, x: 9, y: 4, color: darkRed)
-
-        // Mask seam line
-        setPixel(&grid, x: 7, y: 0, color: darkRed)
-        setPixel(&grid, x: 8, y: 0, color: darkRed)
-
-        // === NECK ===
-        setPixel(&grid, x: 7, y: 5, color: red)
-        setPixel(&grid, x: 8, y: 5, color: red)
-
-        // === SHOULDERS (red with black straps) ===
-        for x in 2...5 { setPixel(&grid, x: x, y: 6, color: red) }
-        for x in 10...13 { setPixel(&grid, x: x, y: 6, color: red) }
-        setPixel(&grid, x: 4, y: 6, color: black)
-        setPixel(&grid, x: 11, y: 6, color: black)
-        setPixel(&grid, x: 2, y: 6, color: darkRed)
-        setPixel(&grid, x: 13, y: 6, color: darkRed)
-
-        // === CHEST (red with black harness) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: red) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 8, color: red) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: red) }
-
-        // Black harness straps (X pattern)
-        setPixel(&grid, x: 5, y: 7, color: black)
-        setPixel(&grid, x: 10, y: 7, color: black)
-        setPixel(&grid, x: 6, y: 8, color: black)
-        setPixel(&grid, x: 9, y: 8, color: black)
-        setPixel(&grid, x: 7, y: 9, color: black)
-        setPixel(&grid, x: 8, y: 9, color: black)
-
-        // Chest highlight
-        setPixel(&grid, x: 7, y: 7, color: brightRed)
-        setPixel(&grid, x: 8, y: 7, color: brightRed)
-
-        // === LEFT ARM ===
-        setPixel(&grid, x: 1, y: 6, color: red)
-        setPixel(&grid, x: 1, y: 7, color: red)
-        setPixel(&grid, x: 1, y: 8, color: red)
-        setPixel(&grid, x: 2, y: 7, color: darkRed)
-        setPixel(&grid, x: 0, y: 8, color: red)
-        setPixel(&grid, x: 1, y: 9, color: red)
-        // Hand
-        setPixel(&grid, x: 0, y: 9, color: red)
-        setPixel(&grid, x: 0, y: 10, color: red)
-        setPixel(&grid, x: 1, y: 10, color: red)
-
-        // === RIGHT ARM (katanas!) ===
-        setPixel(&grid, x: 14, y: 6, color: red)
-        setPixel(&grid, x: 15, y: 6, color: red)
-        setPixel(&grid, x: 14, y: 7, color: red)
-        setPixel(&grid, x: 14, y: 8, color: red)
-        setPixel(&grid, x: 13, y: 7, color: darkRed)
-        // Hand
-        setPixel(&grid, x: 14, y: 9, color: red)
-        setPixel(&grid, x: 15, y: 9, color: red)
-
-        // KATANA 1 (held high)
-        setPixel(&grid, x: 15, y: 5, color: silver)
-        setPixel(&grid, x: 15, y: 4, color: silver)
-        setPixel(&grid, x: 15, y: 3, color: white)
-        setPixel(&grid, x: 15, y: 2, color: white)
-        setPixel(&grid, x: 15, y: 1, color: silver)
-
-        // KATANA 2 (held out)
-        setPixel(&grid, x: 14, y: 5, color: silver)
-        setPixel(&grid, x: 13, y: 5, color: silver)
-        setPixel(&grid, x: 12, y: 5, color: white)
-        setPixel(&grid, x: 11, y: 5, color: silver)
-
-        // === WAIST (black belt with pouches) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 10, color: black) }
-        setPixel(&grid, x: 5, y: 10, color: NSColor(red: 0.6, green: 0.5, blue: 0.2, alpha: 1.0))
-        setPixel(&grid, x: 7, y: 10, color: NSColor(red: 0.6, green: 0.5, blue: 0.2, alpha: 1.0))
-        setPixel(&grid, x: 8, y: 10, color: NSColor(red: 0.6, green: 0.5, blue: 0.2, alpha: 1.0))
-        setPixel(&grid, x: 10, y: 10, color: NSColor(red: 0.6, green: 0.5, blue: 0.2, alpha: 1.0))
-
-        // === LEGS (red with black) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 11, color: red) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 11, color: red) }
-        for x in 4...6 { setPixel(&grid, x: x, y: 12, color: red) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 12, color: red) }
-        for x in 4...6 { setPixel(&grid, x: x, y: 13, color: black) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 13, color: black) }
-
-        // Leg highlights
-        setPixel(&grid, x: 5, y: 11, color: brightRed)
-        setPixel(&grid, x: 10, y: 11, color: brightRed)
-
-        // === BOOTS (red with black) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 14, color: red) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 14, color: red) }
-        setPixel(&grid, x: 3, y: 14, color: black)
-        setPixel(&grid, x: 12, y: 14, color: black)
-        setPixel(&grid, x: 4, y: 14, color: brightRed)
-        setPixel(&grid, x: 11, y: 14, color: brightRed)
-    }
-
-    func drawMVBlackPanther(grid: inout [[NSColor]], frame: Int) {
-        let black = NSColor(red: 0.08, green: 0.08, blue: 0.1, alpha: 1.0)
-        let darkBlack = NSColor(red: 0.03, green: 0.03, blue: 0.05, alpha: 1.0)
-        let highlight = NSColor(red: 0.2, green: 0.2, blue: 0.25, alpha: 1.0)
-        let silver = NSColor(red: 0.65, green: 0.65, blue: 0.7, alpha: 1.0)
-        let darkSilver = NSColor(red: 0.4, green: 0.4, blue: 0.45, alpha: 1.0)
-        let purple = NSColor(red: 0.45, green: 0.15, blue: 0.65, alpha: 1.0)
-        let brightPurple = NSColor(red: 0.6, green: 0.3, blue: 0.85, alpha: 1.0)
-        let vibranium = NSColor(red: 0.5, green: 0.2, blue: 0.75, alpha: 1.0)
-
-        // === PANther HEAD (with ears) ===
-        setPixel(&grid, x: 5, y: 0, color: black)
-        setPixel(&grid, x: 10, y: 0, color: black)
-        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: highlight) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: black) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: black) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: black) }
-
-        // Ears (pointed)
-        setPixel(&grid, x: 5, y: 0, color: silver)
-        setPixel(&grid, x: 10, y: 0, color: silver)
-        setPixel(&grid, x: 5, y: 1, color: black)
-        setPixel(&grid, x: 10, y: 1, color: black)
-
-        // Eyes (glowing purple, intense)
-        setPixel(&grid, x: 6, y: 2, color: purple)
-        setPixel(&grid, x: 9, y: 2, color: purple)
-        setPixel(&grid, x: 6, y: 2, color: brightPurple)
-        setPixel(&grid, x: 9, y: 2, color: brightPurple)
-
-        // Nose/snout detail
-        setPixel(&grid, x: 7, y: 3, color: highlight)
-        setPixel(&grid, x: 8, y: 3, color: highlight)
-
-        // Chin
-        setPixel(&grid, x: 6, y: 4, color: highlight)
-        setPixel(&grid, x: 9, y: 4, color: highlight)
-
-        // === NECK (silver necklace/claw) ===
-        setPixel(&grid, x: 6, y: 5, color: silver)
-        setPixel(&grid, x: 7, y: 5, color: silver)
-        setPixel(&grid, x: 8, y: 5, color: silver)
-        setPixel(&grid, x: 9, y: 5, color: silver)
-
-        // === SHOULDERS (black, broad, muscular) ===
-        for x in 1...5 { setPixel(&grid, x: x, y: 6, color: black) }
-        for x in 10...14 { setPixel(&grid, x: x, y: 6, color: black) }
-        setPixel(&grid, x: 1, y: 6, color: highlight)
-        setPixel(&grid, x: 14, y: 6, color: highlight)
-        setPixel(&grid, x: 3, y: 6, color: darkBlack)
-        setPixel(&grid, x: 12, y: 6, color: darkBlack)
-
-        // === CHEST (black with vibranium accents) ===
-        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: black) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 8, color: black) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: black) }
-
-        // Vibranium necklace detail on chest
-        setPixel(&grid, x: 6, y: 7, color: vibranium)
-        setPixel(&grid, x: 7, y: 7, color: silver)
-        setPixel(&grid, x: 8, y: 7, color: silver)
-        setPixel(&grid, x: 9, y: 7, color: vibranium)
-
-        // Chest muscle highlights
-        setPixel(&grid, x: 5, y: 7, color: highlight)
-        setPixel(&grid, x: 10, y: 7, color: highlight)
-        setPixel(&grid, x: 6, y: 8, color: highlight)
-        setPixel(&grid, x: 9, y: 8, color: highlight)
-
-        // Vibranium lines on suit
-        setPixel(&grid, x: 5, y: 8, color: vibranium)
-        setPixel(&grid, x: 10, y: 8, color: vibranium)
-        setPixel(&grid, x: 6, y: 9, color: vibranium)
-        setPixel(&grid, x: 9, y: 9, color: vibranium)
-
-        // === LEFT ARM (claws out!) ===
-        setPixel(&grid, x: 1, y: 7, color: black)
-        setPixel(&grid, x: 1, y: 8, color: black)
-        setPixel(&grid, x: 0, y: 8, color: black)
-        setPixel(&grid, x: 0, y: 9, color: black)
-        setPixel(&grid, x: 1, y: 9, color: black)
-        setPixel(&grid, x: 2, y: 7, color: highlight)
-        // Claws (silver, extended)
-        setPixel(&grid, x: 0, y: 7, color: silver)
-        setPixel(&grid, x: 0, y: 6, color: silver)
-        setPixel(&grid, x: 1, y: 7, color: silver)
-        setPixel(&grid, x: 2, y: 7, color: silver)
-        setPixel(&grid, x: 0, y: 5, color: darkSilver)
-
-        // === RIGHT ARM (claws out!) ===
-        setPixel(&grid, x: 14, y: 7, color: black)
-        setPixel(&grid, x: 15, y: 7, color: black)
-        setPixel(&grid, x: 15, y: 8, color: black)
-        setPixel(&grid, x: 14, y: 8, color: black)
-        setPixel(&grid, x: 14, y: 9, color: black)
-        setPixel(&grid, x: 13, y: 7, color: highlight)
-        // Claws
-        setPixel(&grid, x: 15, y: 7, color: silver)
-        setPixel(&grid, x: 15, y: 6, color: silver)
-        setPixel(&grid, x: 14, y: 7, color: silver)
-        setPixel(&grid, x: 13, y: 7, color: silver)
-        setPixel(&grid, x: 15, y: 5, color: darkSilver)
-
-        // === WAIST (black with silver) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 10, color: black) }
-        setPixel(&grid, x: 5, y: 10, color: silver)
-        setPixel(&grid, x: 10, y: 10, color: silver)
-
-        // === LEGS (black) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 11, color: black) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 11, color: black) }
-        for x in 3...6 { setPixel(&grid, x: x, y: 12, color: black) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 12, color: black) }
-
-        // Leg highlights
-        setPixel(&grid, x: 3, y: 11, color: highlight)
-        setPixel(&grid, x: 12, y: 11, color: highlight)
-
-        // Vibranium accents on legs
-        setPixel(&grid, x: 3, y: 12, color: vibranium)
-        setPixel(&grid, x: 12, y: 12, color: vibranium)
-
-        // === BOOTS (black, clawed) ===
-        for x in 2...6 { setPixel(&grid, x: x, y: 13, color: black) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 13, color: black) }
-        for x in 2...6 { setPixel(&grid, x: x, y: 14, color: darkBlack) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 14, color: darkBlack) }
-        setPixel(&grid, x: 2, y: 14, color: highlight)
-        setPixel(&grid, x: 13, y: 14, color: highlight)
-        // Toe claws
-        setPixel(&grid, x: 2, y: 14, color: silver)
-        setPixel(&grid, x: 13, y: 14, color: silver)
-
-        // === VIBRANIUM ENERGY (animated pulse) ===
-        let pulsePhase = frame % 4
-        if pulsePhase == 0 {
-            setPixel(&grid, x: 6, y: 7, color: brightPurple)
-            setPixel(&grid, x: 9, y: 7, color: brightPurple)
-        } else if pulsePhase == 2 {
-            setPixel(&grid, x: 5, y: 8, color: brightPurple)
-            setPixel(&grid, x: 10, y: 8, color: brightPurple)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: blue)
         }
     }
 
-    func drawMVDoctorStrange(grid: inout [[NSColor]], frame: Int) {
-        let blue = NSColor(red: 0.1, green: 0.25, blue: 0.65, alpha: 1.0)
-        let darkBlue = NSColor(red: 0.05, green: 0.12, blue: 0.4, alpha: 1.0)
-        let brightBlue = NSColor(red: 0.2, green: 0.4, blue: 0.85, alpha: 1.0)
-        let red = NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.55, green: 0.05, blue: 0.05, alpha: 1.0)
-        let brightRed = NSColor(red: 0.95, green: 0.2, blue: 0.15, alpha: 1.0)
-        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
-        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
-        let orange = NSColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1.0)
-        let white = NSColor.white
+    func drawMVNickFury(grid: inout [[NSColor]], frame: Int) {
         let black = NSColor.black
-        let grey = NSColor(red: 0.7, green: 0.7, blue: 0.72, alpha: 1.0)
+        let darkGray = NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1.0)
+        let skin = NSColor(red: 0.55, green: 0.35, blue: 0.2, alpha: 1.0)
+        let white = NSColor.white
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // === HEAD (with grey streaks in hair) ===
-        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: blue) }
-        setPixel(&grid, x: 6, y: 0, color: grey)
-        setPixel(&grid, x: 9, y: 0, color: grey)
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: blue) }
-        setPixel(&grid, x: 5, y: 1, color: grey)
-        setPixel(&grid, x: 10, y: 1, color: grey)
-
-        // Face
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Head fill (bald, dark skin)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: skin) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: skin) }
         for x in 5...10 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: skin) }
-
-        // Eyes (blue, intense, wise)
-        setPixel(&grid, x: 6, y: 2, color: brightBlue)
-        setPixel(&grid, x: 9, y: 2, color: brightBlue)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
-        setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.15, green: 0.4, blue: 0.9, alpha: 1.0))
-        setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.15, green: 0.4, blue: 0.9, alpha: 1.0))
-
-        // Goatee (grey/black)
-        setPixel(&grid, x: 7, y: 4, color: grey)
-        setPixel(&grid, x: 8, y: 4, color: grey)
-        setPixel(&grid, x: 7, y: 3, color: grey)
-        setPixel(&grid, x: 8, y: 3, color: grey)
-
-        // High collar
-        setPixel(&grid, x: 5, y: 4, color: blue)
-        setPixel(&grid, x: 10, y: 4, color: blue)
-        setPixel(&grid, x: 5, y: 3, color: brightBlue)
-        setPixel(&grid, x: 10, y: 3, color: brightBlue)
-
-        // === CLOAK OF LEVITATION (massive red) ===
-        for x in 1...5 { setPixel(&grid, x: x, y: 6, color: red) }
-        for x in 10...14 { setPixel(&grid, x: x, y: 6, color: red) }
-        setPixel(&grid, x: 1, y: 7, color: red)
-        setPixel(&grid, x: 2, y: 7, color: red)
-        setPixel(&grid, x: 13, y: 7, color: red)
-        setPixel(&grid, x: 14, y: 7, color: red)
-        setPixel(&grid, x: 1, y: 8, color: darkRed)
-        setPixel(&grid, x: 2, y: 8, color: darkRed)
-        setPixel(&grid, x: 13, y: 8, color: darkRed)
-        setPixel(&grid, x: 14, y: 8, color: darkRed)
-        setPixel(&grid, x: 1, y: 9, color: darkRed)
-        setPixel(&grid, x: 14, y: 9, color: darkRed)
-
-        // Cloak collar (high, dramatic)
-        setPixel(&grid, x: 4, y: 5, color: brightRed)
-        setPixel(&grid, x: 11, y: 5, color: brightRed)
-        setPixel(&grid, x: 3, y: 5, color: red)
-        setPixel(&grid, x: 12, y: 5, color: red)
-
-        // === CHEST (blue tunic) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: blue) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 8, color: blue) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: blue) }
-
-        // Eye of Agamotto (AMULET — glowing)
-        setPixel(&grid, x: 7, y: 7, color: yellow)
-        setPixel(&grid, x: 8, y: 7, color: yellow)
-        setPixel(&grid, x: 7, y: 7, color: orange)
-        setPixel(&grid, x: 8, y: 7, color: orange)
-        // Glow effect
-        setPixel(&grid, x: 7, y: 6, color: yellow)
-        setPixel(&grid, x: 8, y: 6, color: yellow)
-
-        // Belt (gold)
-        for x in 4...11 { setPixel(&grid, x: x, y: 10, color: yellow) }
-
-        // === LEFT ARM ===
-        setPixel(&grid, x: 2, y: 7, color: blue)
-        setPixel(&grid, x: 2, y: 8, color: blue)
-        setPixel(&grid, x: 2, y: 9, color: blue)
-        setPixel(&grid, x: 1, y: 8, color: darkBlue)
-        setPixel(&grid, x: 1, y: 9, color: darkBlue)
-        // Hand with sling ring
-        setPixel(&grid, x: 1, y: 10, color: skin)
-        setPixel(&grid, x: 1, y: 9, color: skin)
-        setPixel(&grid, x: 2, y: 9, color: yellow)
-
-        // === RIGHT ARM (casting spell) ===
-        setPixel(&grid, x: 13, y: 7, color: blue)
-        setPixel(&grid, x: 13, y: 8, color: blue)
-        setPixel(&grid, x: 14, y: 8, color: blue)
-        setPixel(&grid, x: 15, y: 8, color: blue)
-        // Hand
-        setPixel(&grid, x: 15, y: 9, color: skin)
-        setPixel(&grid, x: 14, y: 9, color: skin)
-
-        // === MAGIC EFFECTS (animated mandala) ===
-        let magicPhase = frame % 4
-        let mandalaColor = NSColor(red: 1.0, green: 0.6, blue: 0.0, alpha: 0.8)
-        let mandalaBright = NSColor(red: 1.0, green: 0.9, blue: 0.3, alpha: 0.9)
-
-        if magicPhase == 0 {
-            setPixel(&grid, x: 14, y: 7, color: mandalaColor)
-            setPixel(&grid, x: 15, y: 7, color: mandalaColor)
-            setPixel(&grid, x: 15, y: 6, color: mandalaBright)
-        } else if magicPhase == 1 {
-            setPixel(&grid, x: 14, y: 6, color: mandalaColor)
-            setPixel(&grid, x: 15, y: 6, color: mandalaColor)
-            setPixel(&grid, x: 14, y: 7, color: mandalaBright)
-            setPixel(&grid, x: 15, y: 7, color: mandalaBright)
-        } else if magicPhase == 2 {
-            setPixel(&grid, x: 13, y: 7, color: mandalaColor)
-            setPixel(&grid, x: 14, y: 7, color: mandalaColor)
-            setPixel(&grid, x: 15, y: 7, color: mandalaBright)
-            setPixel(&grid, x: 14, y: 6, color: mandalaBright)
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Eye patch (left eye)
+        setPixel(&grid, x: 6, y: 1, color: black); setPixel(&grid, x: 6, y: 2, color: black)
+        // Right eye (white)
+        setPixel(&grid, x: 9, y: 1, color: white)
+        // Goatee
+        setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 3, color: black)
+        // Body (black leather)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: darkGray) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGray) }
+        // Collar
+        setPixel(&grid, x: 5, y: 4, color: gray); setPixel(&grid, x: 10, y: 4, color: gray)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: darkGray); setPixel(&grid, x: 10, y: 6, color: darkGray)
         } else {
-            setPixel(&grid, x: 14, y: 6, color: mandalaColor)
-            setPixel(&grid, x: 15, y: 6, color: mandalaColor)
-            setPixel(&grid, x: 15, y: 5, color: mandalaBright)
+            setPixel(&grid, x: 4, y: 6, color: darkGray); setPixel(&grid, x: 11, y: 6, color: darkGray)
         }
-
-        // === LEGS (blue) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 11, color: blue) }
-        for x in 4...6 { setPixel(&grid, x: x, y: 12, color: darkBlue) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 12, color: darkBlue) }
-
-        // === BOOTS (dark blue) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 13, color: darkBlue) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 13, color: darkBlue) }
-        setPixel(&grid, x: 3, y: 13, color: NSColor(red: 0.3, green: 0.15, blue: 0.05, alpha: 1.0))
-        setPixel(&grid, x: 12, y: 13, color: NSColor(red: 0.3, green: 0.15, blue: 0.05, alpha: 1.0))
-    }
-
-    func drawMVThanos(grid: inout [[NSColor]], frame: Int) {
-        let purple = NSColor(red: 0.5, green: 0.25, blue: 0.65, alpha: 1.0)
-        let darkPurple = NSColor(red: 0.35, green: 0.15, blue: 0.45, alpha: 1.0)
-        let brightPurple = NSColor(red: 0.65, green: 0.35, blue: 0.8, alpha: 1.0)
-        let gold = NSColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0)
-        let darkGold = NSColor(red: 0.75, green: 0.6, blue: 0.0, alpha: 1.0)
-        let silver = NSColor(red: 0.75, green: 0.75, blue: 0.78, alpha: 1.0)
-        let blue = NSColor(red: 0.1, green: 0.3, blue: 0.7, alpha: 1.0)
-        let black = NSColor.black
-        let white = NSColor.white
-        let red = NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0)
-
-        // === HEAD (massive purple, scarred) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: purple) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: purple) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: purple) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: purple) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: purple) }
-
-        // Head scars (lines on chin)
-        setPixel(&grid, x: 6, y: 4, color: darkPurple)
-        setPixel(&grid, x: 7, y: 4, color: darkPurple)
-        setPixel(&grid, x: 8, y: 4, color: darkPurple)
-        setPixel(&grid, x: 9, y: 4, color: darkPurple)
-
-        // Eyes (red, menacing)
-        setPixel(&grid, x: 6, y: 2, color: red)
-        setPixel(&grid, x: 9, y: 2, color: red)
-        setPixel(&grid, x: 6, y: 2, color: white)
-        setPixel(&grid, x: 9, y: 2, color: white)
-        setPixel(&grid, x: 6, y: 2, color: red)
-        setPixel(&grid, x: 9, y: 2, color: red)
-
-        // Brow ridge
-        setPixel(&grid, x: 5, y: 2, color: darkPurple)
-        setPixel(&grid, x: 6, y: 1, color: darkPurple)
-        setPixel(&grid, x: 9, y: 1, color: darkPurple)
-        setPixel(&grid, x: 10, y: 2, color: darkPurple)
-
-        // Mouth (grimacing)
-        setPixel(&grid, x: 6, y: 3, color: black)
-        setPixel(&grid, x: 7, y: 3, color: black)
-        setPixel(&grid, x: 8, y: 3, color: black)
-        setPixel(&grid, x: 9, y: 3, color: black)
-
-        // === GOLD HELMET ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 0, color: gold) }
-        setPixel(&grid, x: 4, y: 0, color: darkGold)
-        setPixel(&grid, x: 11, y: 0, color: darkGold)
-        setPixel(&grid, x: 5, y: 0, color: gold)
-        setPixel(&grid, x: 10, y: 0, color: gold)
-
-        // Helmet sides
-        setPixel(&grid, x: 4, y: 1, color: gold)
-        setPixel(&grid, x: 11, y: 1, color: gold)
-        setPixel(&grid, x: 4, y: 2, color: darkGold)
-        setPixel(&grid, x: 11, y: 2, color: darkGold)
-
-        // === NECK (purple, thick) ===
-        setPixel(&grid, x: 6, y: 5, color: purple)
-        setPixel(&grid, x: 7, y: 5, color: purple)
-        setPixel(&grid, x: 8, y: 5, color: purple)
-        setPixel(&grid, x: 9, y: 5, color: purple)
-
-        // === SHOULDERS (MASSIVE gold armor) ===
-        for x in 1...5 { setPixel(&grid, x: x, y: 6, color: gold) }
-        for x in 10...14 { setPixel(&grid, x: x, y: 6, color: gold) }
-        setPixel(&grid, x: 1, y: 6, color: darkGold)
-        setPixel(&grid, x: 14, y: 6, color: darkGold)
-        setPixel(&grid, x: 2, y: 6, color: gold)
-        setPixel(&grid, x: 13, y: 6, color: gold)
-
-        // Shoulder gems
-        setPixel(&grid, x: 2, y: 6, color: blue)
-        setPixel(&grid, x: 13, y: 6, color: blue)
-
-        // === CHEST (gold armor with purple) ===
-        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: gold) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 8, color: purple) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: purple) }
-
-        // Armor detail
-        setPixel(&grid, x: 5, y: 7, color: darkGold)
-        setPixel(&grid, x: 10, y: 7, color: darkGold)
-        setPixel(&grid, x: 7, y: 7, color: gold)
-        setPixel(&grid, x: 8, y: 7, color: gold)
-
-        // Chest muscle lines
-        setPixel(&grid, x: 6, y: 8, color: darkPurple)
-        setPixel(&grid, x: 9, y: 8, color: darkPurple)
-
-        // === LEFT ARM (gold gauntlet!) ===
-        setPixel(&grid, x: 1, y: 7, color: purple)
-        setPixel(&grid, x: 1, y: 8, color: purple)
-        setPixel(&grid, x: 0, y: 8, color: purple)
-        setPixel(&grid, x: 0, y: 9, color: purple)
-        // GOLD GAUNTLET
-        setPixel(&grid, x: 1, y: 9, color: gold)
-        setPixel(&grid, x: 0, y: 10, color: gold)
-        setPixel(&grid, x: 1, y: 10, color: gold)
-        setPixel(&grid, x: 1, y: 11, color: darkGold)
-        // Infinity stones on gauntlet
-        setPixel(&grid, x: 0, y: 9, color: NSColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0))
-        setPixel(&grid, x: 1, y: 9, color: NSColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0))
-        setPixel(&grid, x: 0, y: 10, color: NSColor(red: 0.0, green: 0.8, blue: 0.0, alpha: 1.0))
-
-        // === RIGHT ARM ===
-        setPixel(&grid, x: 14, y: 7, color: purple)
-        setPixel(&grid, x: 14, y: 8, color: purple)
-        setPixel(&grid, x: 15, y: 8, color: purple)
-        setPixel(&grid, x: 15, y: 9, color: purple)
-        setPixel(&grid, x: 14, y: 9, color: purple)
-        setPixel(&grid, x: 14, y: 10, color: purple)
-
-        // === WAIST (gold belt) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 10, color: gold) }
-        setPixel(&grid, x: 7, y: 10, color: blue)
-        setPixel(&grid, x: 8, y: 10, color: blue)
-
-        // === LEGS (purple) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 11, color: purple) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 11, color: purple) }
-        for x in 3...6 { setPixel(&grid, x: x, y: 12, color: darkPurple) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 12, color: darkPurple) }
-
-        // Leg highlights
-        setPixel(&grid, x: 3, y: 11, color: brightPurple)
-        setPixel(&grid, x: 12, y: 11, color: brightPurple)
-
-        // === BOOTS (gold) ===
-        for x in 2...6 { setPixel(&grid, x: x, y: 13, color: gold) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 13, color: gold) }
-        setPixel(&grid, x: 2, y: 13, color: darkGold)
-        setPixel(&grid, x: 13, y: 13, color: darkGold)
-        setPixel(&grid, x: 3, y: 13, color: gold)
-        setPixel(&grid, x: 12, y: 13, color: gold)
-
-        // Boot soles
-        for x in 2...6 { setPixel(&grid, x: x, y: 14, color: darkGold) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 14, color: darkGold) }
     }
 
     func drawMVLoki(grid: inout [[NSColor]], frame: Int) {
-        let green = NSColor(red: 0.1, green: 0.5, blue: 0.15, alpha: 1.0)
-        let darkGreen = NSColor(red: 0.05, green: 0.3, blue: 0.08, alpha: 1.0)
-        let brightGreen = NSColor(red: 0.2, green: 0.7, blue: 0.3, alpha: 1.0)
-        let gold = NSColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0)
-        let darkGold = NSColor(red: 0.75, green: 0.6, blue: 0.0, alpha: 1.0)
-        let brightGold = NSColor(red: 1.0, green: 0.95, blue: 0.4, alpha: 1.0)
+        let green = NSColor(red: 0.2, green: 0.6, blue: 0.25, alpha: 1.0)
+        let gold = NSColor(red: 0.9, green: 0.75, blue: 0.2, alpha: 1.0)
         let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
         let black = NSColor.black
         let white = NSColor.white
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let darkGreen = NSColor(red: 0.1, green: 0.4, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
 
-        // === HORNS (TALL gold, curved) ===
-        setPixel(&grid, x: 5, y: 0, color: gold)
-        setPixel(&grid, x: 10, y: 0, color: gold)
-        setPixel(&grid, x: 4, y: 0, color: darkGold)
-        setPixel(&grid, x: 11, y: 0, color: darkGold)
-        setPixel(&grid, x: 5, y: 1, color: gold)
-        setPixel(&grid, x: 10, y: 1, color: gold)
-        setPixel(&grid, x: 4, y: 1, color: darkGold)
-        setPixel(&grid, x: 11, y: 1, color: darkGold)
-        // Horn tips
-        setPixel(&grid, x: 3, y: 0, color: brightGold)
-        setPixel(&grid, x: 12, y: 0, color: brightGold)
-
-        // === CROWN (gold, tall) ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: gold) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: gold) }
-        setPixel(&grid, x: 5, y: 1, color: darkGold)
-        setPixel(&grid, x: 10, y: 1, color: darkGold)
-        // Crown jewel
-        setPixel(&grid, x: 7, y: 1, color: NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0))
-        setPixel(&grid, x: 8, y: 1, color: NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0))
-
-        // === FACE ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: skin) }
-
-        // Eyes (green, mischievous, glowing)
-        setPixel(&grid, x: 6, y: 3, color: green)
-        setPixel(&grid, x: 9, y: 3, color: green)
-        setPixel(&grid, x: 6, y: 3, color: brightGreen)
-        setPixel(&grid, x: 9, y: 3, color: brightGreen)
-
-        // Eyebrows (arched, evil)
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
-
-        // Smirk
-        setPixel(&grid, x: 7, y: 4, color: darkGreen)
-        setPixel(&grid, x: 8, y: 4, color: darkGreen)
-        setPixel(&grid, x: 9, y: 4, color: skin)
-
-        // Chin
-        setPixel(&grid, x: 7, y: 5, color: skin)
-        setPixel(&grid, x: 8, y: 5, color: skin)
-
-        // === NECK (green collar) ===
-        setPixel(&grid, x: 6, y: 5, color: green)
-        setPixel(&grid, x: 7, y: 5, color: green)
-        setPixel(&grid, x: 8, y: 5, color: green)
-        setPixel(&grid, x: 9, y: 5, color: green)
-
-        // === SHOULDERS (green with gold trim) ===
-        for x in 1...5 { setPixel(&grid, x: x, y: 6, color: green) }
-        for x in 10...14 { setPixel(&grid, x: x, y: 6, color: green) }
-        setPixel(&grid, x: 1, y: 6, color: darkGreen)
-        setPixel(&grid, x: 14, y: 6, color: darkGreen)
-        setPixel(&grid, x: 3, y: 6, color: gold)
-        setPixel(&grid, x: 12, y: 6, color: gold)
-
-        // Cape (dark green)
-        setPixel(&grid, x: 1, y: 7, color: darkGreen)
-        setPixel(&grid, x: 2, y: 7, color: darkGreen)
-        setPixel(&grid, x: 13, y: 7, color: darkGreen)
-        setPixel(&grid, x: 14, y: 7, color: darkGreen)
-        setPixel(&grid, x: 1, y: 8, color: darkGreen)
-        setPixel(&grid, x: 14, y: 8, color: darkGreen)
-
-        // === CHEST (green with gold patterns) ===
-        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: green) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 8, color: green) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: green) }
-
-        // Gold pattern on chest
-        setPixel(&grid, x: 6, y: 7, color: gold)
-        setPixel(&grid, x: 7, y: 7, color: gold)
-        setPixel(&grid, x: 8, y: 7, color: gold)
-        setPixel(&grid, x: 9, y: 7, color: gold)
-        setPixel(&grid, x: 6, y: 8, color: darkGold)
-        setPixel(&grid, x: 9, y: 8, color: darkGold)
-
-        // === LEFT ARM (holding scepter) ===
-        setPixel(&grid, x: 1, y: 7, color: green)
-        setPixel(&grid, x: 1, y: 8, color: green)
-        setPixel(&grid, x: 0, y: 8, color: green)
-        setPixel(&grid, x: 0, y: 9, color: green)
-        setPixel(&grid, x: 2, y: 7, color: darkGreen)
-        // Hand
-        setPixel(&grid, x: 0, y: 10, color: skin)
-        setPixel(&grid, x: 1, y: 10, color: skin)
-
-        // SCEPTER (gold with blue gem)
-        setPixel(&grid, x: 0, y: 7, color: gold)
-        setPixel(&grid, x: 0, y: 6, color: gold)
-        setPixel(&grid, x: 0, y: 5, color: gold)
-        setPixel(&grid, x: 0, y: 4, color: gold)
-        setPixel(&grid, x: 0, y: 3, color: gold)
-        setPixel(&grid, x: 0, y: 2, color: gold)
-        // Blue gem (Mind Stone)
-        setPixel(&grid, x: 0, y: 2, color: NSColor(red: 0.1, green: 0.3, blue: 0.9, alpha: 1.0))
-        setPixel(&grid, x: 0, y: 1, color: NSColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 1.0))
-
-        // === RIGHT ARM (holding tesseract energy) ===
-        setPixel(&grid, x: 14, y: 7, color: green)
-        setPixel(&grid, x: 14, y: 8, color: green)
-        setPixel(&grid, x: 15, y: 8, color: green)
-        setPixel(&grid, x: 15, y: 9, color: green)
-        setPixel(&grid, x: 13, y: 7, color: darkGreen)
-        // Hand
-        setPixel(&grid, x: 15, y: 10, color: skin)
-        setPixel(&grid, x: 14, y: 10, color: skin)
-
-        // === WAIST (gold belt) ===
-        for x in 4...11 { setPixel(&grid, x: x, y: 10, color: gold) }
-        setPixel(&grid, x: 7, y: 10, color: NSColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1.0))
-
-        // === LEGS (green) ===
-        for x in 4...6 { setPixel(&grid, x: x, y: 11, color: green) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 11, color: green) }
-        for x in 4...6 { setPixel(&grid, x: x, y: 12, color: darkGreen) }
-        for x in 9...11 { setPixel(&grid, x: x, y: 12, color: darkGreen) }
-
-        // Leg gold trim
-        setPixel(&grid, x: 4, y: 11, color: gold)
-        setPixel(&grid, x: 11, y: 11, color: gold)
-
-        // === BOOTS (gold) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 13, color: gold) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 13, color: gold) }
-        setPixel(&grid, x: 3, y: 13, color: darkGold)
-        setPixel(&grid, x: 12, y: 13, color: darkGold)
-
-        // Boot soles
-        for x in 3...6 { setPixel(&grid, x: x, y: 14, color: darkGold) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 14, color: darkGold) }
-
-        // === MAGIC EFFECTS (scepter energy, animated) ===
-        let magicPhase = frame % 4
-        if magicPhase == 0 {
-            setPixel(&grid, x: 0, y: 1, color: white)
-            setPixel(&grid, x: 0, y: 0, color: NSColor(red: 0.3, green: 0.6, blue: 1.0, alpha: 1.0))
-        } else if magicPhase == 1 {
-            setPixel(&grid, x: 0, y: 0, color: white)
-        } else if magicPhase == 2 {
-            setPixel(&grid, x: 1, y: 2, color: NSColor(red: 0.2, green: 0.5, blue: 1.0, alpha: 1.0))
+        // Horned helmet
+        setPixel(&grid, x: 4, y: 0, color: gold); setPixel(&grid, x: 11, y: 0, color: gold)
+        setPixel(&grid, x: 5, y: 1, color: gold); setPixel(&grid, x: 10, y: 1, color: gold)
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Head fill (green helmet, blonde hair)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: gold) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: green) }
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Eyes (mischievous)
+        setPixel(&grid, x: 6, y: 2, color: green); setPixel(&grid, x: 9, y: 2, color: green)
+        // Body (green and gold)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: darkGreen) }
+        // Gold accents
+        setPixel(&grid, x: 7, y: 4, color: gold); setPixel(&grid, x: 8, y: 4, color: gold)
+        // Cape
+        setPixel(&grid, x: 3, y: 4, color: green); setPixel(&grid, x: 12, y: 4, color: green)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: gold); setPixel(&grid, x: 10, y: 6, color: gold)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: gold); setPixel(&grid, x: 11, y: 6, color: gold)
         }
     }
 
-    func drawMVMagneto(grid: inout [[NSColor]], frame: Int) {
-        let red = NSColor(red: 0.85, green: 0.1, blue: 0.1, alpha: 1.0)
-        let darkRed = NSColor(red: 0.6, green: 0.05, blue: 0.05, alpha: 1.0)
-        let brightRed = NSColor(red: 0.95, green: 0.2, blue: 0.15, alpha: 1.0)
-        let purple = NSColor(red: 0.55, green: 0.15, blue: 0.6, alpha: 1.0)
-        let darkPurple = NSColor(red: 0.35, green: 0.08, blue: 0.4, alpha: 1.0)
-        let brightPurple = NSColor(red: 0.7, green: 0.3, blue: 0.85, alpha: 1.0)
+    func drawMVBlackWidow(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.75, green: 0.15, blue: 0.1, alpha: 1.0)
+        let black = NSColor.black
+        let darkGray = NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1.0)
         let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
         let white = NSColor.white
-        let black = NSColor.black
-        let silver = NSColor(red: 0.7, green: 0.7, blue: 0.73, alpha: 1.0)
+        let outline = NSColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // === HELMET (red, iconic shape) ===
+        // Head outline
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: outline) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: outline) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: outline) }
+        // Hair (red, long)
         for x in 5...10 { setPixel(&grid, x: x, y: 0, color: red) }
         for x in 4...11 { setPixel(&grid, x: x, y: 1, color: red) }
-        setPixel(&grid, x: 4, y: 0, color: darkRed)
-        setPixel(&grid, x: 11, y: 0, color: darkRed)
-        setPixel(&grid, x: 5, y: 0, color: brightRed)
-        setPixel(&grid, x: 10, y: 0, color: brightRed)
-
-        // Helmet forehead crest
-        setPixel(&grid, x: 7, y: 0, color: brightRed)
-        setPixel(&grid, x: 8, y: 0, color: brightRed)
-
-        // Helmet sides
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: red) }
-        setPixel(&grid, x: 4, y: 2, color: darkRed)
-        setPixel(&grid, x: 11, y: 2, color: darkRed)
-
-        // === FACE ===
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: skin) }
-
-        // Eyes (intense, glowing purple — magnetic power)
-        setPixel(&grid, x: 6, y: 3, color: purple)
-        setPixel(&grid, x: 9, y: 3, color: purple)
-        setPixel(&grid, x: 6, y: 3, color: brightPurple)
-        setPixel(&grid, x: 9, y: 3, color: brightPurple)
-
-        // Brow (stern)
-        setPixel(&grid, x: 5, y: 3, color: black)
-        setPixel(&grid, x: 10, y: 3, color: black)
-
-        // Mouth (firm)
-        setPixel(&grid, x: 7, y: 4, color: darkRed)
-        setPixel(&grid, x: 8, y: 4, color: darkRed)
-
-        // Grey hair at sides
-        setPixel(&grid, x: 5, y: 3, color: silver)
-        setPixel(&grid, x: 10, y: 3, color: silver)
-
-        // === NECK ===
-        setPixel(&grid, x: 6, y: 5, color: red)
-        setPixel(&grid, x: 7, y: 5, color: red)
-        setPixel(&grid, x: 8, y: 5, color: red)
-        setPixel(&grid, x: 9, y: 5, color: red)
-
-        // === SHOULDERS (red, massive, with cape) ===
-        for x in 1...5 { setPixel(&grid, x: x, y: 6, color: red) }
-        for x in 10...14 { setPixel(&grid, x: x, y: 6, color: red) }
-        setPixel(&grid, x: 1, y: 6, color: darkRed)
-        setPixel(&grid, x: 14, y: 6, color: darkRed)
-        setPixel(&grid, x: 2, y: 6, color: brightRed)
-        setPixel(&grid, x: 13, y: 6, color: brightRed)
-
-        // Cape (purple, flowing)
-        setPixel(&grid, x: 1, y: 7, color: purple)
-        setPixel(&grid, x: 2, y: 7, color: purple)
-        setPixel(&grid, x: 13, y: 7, color: purple)
-        setPixel(&grid, x: 14, y: 7, color: purple)
-        setPixel(&grid, x: 1, y: 8, color: darkPurple)
-        setPixel(&grid, x: 2, y: 8, color: darkPurple)
-        setPixel(&grid, x: 13, y: 8, color: darkPurple)
-        setPixel(&grid, x: 14, y: 8, color: darkPurple)
-        setPixel(&grid, x: 1, y: 9, color: darkPurple)
-        setPixel(&grid, x: 14, y: 9, color: darkPurple)
-
-        // === CHEST (red with silver accents) ===
-        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: red) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 8, color: red) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: red) }
-
-        // Silver X-emblem on chest
-        setPixel(&grid, x: 6, y: 8, color: silver)
-        setPixel(&grid, x: 9, y: 8, color: silver)
-        setPixel(&grid, x: 7, y: 7, color: silver)
-        setPixel(&grid, x: 8, y: 7, color: silver)
-        setPixel(&grid, x: 7, y: 9, color: silver)
-        setPixel(&grid, x: 8, y: 9, color: silver)
-
-        // Belt (red with silver buckle)
-        for x in 4...11 { setPixel(&grid, x: x, y: 10, color: red) }
-        setPixel(&grid, x: 7, y: 10, color: silver)
-        setPixel(&grid, x: 8, y: 10, color: silver)
-
-        // === LEFT ARM (raised, using powers) ===
-        setPixel(&grid, x: 1, y: 7, color: red)
-        setPixel(&grid, x: 1, y: 8, color: red)
-        setPixel(&grid, x: 0, y: 7, color: red)
-        setPixel(&grid, x: 0, y: 8, color: red)
-        setPixel(&grid, x: 0, y: 6, color: red)
-        setPixel(&grid, x: 2, y: 7, color: darkRed)
-        // Hand (open, using powers)
-        setPixel(&grid, x: 0, y: 9, color: skin)
-        setPixel(&grid, x: 1, y: 9, color: skin)
-
-        // Magnetic energy from hand
-        setPixel(&grid, x: 0, y: 5, color: brightPurple)
-        setPixel(&grid, x: 0, y: 4, color: purple)
-
-        // === RIGHT ARM ===
-        setPixel(&grid, x: 14, y: 7, color: red)
-        setPixel(&grid, x: 14, y: 8, color: red)
-        setPixel(&grid, x: 15, y: 7, color: red)
-        setPixel(&grid, x: 15, y: 8, color: red)
-        setPixel(&grid, x: 13, y: 7, color: darkRed)
-        // Hand
-        setPixel(&grid, x: 15, y: 9, color: skin)
-        setPixel(&grid, x: 14, y: 9, color: skin)
-
-        // === LEGS (red) ===
-        for x in 3...6 { setPixel(&grid, x: x, y: 11, color: red) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 11, color: red) }
-        for x in 3...6 { setPixel(&grid, x: x, y: 12, color: darkRed) }
-        for x in 9...12 { setPixel(&grid, x: x, y: 12, color: darkRed) }
-
-        // Leg highlights
-        setPixel(&grid, x: 3, y: 11, color: brightRed)
-        setPixel(&grid, x: 12, y: 11, color: brightRed)
-
-        // === BOOTS (red) ===
-        for x in 2...6 { setPixel(&grid, x: x, y: 13, color: red) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 13, color: red) }
-        setPixel(&grid, x: 2, y: 13, color: darkRed)
-        setPixel(&grid, x: 13, y: 13, color: darkRed)
-
-        // Boot soles
-        for x in 2...6 { setPixel(&grid, x: x, y: 14, color: darkRed) }
-        for x in 9...13 { setPixel(&grid, x: x, y: 14, color: darkRed) }
-
-        // === MAGNETIC FIELD EFFECTS (animated) ===
-        let fieldPhase = frame % 4
-        if fieldPhase == 0 {
-            setPixel(&grid, x: 0, y: 3, color: brightPurple)
-            setPixel(&grid, x: 15, y: 3, color: brightPurple)
-        } else if fieldPhase == 1 {
-            setPixel(&grid, x: 0, y: 2, color: purple)
-            setPixel(&grid, x: 15, y: 2, color: purple)
-        } else if fieldPhase == 2 {
-            setPixel(&grid, x: 1, y: 2, color: brightPurple)
-            setPixel(&grid, x: 14, y: 2, color: brightPurple)
+        setPixel(&grid, x: 4, y: 2, color: red); setPixel(&grid, x: 11, y: 2, color: red)
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: skin) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: skin) }
+        // Eyes (green)
+        setPixel(&grid, x: 6, y: 2, color: NSColor(red: 0.2, green: 0.6, blue: 0.3, alpha: 1.0))
+        setPixel(&grid, x: 9, y: 2, color: NSColor(red: 0.2, green: 0.6, blue: 0.3, alpha: 1.0))
+        // Body (black suit)
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: darkGray) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: black) }
+        // Belt (red)
+        setPixel(&grid, x: 6, y: 4, color: red); setPixel(&grid, x: 7, y: 4, color: red)
+        setPixel(&grid, x: 8, y: 4, color: red); setPixel(&grid, x: 9, y: 4, color: red)
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 6, color: black); setPixel(&grid, x: 9, y: 6, color: black)
         } else {
-            setPixel(&grid, x: 0, y: 4, color: purple)
-            setPixel(&grid, x: 15, y: 4, color: purple)
+            setPixel(&grid, x: 5, y: 6, color: black); setPixel(&grid, x: 10, y: 6, color: black)
         }
     }
 
-
-    // MARK: - DC Comics
     func drawDCBatman(grid: inout [[NSColor]], frame: Int) {
         let gray = NSColor(red: 0.6, green: 0.6, blue: 0.65, alpha: 1.0)
         let black = NSColor(red: 0.1, green: 0.1, blue: 0.12, alpha: 1.0)
