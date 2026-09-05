@@ -99,6 +99,7 @@ class SpriteRenderer {
             case .lapras: drawLapras(grid: &grid, frame: frame)
             case .marill: drawMarill(grid: &grid, frame: frame)
             case .umbreon: drawUmbreon(grid: &grid, frame: frame)
+            case .pokeball: drawPokeball(grid: &grid, frame: frame)
             }
         case .marioItem(let item):
             switch item {
@@ -505,61 +506,62 @@ class SpriteRenderer {
 
     // MARK: - Pikachu (yellow body, red cheeks, pointy ears, running legs)
     private func drawPikachu(grid: inout [[NSColor]], frame: Int) {
-        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
-        let darkYellow = NSColor(red: 0.85, green: 0.7, blue: 0.0, alpha: 1.0)
-        let red = NSColor(red: 1.0, green: 0.2, blue: 0.2, alpha: 1.0)
-        let black = NSColor.black
-        let brown = NSColor(red: 0.55, green: 0.3, blue: 0.1, alpha: 1.0)
+        let y = NSColor(red: 1.0, green: 0.88, blue: 0.0, alpha: 1.0)
+        let b = NSColor.black
+        let r = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let br = NSColor(red: 0.55, green: 0.3, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // Ears
-        setPixel(&grid, x: 5, y: 1, color: yellow)
-        setPixel(&grid, x: 6, y: 0, color: yellow)
-        setPixel(&grid, x: 10, y: 1, color: yellow)
-        setPixel(&grid, x: 9, y: 0, color: yellow)
-        setPixel(&grid, x: 6, y: 1, color: darkYellow)
-        setPixel(&grid, x: 9, y: 1, color: darkYellow)
+        // Row 0: ear tips
+        setPixel(&grid, x: 5, y: 0, color: b)
+        setPixel(&grid, x: 6, y: 0, color: y)
+        setPixel(&grid, x: 9, y: 0, color: y)
+        setPixel(&grid, x: 10, y: 0, color: b)
 
-        // Head
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: yellow) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: yellow) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: yellow) }
+        // Row 1: ears
+        setPixel(&grid, x: 5, y: 1, color: y)
+        setPixel(&grid, x: 6, y: 1, color: y)
+        setPixel(&grid, x: 9, y: 1, color: y)
+        setPixel(&grid, x: 10, y: 1, color: y)
 
-        // Eyes
-        setPixel(&grid, x: 6, y: 3, color: black)
-        setPixel(&grid, x: 9, y: 3, color: black)
+        // Row 2: head top
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: y) }
 
-        // Cheeks
-        setPixel(&grid, x: 5, y: 4, color: red)
-        setPixel(&grid, x: 10, y: 4, color: red)
+        // Row 3: head with eyes
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: y) }
+        setPixel(&grid, x: 6, y: 3, color: b)
+        setPixel(&grid, x: 9, y: 3, color: b)
 
-        // Mouth
-        setPixel(&grid, x: 7, y: 4, color: black)
-        setPixel(&grid, x: 8, y: 4, color: black)
+        // Row 4: cheeks and mouth
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: y) }
+        setPixel(&grid, x: 5, y: 4, color: r)
+        setPixel(&grid, x: 10, y: 4, color: r)
+        setPixel(&grid, x: 7, y: 4, color: br)
+        setPixel(&grid, x: 8, y: 4, color: br)
 
-        // Body
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: yellow) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: yellow) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 7, color: yellow) }
+        // Row 5: body
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: y) }
 
-        // Tail (lightning bolt shape)
-        setPixel(&grid, x: 11, y: 4, color: yellow)
-        setPixel(&grid, x: 12, y: 3, color: yellow)
-        setPixel(&grid, x: 12, y: 2, color: darkYellow)
-        setPixel(&grid, x: 13, y: 1, color: yellow)
-        setPixel(&grid, x: 14, y: 0, color: yellow)
+        // Row 6: body
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: y) }
 
-        // Legs (running animation)
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 6, y: 8, color: brown)
-            setPixel(&grid, x: 9, y: 8, color: brown)
-            setPixel(&grid, x: 5, y: 9, color: brown)
-            setPixel(&grid, x: 10, y: 7, color: brown)
+        // Row 7: body
+        for x in 5...10 { setPixel(&grid, x: x, y: 7, color: y) }
+
+        // Row 8: feet
+        if anim == 0 {
+            setPixel(&grid, x: 6, y: 8, color: br)
+            setPixel(&grid, x: 9, y: 8, color: br)
         } else {
-            setPixel(&grid, x: 6, y: 7, color: brown)
-            setPixel(&grid, x: 9, y: 9, color: brown)
-            setPixel(&grid, x: 10, y: 8, color: brown)
-            setPixel(&grid, x: 5, y: 8, color: brown)
+            setPixel(&grid, x: 5, y: 8, color: br)
+            setPixel(&grid, x: 10, y: 8, color: br)
         }
+
+        // Tail (lightning bolt)
+        setPixel(&grid, x: 11, y: 4, color: y)
+        setPixel(&grid, x: 12, y: 3, color: y)
+        setPixel(&grid, x: 13, y: 2, color: y)
+        setPixel(&grid, x: 14, y: 1, color: br)
     }
 
     // MARK: - Psyduck (classic sprite style, confused head bob)
@@ -682,123 +684,146 @@ class SpriteRenderer {
 
     // MARK: - Charmander
     private func drawCharmander(grid: inout [[NSColor]], frame: Int) {
-        let orange = NSColor(red: 1.0, green: 0.5, blue: 0.1, alpha: 1.0)
-        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.3, alpha: 1.0)
-        let blue = NSColor(red: 0.4, green: 0.6, blue: 1.0, alpha: 1.0)
-        let red = NSColor(red: 1.0, green: 0.3, blue: 0.1, alpha: 1.0)
+        let o = NSColor(red: 0.95, green: 0.5, blue: 0.1, alpha: 1.0)
+        let y = NSColor(red: 1.0, green: 0.85, blue: 0.3, alpha: 1.0)
+        let b = NSColor.black
+        let anim = frame % 2
 
-        // Head
-        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: orange) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: orange) }
+        // Row 1: head top
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: o) }
 
-        // Eyes
-        setPixel(&grid, x: 6, y: 2, color: blue)
-        setPixel(&grid, x: 9, y: 2, color: blue)
+        // Row 2: head with eyes
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: o) }
+        setPixel(&grid, x: 6, y: 2, color: b)
+        setPixel(&grid, x: 9, y: 2, color: b)
 
-        // Body
-        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: orange) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: orange) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: orange) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: orange) }
+        // Row 3: head
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: o) }
 
-        // Belly
-        for x in 6...9 { setPixel(&grid, x: x, y: 5, color: yellow) }
-        for x in 6...9 { setPixel(&grid, x: x, y: 6, color: yellow) }
+        // Row 4: body top
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: o) }
 
-        // Tail flame
-        setPixel(&grid, x: 12, y: 5, color: red)
-        setPixel(&grid, x: 13, y: 4, color: yellow)
-        setPixel(&grid, x: 13, y: 5, color: red)
+        // Row 5: body with belly
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: o) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 5, color: y) }
 
-        // Legs
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 5, y: 8, color: orange)
-            setPixel(&grid, x: 10, y: 8, color: orange)
+        // Row 6: body with belly
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: o) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 6, color: y) }
+
+        // Row 7: body
+        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: o) }
+
+        // Row 8: feet
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 8, color: o)
+            setPixel(&grid, x: 10, y: 8, color: o)
         } else {
-            setPixel(&grid, x: 6, y: 8, color: orange)
-            setPixel(&grid, x: 9, y: 8, color: orange)
+            setPixel(&grid, x: 4, y: 8, color: o)
+            setPixel(&grid, x: 11, y: 8, color: o)
         }
+
+        // Tail
+        setPixel(&grid, x: 12, y: 5, color: o)
+        setPixel(&grid, x: 13, y: 4, color: o)
+        setPixel(&grid, x: 13, y: 5, color: y)
     }
 
     // MARK: - Bulbasaur
     private func drawBulbasaur(grid: inout [[NSColor]], frame: Int) {
-        let teal = NSColor(red: 0.35, green: 0.65, blue: 0.55, alpha: 1.0)
-        let green = NSColor(red: 0.3, green: 0.75, blue: 0.2, alpha: 1.0)
-        let red = NSColor(red: 0.8, green: 0.2, blue: 0.15, alpha: 1.0)
+        let t = NSColor(red: 0.3, green: 0.6, blue: 0.55, alpha: 1.0)
+        let g = NSColor(red: 0.3, green: 0.65, blue: 0.2, alpha: 1.0)
+        let lg = NSColor(red: 0.45, green: 0.75, blue: 0.35, alpha: 1.0)
+        let b = NSColor.black
+        let anim = frame % 2
 
-        // Bulb on back
-        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: green) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: green) }
+        // Row 0: bulb tip
+        setPixel(&grid, x: 7, y: 0, color: g)
+        setPixel(&grid, x: 8, y: 0, color: g)
 
-        // Head
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: teal) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: teal) }
+        // Row 1: bulb
+        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: g) }
+        setPixel(&grid, x: 7, y: 1, color: lg)
+        setPixel(&grid, x: 8, y: 1, color: lg)
 
-        // Eyes
-        setPixel(&grid, x: 6, y: 3, color: red)
-        setPixel(&grid, x: 9, y: 3, color: red)
+        // Row 2: bulb base
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: g) }
+        setPixel(&grid, x: 7, y: 2, color: lg)
+        setPixel(&grid, x: 8, y: 2, color: lg)
 
-        // Body
-        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: teal) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 6, color: teal) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: teal) }
+        // Row 3: head with eyes
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: t) }
+        setPixel(&grid, x: 6, y: 3, color: b)
+        setPixel(&grid, x: 9, y: 3, color: b)
 
-        // Spots
-        setPixel(&grid, x: 5, y: 5, color: green)
-        setPixel(&grid, x: 8, y: 6, color: green)
-        setPixel(&grid, x: 10, y: 5, color: green)
+        // Row 4: head
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: t) }
 
-        // Legs
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 4, y: 8, color: teal)
-            setPixel(&grid, x: 11, y: 8, color: teal)
+        // Row 5: body wide
+        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: t) }
+
+        // Row 6: body with belly
+        for x in 3...12 { setPixel(&grid, x: x, y: 6, color: t) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: g) }
+
+        // Row 7: body
+        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: t) }
+
+        // Row 8: feet
+        if anim == 0 {
+            setPixel(&grid, x: 4, y: 8, color: t)
+            setPixel(&grid, x: 11, y: 8, color: t)
         } else {
-            setPixel(&grid, x: 5, y: 8, color: teal)
-            setPixel(&grid, x: 10, y: 8, color: teal)
+            setPixel(&grid, x: 5, y: 8, color: t)
+            setPixel(&grid, x: 10, y: 8, color: t)
         }
     }
 
     // MARK: - Squirtle
     private func drawSquirtle(grid: inout [[NSColor]], frame: Int) {
-        let blue = NSColor(red: 0.3, green: 0.55, blue: 0.85, alpha: 1.0)
-        let brown = NSColor(red: 0.65, green: 0.45, blue: 0.2, alpha: 1.0)
-        let yellow = NSColor(red: 0.95, green: 0.85, blue: 0.3, alpha: 1.0)
-        let black = NSColor.black
+        let bl = NSColor(red: 0.3, green: 0.55, blue: 0.85, alpha: 1.0)
+        let br = NSColor(red: 0.65, green: 0.45, blue: 0.2, alpha: 1.0)
+        let or = NSColor(red: 0.85, green: 0.55, blue: 0.2, alpha: 1.0)
+        let b = NSColor.black
+        let anim = frame % 2
 
-        // Head
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: blue) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: blue) }
+        // Row 1: head top
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: bl) }
 
-        // Eyes
-        setPixel(&grid, x: 6, y: 2, color: black)
-        setPixel(&grid, x: 9, y: 2, color: black)
+        // Row 2: head with eyes
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: bl) }
+        setPixel(&grid, x: 6, y: 2, color: b)
+        setPixel(&grid, x: 9, y: 2, color: b)
 
-        // Shell
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: brown) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 5, color: brown) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 6, color: brown) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: brown) }
+        // Row 3: head
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: bl) }
 
-        // Shell pattern
-        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: yellow) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: yellow) }
+        // Row 4: shell top
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: br) }
 
-        // Body edges
-        setPixel(&grid, x: 4, y: 5, color: blue)
-        setPixel(&grid, x: 11, y: 5, color: blue)
+        // Row 5: shell with belly
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: br) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 5, color: or) }
 
-        // Legs
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 4, y: 8, color: blue)
-            setPixel(&grid, x: 11, y: 8, color: blue)
+        // Row 6: shell with belly
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: br) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 6, color: or) }
+
+        // Row 7: shell bottom
+        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: br) }
+
+        // Row 8: feet
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 8, color: bl)
+            setPixel(&grid, x: 10, y: 8, color: bl)
         } else {
-            setPixel(&grid, x: 5, y: 8, color: blue)
-            setPixel(&grid, x: 10, y: 8, color: blue)
+            setPixel(&grid, x: 4, y: 8, color: bl)
+            setPixel(&grid, x: 11, y: 8, color: bl)
         }
 
         // Tail
-        setPixel(&grid, x: 12, y: 6, color: blue)
-        setPixel(&grid, x: 13, y: 5, color: blue)
+        setPixel(&grid, x: 12, y: 5, color: bl)
+        setPixel(&grid, x: 13, y: 4, color: bl)
     }
 
     // MARK: - Jigglypuff
@@ -1646,60 +1671,98 @@ class SpriteRenderer {
 
     // MARK: - Umbreon (black body, yellow rings, red eyes)
     private func drawUmbreon(grid: inout [[NSColor]], frame: Int) {
-        let black = NSColor(red: 0.1, green: 0.1, blue: 0.12, alpha: 1.0)
-        let darkGray = NSColor(red: 0.2, green: 0.2, blue: 0.22, alpha: 1.0)
-        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
-        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let g = NSColor(red: 0.45, green: 0.45, blue: 0.48, alpha: 1.0)
+        let dg = NSColor(red: 0.3, green: 0.3, blue: 0.32, alpha: 1.0)
+        let y = NSColor(red: 1.0, green: 0.85, blue: 0.0, alpha: 1.0)
+        let r = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let b = NSColor.black
+        let anim = frame % 2
 
-        // Ears
-        setPixel(&grid, x: 4, y: 0, color: black)
-        setPixel(&grid, x: 5, y: 1, color: black)
-        setPixel(&grid, x: 11, y: 1, color: black)
-        setPixel(&grid, x: 12, y: 0, color: black)
-        // Ear rings
-        setPixel(&grid, x: 4, y: 1, color: yellow)
-        setPixel(&grid, x: 12, y: 1, color: yellow)
+        // Row 0: ear tips
+        setPixel(&grid, x: 4, y: 0, color: b)
+        setPixel(&grid, x: 12, y: 0, color: b)
 
-        // Head
-        for x in 5...11 { setPixel(&grid, x: x, y: 2, color: black) }
-        for x in 4...12 { setPixel(&grid, x: x, y: 3, color: black) }
+        // Row 1: ears with yellow rings
+        for x in 4...12 { setPixel(&grid, x: x, y: 1, color: g) }
+        setPixel(&grid, x: 4, y: 1, color: y)
+        setPixel(&grid, x: 12, y: 1, color: y)
 
-        // Eyes
-        setPixel(&grid, x: 6, y: 3, color: red)
-        setPixel(&grid, x: 10, y: 3, color: red)
-        setPixel(&grid, x: 6, y: 2, color: red)
-        setPixel(&grid, x: 10, y: 2, color: red)
+        // Row 2: head with eyes and forehead circle
+        for x in 4...12 { setPixel(&grid, x: x, y: 2, color: g) }
+        setPixel(&grid, x: 6, y: 2, color: r)
+        setPixel(&grid, x: 10, y: 2, color: r)
+        setPixel(&grid, x: 8, y: 2, color: y)
 
-        // Head ring
-        setPixel(&grid, x: 5, y: 2, color: yellow)
-        setPixel(&grid, x: 11, y: 2, color: yellow)
+        // Row 3: head
+        for x in 4...12 { setPixel(&grid, x: x, y: 3, color: g) }
 
-        // Body
-        for y in 4...7 {
-            for x in 5...11 { setPixel(&grid, x: x, y: y, color: black) }
+        // Row 4: body top
+        for x in 4...12 { setPixel(&grid, x: x, y: 4, color: g) }
+
+        // Row 5: body with rings
+        for x in 4...12 { setPixel(&grid, x: x, y: 5, color: g) }
+        setPixel(&grid, x: 4, y: 5, color: y)
+        setPixel(&grid, x: 12, y: 5, color: y)
+
+        // Row 6: body with ring
+        for x in 4...12 { setPixel(&grid, x: x, y: 6, color: g) }
+        setPixel(&grid, x: 8, y: 6, color: y)
+
+        // Row 7: body
+        for x in 4...12 { setPixel(&grid, x: x, y: 7, color: g) }
+
+        // Row 8: feet
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 8, color: dg)
+            setPixel(&grid, x: 11, y: 8, color: dg)
+        } else {
+            setPixel(&grid, x: 4, y: 8, color: dg)
+            setPixel(&grid, x: 12, y: 8, color: dg)
         }
 
-        // Body rings
-        setPixel(&grid, x: 5, y: 5, color: yellow)
-        setPixel(&grid, x: 11, y: 5, color: yellow)
-        setPixel(&grid, x: 8, y: 6, color: yellow)
-
         // Tail
-        setPixel(&grid, x: 12, y: 5, color: black)
-        setPixel(&grid, x: 13, y: 4, color: black)
-        setPixel(&grid, x: 14, y: 4, color: yellow)
+        setPixel(&grid, x: 13, y: 5, color: g)
+        setPixel(&grid, x: 14, y: 4, color: y)
+    }
 
-        // Legs
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 6, y: 8, color: black)
-            setPixel(&grid, x: 10, y: 8, color: black)
-            setPixel(&grid, x: 6, y: 9, color: darkGray)
-            setPixel(&grid, x: 10, y: 9, color: darkGray)
-        } else {
-            setPixel(&grid, x: 5, y: 8, color: black)
-            setPixel(&grid, x: 11, y: 8, color: black)
-            setPixel(&grid, x: 5, y: 9, color: darkGray)
-            setPixel(&grid, x: 11, y: 9, color: darkGray)
+    private func drawPokeball(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let white = NSColor.white
+        let black = NSColor.black
+        let gray = NSColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1.0)
+        let anim = frame % 2
+
+        // Row 2: top
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: red) }
+
+        // Row 3
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: red) }
+
+        // Row 4
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: red) }
+
+        // Row 5: middle line
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: black) }
+        setPixel(&grid, x: 7, y: 5, color: white)
+        setPixel(&grid, x: 8, y: 5, color: white)
+
+        // Row 6: button
+        setPixel(&grid, x: 7, y: 6, color: gray)
+        setPixel(&grid, x: 8, y: 6, color: gray)
+
+        // Row 7
+        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: white) }
+
+        // Row 8
+        for x in 5...10 { setPixel(&grid, x: x, y: 8, color: white) }
+
+        // Row 9: bottom
+        for x in 6...9 { setPixel(&grid, x: x, y: 9, color: white) }
+
+        // Bounce animation
+        if anim == 1 {
+            setPixel(&grid, x: 7, y: 1, color: gray)
+            setPixel(&grid, x: 8, y: 1, color: gray)
         }
     }
 

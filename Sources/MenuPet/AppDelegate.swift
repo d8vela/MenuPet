@@ -11,7 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         .meowth, .eevee, .mew, .gengar, .dragonite,
         .gyarados, .arcanine, .alakazam, .machamp, .golem, .onix,
         .jolteon, .flareon, .vaporeon, .porygon, .ditto, .lapras,
-        .marill, .umbreon
+        .marill, .umbreon, .pokeball
     ]
 
     let marioCharacters: [MarioItem] = [
