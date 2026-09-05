@@ -6,9 +6,14 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 
 ## Features
 
-- **140+ characters** across 23 categories — Pokémon, Mario, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama
+- **140+ characters** across 24 categories — Pokémon, Mario, Mario Kart, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama
 - **CPU-reactive animation** — sprite speed adjusts based on system load
-- **Random rotation** — automatically cycles to a random character every 10 minutes
+- **Random rotation** — automatically cycles to a random character with configurable interval (0.01s to hours)
+- **Smart rotation** — prefer characters you interact with most
+- **Category rotation** — rotate only within the current character's category
+- **Google image search** — search for any character directly from the menu
+- **Character history** — quickly access recently viewed characters
+- **Auto-update** — checks for new releases on startup and daily
 - **Lightweight** — pure Swift, no dependencies, minimal resource usage
 - **Menu bar only** — lives in your menu bar, no dock icon
 
@@ -33,7 +38,10 @@ cp .build/release/MenuPet /usr/local/bin/
 ## Usage
 
 - Click the menu bar icon to see CPU usage, switch characters, or adjust settings
-- Enable **Random Rotation** to cycle characters automatically
+- Enable **Random Rotation** under the Rotation submenu to cycle characters automatically
+- Set a custom **Rotation Interval** from 0.01 seconds to any value
+- Use **Rotate Within Category Only** to limit rotation to the current category
+- Click a character name to open a Google image search for that character
 - Choose **Quit** to exit
 
 ## Character Categories
@@ -41,11 +49,13 @@ cp .build/release/MenuPet /usr/local/bin/
 | Category | Characters |
 |----------|------------|
 | Pokémon | Pikachu, Jigglypuff, Snorlax, Charizard, Mew, Gengar, Bulbasaur, Squirtle, Eevee, Psyduck |
-| Mario | Mario, Luigi, Peach, Bowser, Toad, Yoshi |
+| Mario | Mario, Luigi, Peach, Toad, Bowser, Yoshi, Donkey Kong, Wario, Waluigi, Boo |
 | Mario Kart | Mario, Luigi, Peach, Bowser, Toad, Yoshi, Donkey Kong |
 | Zelda | Link, Zelda, Ganondorf, Epona, Navi |
 | Kirby | Kirby, King Dedede, Meta Knight, Waddle Dee, Bandana Waddle Dee |
+| Mega Man | Mega Man, Roll, Proto Man, Bass, Dr. Wily |
 | Dragon Ball | Goku, Vegeta, Gohan, Frieza, Piccolo, Krillin |
+| Naruto | Naruto, Sasuke, Sakura, Kakashi |
 | Metal Slug | Marco, Tarma, Eri, Fio, Morden, Camel, Slug Tank, Zombie, Mummy, Ape, Hermit, Crab |
 | Contra | Bill, Lance |
 | TMNT | Leonardo, Donatello, Raphael, Michelangelo |
