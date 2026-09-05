@@ -8925,78 +8925,62 @@ class SpriteRenderer {
             eyeIrisColor = NSColor(red: 0.30, green: 0.63, blue: 0.24, alpha: 1.0)
         }
 
-        let skinLight = NSColor(red: 0.93, green: 0.85, blue: 0.73, alpha: 1.0)
-        let skinTan = NSColor(red: 0.87, green: 0.71, blue: 0.53, alpha: 1.0)
-        let blushPink = NSColor(red: 0.90, green: 0.60, blue: 0.69, alpha: 1.0)
-        let noseLight = NSColor(red: 0.92, green: 0.79, blue: 0.83, alpha: 1.0)
-        let noseDark = NSColor(red: 0.84, green: 0.45, blue: 0.42, alpha: 1.0)
-        let eyeBlack = NSColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.0)
-        let eyeDarkGray = NSColor(red: 0.32, green: 0.32, blue: 0.32, alpha: 1.0)
+        let skinLight = NSColor(red: 0.95, green: 0.85, blue: 0.75, alpha: 1.0)
+        let skinTan = NSColor(red: 0.88, green: 0.72, blue: 0.55, alpha: 1.0)
+        let blushPink = NSColor(red: 0.95, green: 0.65, blue: 0.72, alpha: 1.0)
+        let noseDark = NSColor(red: 0.85, green: 0.15, blue: 0.15, alpha: 1.0)
+        let eyeBlack = NSColor(red: 0.12, green: 0.12, blue: 0.12, alpha: 1.0)
         let white = NSColor.white
+        let earTan = NSColor(red: 0.92, green: 0.78, blue: 0.58, alpha: 1.0)
 
         let anim = frame % 4
         let ox = 4
-        let oy = 2
+        let oy = 0
+
+        // E = ear pink, e = ear tan, O = outline, S = suit, s = skin light, t = skin tan
+        // b = blush, P = nose red, K = eye black, w = white, Z = zipper
 
         let rows: [String] = [
-            "......OO.......OO......", // 00
-            ".....OSSO.....OSSO.....", // 01
-            ".....OStSO...OStSO.....", // 02
-            "....OSStSO...OStSSO....", // 03
-            "....OSttSSO.OSSttSO....", // 04
-            "....OStOsSO.OSsOtSO....", // 05
-            "....OStOsSO.OSsOtSO....", // 06
-            "....OStOsSO.OSsOtSO....", // 07
-            "....OSSSSOOOOOSSSSO....", // 08
-            "....OOSSSSSSSSSSSOO....", // 09
-            "...OSSSSSSSSSSSSSSSO...", // 10
-            "..OSSSSSSSSSSSSSSSSSO..", // 11
-            ".OSSSStttSSSSStttSSSSO.", // 12
-            ".OSSStssstttttssstSSSO.", // 13
-            ".OSStssssssssssssstSSO.", // 14
-            "OSSStstsstssstsststSSSO", // 15
-            "OSStssswtssssstwssstSSO", // 16
-            "OSStsssKwsspsswKssstSSO", // 17
-            "OSStsssKEspppsKEssstSSO", // 18
-            "OSStbssKKsPPPsKKssbtSSO", // 19
-            "OSStwsskkssPsskksswtSSO", // 20
-            "OSStssssssssssssssstSSO", // 21
-            ".OSStswssssssssswstSSO.", // 22
-            ".OSSStsswswswswsstSSSO.", // 23
-            "..OOSSttsssssssttSSOO..", // 24
-            "....OOSStttttttSSOO....", // 25
-            "...OSSOSSSSSSSSSOSSO...", // 26
-            "..OSSOSOOOOZOOOOSOSSO..", // 27
-            ".OSSSOSSSSSZSSSSSOSSSO.", // 28
-            ".OSSOSSSSSSZSSSSSSOSSO.", // 29
-            ".OSSOSSSSSSZSSSSSSOSSO.", // 30
-            ".HhSOSSSSSSZSSSSSSOShH.", // 31
-            ".h.OSSSSSSSZSSSSSSSO.h.", // 32
-            "...OSSSSSSSZSSSSSSSO...", // 33
-            "...OSSSSSSSZSSSSSSSO...", // 34
-            "...OSSSSSSSZSSSSSSSO...", // 35
-            "...OSSSSSSSSSSSSSSSO...", // 36
-            "....OSSSSSOOOSSSSSO....", // 37
-            "....OSSSSO...OSSSSO....", // 38
-            ".....OOOO.....OOOO.....", // 39
-            ".....hHh.......hHh.....", // 40
+            "...EE.....EE....",  // 0 - ear tips
+            "..EeeE...EeeE...",  // 1 - ear upper
+            "..EeeE...EeeE...",  // 2 - ear mid
+            "..EeeE...EeeE...",  // 3 - ear lower
+            "..EeeEOOOOeeE...",  // 4 - ear base + head top
+            "..EEEESSSSSEEE..",  // 5 - head top
+            ".OOSSSSSSSSSSSO.",  // 6 - head
+            "OSSSSSSSSSSSSSSO",  // 7 - head
+            "OSSStttttttttSSSO", // 8 - face top
+            "OSSstttttttttsSSO", // 9 - face
+            "OSSstwKttttKwtsSSO", // 10 - eyes
+            "OSSstwKttttKwtsSSO", // 11 - eyes
+            "OSStttttPPtttSSO",  // 12 - nose
+            "OSSttttttttttSSO",  // 13 - mouth
+            "OSSttwwwwwwttSSO",  // 14 - teeth
+            ".OSSttttttttSSO.",  // 15
+            ".OOSSSSSSSSSSO.",   // 16 - neck
+            "..OSSSSSSSSSO..",  // 17 - body
+            "..OSSSSSSSSSO..",  // 18
+            "..OSSSSZSSSSO..",  // 19 - zipper
+            "..OSSSSZSSSSO..",  // 20
+            "..OSSSSZSSSSO..",  // 21
+            ".sOSSSSSSSSSOs.",  // 22 - arms
+            ".ssOSSSSSSSOss.",  // 23
+            "..OSSSSSSSSSO..",  // 24
+            "..OSSSSSSSSSO..",  // 25
+            "..OSSSOOOSSSO..",  // 26 - legs split
+            "...OSSO.OSSO...",  // 27
+            "...OSSO.OSSO...",  // 28
+            "...OeEO.OeEO...",  // 29 - feet
         ]
 
         for (rIdx, row) in rows.enumerated() {
             var rowChars = Array(row)
             let y = oy + rIdx
 
-            // Eye glance & ear tip animations
-            if anim == 1 && rIdx == 17 {
-                rowChars[7] = "w"; rowChars[8] = "K"; rowChars[14] = "w"; rowChars[15] = "K"
-            } else if anim == 1 && rIdx == 18 {
-                rowChars[7] = "E"; rowChars[8] = "K"; rowChars[14] = "E"; rowChars[15] = "K"
-            } else if anim == 3 && rIdx == 17 {
-                rowChars[7] = "K"; rowChars[8] = "w"; rowChars[14] = "K"; rowChars[15] = "w"
-            } else if anim == 3 && rIdx == 18 {
-                rowChars[7] = "K"; rowChars[8] = "E"; rowChars[14] = "K"; rowChars[15] = "E"
-            } else if anim == 2 && rIdx == 0 {
-                rowChars[5] = "O"; rowChars[17] = "O"
+            if anim == 1 && rIdx == 10 {
+                rowChars[6] = "w"; rowChars[7] = "K"
+            } else if anim == 1 && rIdx == 11 {
+                rowChars[6] = "K"; rowChars[7] = "w"
             }
 
             for (cIdx, ch) in rowChars.enumerated() {
@@ -9005,15 +8989,14 @@ class SpriteRenderer {
                 case "O": setPixel(&grid, x: x, y: y, color: outlineColor)
                 case "S": setPixel(&grid, x: x, y: y, color: suitColor)
                 case "Z": setPixel(&grid, x: x, y: y, color: zipperColor)
-                case "s", "h": setPixel(&grid, x: x, y: y, color: skinLight)
-                case "t", "H": setPixel(&grid, x: x, y: y, color: skinTan)
+                case "s": setPixel(&grid, x: x, y: y, color: skinLight)
+                case "t": setPixel(&grid, x: x, y: y, color: skinTan)
                 case "b": setPixel(&grid, x: x, y: y, color: blushPink)
                 case "w": setPixel(&grid, x: x, y: y, color: white)
-                case "p": setPixel(&grid, x: x, y: y, color: noseLight)
                 case "P": setPixel(&grid, x: x, y: y, color: noseDark)
                 case "K": setPixel(&grid, x: x, y: y, color: eyeBlack)
-                case "k": setPixel(&grid, x: x, y: y, color: eyeDarkGray)
-                case "E": setPixel(&grid, x: x, y: y, color: eyeIrisColor)
+                case "E": setPixel(&grid, x: x, y: y, color: suitColor)
+                case "e": setPixel(&grid, x: x, y: y, color: earTan)
                 default: break
                 }
             }
