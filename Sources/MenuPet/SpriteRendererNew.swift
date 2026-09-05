@@ -1904,29 +1904,59 @@ extension SpriteRenderer {
     }
 
     func drawMVWolverine(grid: inout [[NSColor]], frame: Int) {
-        let yellow = NSColor(red: 0.95, green: 0.85, blue: 0.2, alpha: 1.0)
-        let blue = NSColor(red: 0.1, green: 0.2, blue: 0.6, alpha: 1.0)
-        let skin = NSColor(red: 0.95, green: 0.8, blue: 0.65, alpha: 1.0)
         let black = NSColor.black
-        let silver = NSColor(red: 0.82, green: 0.82, blue: 0.85, alpha: 1.0)
+        let darkGray = NSColor(red: 0.45, green: 0.45, blue: 0.48, alpha: 1.0)
+        let white = NSColor.white
+        let brown = NSColor(red: 0.55, green: 0.3, blue: 0.1, alpha: 1.0)
+        let tan = NSColor(red: 0.9, green: 0.75, blue: 0.45, alpha: 1.0)
+        let red = NSColor(red: 0.8, green: 0.15, blue: 0.15, alpha: 1.0)
+        let silver = NSColor(red: 0.78, green: 0.78, blue: 0.82, alpha: 1.0)
         let anim = frame % 2
 
+        // Mask wings (big, pointed, black)
         setPixel(&grid, x: 3, y: 0, color: black); setPixel(&grid, x: 12, y: 0, color: black)
+        setPixel(&grid, x: 3, y: 1, color: black); setPixel(&grid, x: 12, y: 1, color: black)
         setPixel(&grid, x: 4, y: 1, color: black); setPixel(&grid, x: 11, y: 1, color: black)
-        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: yellow) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 1, color: yellow) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: skin) }
-        setPixel(&grid, x: 6, y: 2, color: black); setPixel(&grid, x: 9, y: 2, color: black)
+        setPixel(&grid, x: 4, y: 2, color: black); setPixel(&grid, x: 11, y: 2, color: black)
+
+        // Head (black mask top)
+        for x in 5...10 { setPixel(&grid, x: x, y: 0, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: black) }
+
+        // Eyes (white, angular)
+        setPixel(&grid, x: 5, y: 2, color: white); setPixel(&grid, x: 6, y: 2, color: white)
+        setPixel(&grid, x: 9, y: 2, color: white); setPixel(&grid, x: 10, y: 2, color: white)
+
+        // Face (skin)
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: tan) }
+        setPixel(&grid, x: 5, y: 3, color: black); setPixel(&grid, x: 10, y: 3, color: black)
+
+        // Mouth (angry)
         setPixel(&grid, x: 7, y: 3, color: black); setPixel(&grid, x: 8, y: 3, color: black)
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: yellow) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: blue) }
-        setPixel(&grid, x: 3, y: 4, color: silver); setPixel(&grid, x: 3, y: 5, color: silver)
-        setPixel(&grid, x: 12, y: 4, color: silver); setPixel(&grid, x: 12, y: 5, color: silver)
+
+        // Body (brown and tan, classic costume)
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: brown) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: tan) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: brown) }
+
+        // Belt
+        setPixel(&grid, x: 7, y: 5, color: red); setPixel(&grid, x: 8, y: 5, color: red)
+
+        // Claws (silver, animated)
         if anim == 0 {
-            setPixel(&grid, x: 5, y: 6, color: blue); setPixel(&grid, x: 10, y: 6, color: blue)
+            setPixel(&grid, x: 3, y: 4, color: silver); setPixel(&grid, x: 3, y: 5, color: silver); setPixel(&grid, x: 3, y: 6, color: silver)
+            setPixel(&grid, x: 12, y: 4, color: silver); setPixel(&grid, x: 12, y: 5, color: silver); setPixel(&grid, x: 12, y: 6, color: silver)
         } else {
-            setPixel(&grid, x: 4, y: 6, color: blue); setPixel(&grid, x: 11, y: 6, color: blue)
+            setPixel(&grid, x: 2, y: 4, color: silver); setPixel(&grid, x: 2, y: 5, color: silver); setPixel(&grid, x: 2, y: 6, color: silver)
+            setPixel(&grid, x: 13, y: 4, color: silver); setPixel(&grid, x: 13, y: 5, color: silver); setPixel(&grid, x: 13, y: 6, color: silver)
+        }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 7, color: brown); setPixel(&grid, x: 10, y: 7, color: brown)
+        } else {
+            setPixel(&grid, x: 4, y: 7, color: brown); setPixel(&grid, x: 11, y: 7, color: brown)
         }
     }
 
