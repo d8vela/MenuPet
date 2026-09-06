@@ -59,11 +59,13 @@ class SpriteRenderer {
             for x in 0..<frameWidth {
                 var color = pixels[y][x]
                 if color != NSColor.clear && (brightness != 1.0 || saturation != 1.0) {
-                    var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-                    color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-                    s = min(1.0, s * CGFloat(saturation))
-                    b = min(1.0, b * CGFloat(brightness))
-                    color = NSColor(hue: h, saturation: s, brightness: b, alpha: a)
+                    if let rgb = color.usingColorSpace(.genericRGB) {
+                        var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+                        rgb.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+                        s = min(1.0, s * CGFloat(saturation))
+                        b = min(1.0, b * CGFloat(brightness))
+                        color = NSColor(hue: h, saturation: s, brightness: b, alpha: a)
+                    }
                 }
                 color.setFill()
                 NSRect(x: CGFloat(x) * ps, y: CGFloat(frameHeight - 1 - y) * ps,
