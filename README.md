@@ -7,11 +7,8 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 ## Features
 
 - **140+ characters** across 25 categories — Pokémon, Mario, Mario Kart, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama
-- **CPU-reactive animation** — sprite speed adjusts based on system load (sleeping → walking → jogging → sprinting → overdrive)
-- **Tamagotchi pet care** — Feed, Play, Clean, Sleep your pet; stats decay over time
-- **Pet evolution** — 5 stages based on care quality: Neglected → Baby → Normal → Happy → Champion
-- **Visual evolution effects** — sparkles for well-cared pets, darker colors and shadows for neglected ones
-- **Need indicators** — thought bubbles and status bar icons appear when your pet needs attention
+- **Pet care** — Tamagotchi-style system: Feed, Play, Clean, Sleep; stats decay over time
+- **CPU-reactive animation** — sprite speed adjusts based on system load
 - **Random rotation** — automatically cycles to a random character with configurable interval (0.01s to hours)
 - **Smart rotation** — prefer characters you interact with most
 - **Category rotation** — rotate only within the current character's category
@@ -41,16 +38,7 @@ cp .build/release/MenuPet /usr/local/bin/
 
 ## Usage
 
-- Click the menu bar icon to see CPU usage, pet status, switch characters, or adjust settings
-- **Pet Stats** — view Hunger, Happiness, Energy, and Hygiene percentages in the menu
-- **Care Actions** — use Feed, Play, Clean, Sleep to keep your pet happy
-- **Evolution** — your pet evolves through 5 stages based on how well you care for it:
-  - 🥀 Neglected (care score <20%) — dark, desaturated sprite with shadow
-  - 🥚 Baby (20-39%) — slightly dimmed appearance
-  - ⭐ Normal (40-64%) — default look
-  - 🌟 Happy (65-84%) — brighter, more vivid colors with sparkles
-  - 👑 Champion (85%+) — extra bright, extra vivid, sparkles
-- **Need Indicators** — when stats drop below 40%, a thought bubble appears above the sprite showing what it needs (🍕 food, 😢 happiness, 💤 sleep, 🧼 clean). Below 30%, an emoji appears next to the menu bar icon.
+- Click the menu bar icon to see CPU usage, switch characters, or adjust settings
 - Enable **Random Rotation** under the Rotation submenu to cycle characters automatically
 - Set a custom **Rotation Interval** from 0.01 seconds to any value
 - Use **Rotate Within Category Only** to limit rotation to the current category
