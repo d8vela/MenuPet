@@ -51,12 +51,31 @@ class SpriteRenderer {
         ctx.concatenate(CGAffineTransform(scaleX: scale, y: scale))
         ctx.concatenate(CGAffineTransform(translationX: offsetX / scale, y: offsetY))
 
-        // Draw the actual sprite
+        let pet = PetState.shared
+        let brightness = pet.brightnessModifier
+        let saturation = pet.saturationModifier
+
         for y in 0..<frameHeight {
             for x in 0..<frameWidth {
-                let color = pixels[y][x]
+                var color = pixels[y][x]
+                if color != NSColor.clear && (brightness != 1.0 || saturation != 1.0) {
+                    var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+                    color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+                    s = min(1.0, s * CGFloat(saturation))
+                    b = min(1.0, b * CGFloat(brightness))
+                    color = NSColor(hue: h, saturation: s, brightness: b, alpha: a)
+                }
                 color.setFill()
                 NSRect(x: CGFloat(x) * ps, y: CGFloat(frameHeight - 1 - y) * ps,
+                       width: ps, height: ps).fill()
+            }
+        }
+
+        if pet.showShadow {
+            let shadow = NSColor(white: 0, alpha: 0.15)
+            shadow.setFill()
+            for x in minX...maxX {
+                NSRect(x: CGFloat(x) * ps, y: CGFloat(frameHeight - 1 - (minY + 1)) * ps,
                        width: ps, height: ps).fill()
             }
         }
@@ -65,8 +84,33 @@ class SpriteRenderer {
         img.unlockFocus()
         img.isTemplate = false
 
+        if pet.showSparkles && frame % 6 < 3 {
+            drawSparkles(on: img, frame: frame)
+        }
+
         drawNeedOverlay(on: img, frame: frame)
         return img
+    }
+
+    private func drawSparkles(on image: NSImage, frame: Int) {
+        image.lockFocus()
+        let gold = NSColor(red: 1.0, green: 0.9, blue: 0.2, alpha: 0.9)
+        gold.setFill()
+
+        let sparklePositions: [(CGFloat, CGFloat)] = [
+            (2, image.size.height - 4),
+            (image.size.width - 4, image.size.height - 3),
+            (image.size.width / 2, image.size.height - 2)
+        ]
+
+        for (sx, sy) in sparklePositions {
+            let offset = CGFloat(frame % 4) * 0.3
+            NSRect(x: sx + offset, y: sy, width: 2, height: 2).fill()
+            NSRect(x: sx + offset - 1, y: sy + 1, width: 1, height: 1).fill()
+            NSRect(x: sx + offset + 2, y: sy + 1, width: 1, height: 1).fill()
+        }
+
+        image.unlockFocus()
     }
 
     private func drawNeedOverlay(on image: NSImage, frame: Int) {

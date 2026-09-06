@@ -257,9 +257,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         cpuItem.tag = 100
         menu.addItem(cpuItem)
 
-        let petStatus = NSMenuItem(title: "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood)", action: nil, keyEquivalent: "")
+        let petStatus = NSMenuItem(title: "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood) \(PetState.shared.stageEmoji)", action: nil, keyEquivalent: "")
         petStatus.tag = 200
         menu.addItem(petStatus)
+
+        let stageItem = NSMenuItem(title: "  \(PetState.shared.stageEmoji) Stage: \(PetState.shared.stageName) (\(Int(PetState.shared.careScore))%)", action: nil, keyEquivalent: "")
+        stageItem.tag = 205
+        stageItem.isEnabled = false
+        menu.addItem(stageItem)
 
         let hungerItem = NSMenuItem(title: "  🍕 Hunger: \(Int(PetState.shared.hunger))%", action: nil, keyEquivalent: "")
         hungerItem.tag = 201
@@ -1117,7 +1122,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let menu = statusItem.menu else { return }
         for item in menu.items {
             if item.tag == 200 {
-                item.title = "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood)"
+                item.title = "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood) \(PetState.shared.stageEmoji)"
             } else if item.tag == 201 {
                 item.title = "  🍕 Hunger: \(Int(PetState.shared.hunger))%"
             } else if item.tag == 202 {
@@ -1126,6 +1131,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 item.title = "  ⚡ Energy: \(Int(PetState.shared.energy))%"
             } else if item.tag == 204 {
                 item.title = "  🧼 Clean: \(Int(PetState.shared.hygiene))%"
+            } else if item.tag == 205 {
+                item.title = "  \(PetState.shared.stageEmoji) Stage: \(PetState.shared.stageName) (\(Int(PetState.shared.careScore))%)"
             }
         }
     }

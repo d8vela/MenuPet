@@ -8,6 +8,10 @@ class PetState {
     var energy: Double = 100
     var hygiene: Double = 100
 
+    var careScore: Double = 50
+    var stage: Int = 2
+    var totalDaysOwned: Int = 0
+
     var mood: String {
         let avg = (hunger + happiness + energy + hygiene) / 4.0
         if avg >= 80 { return "Happy" }
@@ -25,6 +29,53 @@ class PetState {
         if avg >= 20 { return "😢" }
         return "😫"
     }
+
+    var stageName: String {
+        switch stage {
+        case 0: return "Neglected"
+        case 1: return "Baby"
+        case 2: return "Normal"
+        case 3: return "Happy"
+        case 4: return "Champion"
+        default: return "Normal"
+        }
+    }
+
+    var stageEmoji: String {
+        switch stage {
+        case 0: return "🥀"
+        case 1: return "🥚"
+        case 2: return "⭐"
+        case 3: return "🌟"
+        case 4: return "👑"
+        default: return "⭐"
+        }
+    }
+
+    var brightnessModifier: Double {
+        switch stage {
+        case 0: return 0.6
+        case 1: return 0.8
+        case 2: return 1.0
+        case 3: return 1.1
+        case 4: return 1.2
+        default: return 1.0
+        }
+    }
+
+    var saturationModifier: Double {
+        switch stage {
+        case 0: return 0.5
+        case 1: return 0.8
+        case 2: return 1.0
+        case 3: return 1.15
+        case 4: return 1.3
+        default: return 1.0
+        }
+    }
+
+    var showSparkles: Bool { stage >= 3 }
+    var showShadow: Bool { stage <= 1 }
 
     private init() {
         load()
@@ -64,6 +115,28 @@ class PetState {
         if hunger < 20 { happiness = max(0, happiness - 0.5) }
         if hygiene < 20 { happiness = max(0, happiness - 0.3) }
 
+        let avg = (hunger + happiness + energy + hygiene) / 4.0
+        if avg >= 70 {
+            careScore = min(100, careScore + 0.3)
+        } else if avg >= 40 {
+            careScore = min(100, careScore + 0.1)
+        } else if avg >= 20 {
+            careScore = max(0, careScore - 0.2)
+        } else {
+            careScore = max(0, careScore - 0.5)
+        }
+
+        let newStage: Int
+        if careScore >= 85 { newStage = 4 }
+        else if careScore >= 65 { newStage = 3 }
+        else if careScore >= 40 { newStage = 2 }
+        else if careScore >= 20 { newStage = 1 }
+        else { newStage = 0 }
+
+        if newStage != stage {
+            stage = newStage
+        }
+
         save()
     }
 
@@ -72,7 +145,9 @@ class PetState {
             "hunger": hunger,
             "happiness": happiness,
             "energy": energy,
-            "hygiene": hygiene
+            "hygiene": hygiene,
+            "careScore": careScore,
+            "stage": Double(stage)
         ]
         UserDefaults.standard.set(dict, forKey: "petState")
     }
@@ -83,5 +158,7 @@ class PetState {
         happiness = dict["happiness"] ?? 100
         energy = dict["energy"] ?? 100
         hygiene = dict["hygiene"] ?? 100
+        careScore = dict["careScore"] ?? 50
+        stage = Int(dict["stage"] ?? 2)
     }
 }
