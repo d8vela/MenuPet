@@ -226,6 +226,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.spriteAnimator.updateSpeed(cpuUsage: usage)
                 self?.statusItem.button?.image = self?.spriteAnimator.currentFrame
                 self?.updateMenu()
+                self?.updateStatusBarTitle()
             }
         }
 
@@ -1127,5 +1128,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 item.title = "  🧼 Clean: \(Int(PetState.shared.hygiene))%"
             }
         }
+    }
+
+    func updateStatusBarTitle() {
+        let pet = PetState.shared
+        var worstStat = 100.0
+        var icon = ""
+
+        if pet.hunger < worstStat && pet.hunger < 30 {
+            worstStat = pet.hunger
+            icon = "🍕"
+        }
+        if pet.happiness < worstStat && pet.happiness < 30 {
+            worstStat = pet.happiness
+            icon = "😢"
+        }
+        if pet.energy < worstStat && pet.energy < 30 {
+            worstStat = pet.energy
+            icon = "😴"
+        }
+        if pet.hygiene < worstStat && pet.hygiene < 30 {
+            worstStat = pet.hygiene
+            icon = "🧼"
+        }
+
+        statusItem.button?.title = icon
     }
 }

@@ -64,7 +64,107 @@ class SpriteRenderer {
         ctx.restoreGState()
         img.unlockFocus()
         img.isTemplate = false
+
+        drawNeedOverlay(on: img, frame: frame)
         return img
+    }
+
+    private func drawNeedOverlay(on image: NSImage, frame: Int) {
+        let pet = PetState.shared
+        let blink = frame % 4 < 2
+        guard blink else { return }
+
+        var icon: [[Int]] = []
+        var iconColor = NSColor.clear
+        var worstStat = 100.0
+        var worstLabel = ""
+
+        if pet.hunger < worstStat && pet.hunger < 40 {
+            worstStat = pet.hunger
+            worstLabel = "hunger"
+        }
+        if pet.happiness < worstStat && pet.happiness < 40 {
+            worstStat = pet.happiness
+            worstLabel = "happy"
+        }
+        if pet.energy < worstStat && pet.energy < 40 {
+            worstStat = pet.energy
+            worstLabel = "energy"
+        }
+        if pet.hygiene < worstStat && pet.hygiene < 40 {
+            worstStat = pet.hygiene
+            worstLabel = "hygiene"
+        }
+
+        guard worstStat < 40 else { return }
+
+        switch worstLabel {
+        case "hunger":
+            icon = [
+                [0,0,1,0,0],
+                [0,1,1,1,0],
+                [0,0,1,0,0],
+                [0,1,0,1,0],
+                [0,0,1,0,0]
+            ]
+            iconColor = NSColor(red: 0.9, green: 0.5, blue: 0.1, alpha: 1.0)
+        case "happy":
+            icon = [
+                [0,1,0,1,0],
+                [0,0,0,0,0],
+                [0,0,0,0,0],
+                [1,0,0,0,1],
+                [0,1,1,1,0]
+            ]
+            iconColor = NSColor(red: 0.2, green: 0.4, blue: 0.9, alpha: 1.0)
+        case "energy":
+            icon = [
+                [0,0,1,0,0],
+                [0,0,0,1,0],
+                [0,0,1,0,0],
+                [0,1,0,0,0],
+                [0,0,1,0,0]
+            ]
+            iconColor = NSColor(red: 0.6, green: 0.6, blue: 0.65, alpha: 1.0)
+        case "hygiene":
+            icon = [
+                [0,0,1,0,0],
+                [0,1,0,1,0],
+                [0,0,1,0,0],
+                [0,0,0,0,0],
+                [0,0,1,0,0]
+            ]
+            iconColor = NSColor(red: 0.4, green: 0.65, blue: 0.9, alpha: 1.0)
+        default:
+            return
+        }
+
+        let bubbleSize: CGFloat = 11
+        let bubbleX = image.size.width - bubbleSize - 1
+        let bubbleY: CGFloat = image.size.height - bubbleSize - 1
+
+        image.lockFocus()
+
+        let bg = NSColor(red: 1, green: 1, blue: 1, alpha: 0.85)
+        let border = NSColor.gray
+
+        border.setFill()
+        NSRect(x: bubbleX - 1, y: bubbleY - 1, width: bubbleSize + 2, height: bubbleSize + 2).fill()
+        bg.setFill()
+        NSRect(x: bubbleX, y: bubbleY, width: bubbleSize, height: bubbleSize).fill()
+
+        iconColor.setFill()
+        for row in 0..<5 {
+            for col in 0..<5 {
+                if icon[row][col] == 1 {
+                    NSRect(x: bubbleX + CGFloat(col) * 2 + 0.5,
+                           y: bubbleY + CGFloat(4 - row) * 2 + 0.5,
+                           width: 2, height: 2).fill()
+                }
+            }
+        }
+
+        image.unlockFocus()
     }
 
     private func getPixels(character: SelectableCharacter, frame: Int) -> [[NSColor]] {
