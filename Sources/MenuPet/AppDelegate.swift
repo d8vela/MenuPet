@@ -240,6 +240,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         petDecayTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
             PetState.shared.decay()
+            PetState.shared.checkDisobedience()
             self?.updatePetMenu()
         }
     }
@@ -303,6 +304,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let sleepItem = NSMenuItem(title: "😴 Sleep", action: #selector(letPetSleep), keyEquivalent: "")
         sleepItem.target = self
         menu.addItem(sleepItem)
+
+        if PetState.shared.isDisobedient {
+            let disobeyItem = NSMenuItem(title: "😡 \(PetState.shared.disobedienceMessage)", action: nil, keyEquivalent: "")
+            disobeyItem.isEnabled = false
+            menu.addItem(disobeyItem)
+
+            let disciplineItem = NSMenuItem(title: "👋 Disciplin", action: #selector(disciplinePet), keyEquivalent: "")
+            disciplineItem.target = self
+            menu.addItem(disciplineItem)
+        }
+
+        let obedienceItem = NSMenuItem(title: "  🎓 Obedience: \(Int(PetState.shared.obedience))%", action: nil, keyEquivalent: "")
+        obedienceItem.isEnabled = false
+        menu.addItem(obedienceItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -1160,5 +1175,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         statusItem.button?.title = icon
+    }
+
+    @objc func disciplinePet() {
+        let result = PetState.shared.discipline()
+        let alert = NSAlert()
+        alert.messageText = "Discipline"
+        alert.informativeText = result
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+        buildMenu()
     }
 }

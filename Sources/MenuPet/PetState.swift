@@ -12,6 +12,10 @@ class PetState {
     var stage: Int = 2
     var totalDaysOwned: Int = 0
 
+    var isDisobedient: Bool = false
+    var obedience: Double = 80
+    var disobedienceMessage: String = ""
+
     var mood: String {
         let avg = (hunger + happiness + energy + hygiene) / 4.0
         if avg >= 80 { return "Happy" }
@@ -106,6 +110,37 @@ class PetState {
         save()
     }
 
+    func checkDisobedience() {
+        guard !isDisobedient else { return }
+        let chance = Int.random(in: 0...100)
+        let disobedienceThreshold = max(5, Int(100 - obedience))
+        if chance < disobedienceThreshold {
+            isDisobedient = true
+            let messages = [
+                "Refuses to eat!",
+                "Made a mess!",
+                "Won't stop jumping around!",
+                "Knocked something over!",
+                "Is ignoring you!",
+                "Chewed on something!",
+                "Is throwing a tantrum!",
+                "Won't settle down!"
+            ]
+            disobedienceMessage = messages.randomElement() ?? "Is misbehaving!"
+        }
+    }
+
+    func discipline() -> String {
+        guard isDisobedient else {
+            return "Pet is behaving well!"
+        }
+        isDisobedient = false
+        obedience = min(100, obedience + 5)
+        happiness = max(0, happiness - 10)
+        save()
+        return "Pet disciplined. Obedience increased."
+    }
+
     func decay() {
         hunger = max(0, hunger - 0.5)
         happiness = max(0, happiness - 0.3)
@@ -147,9 +182,12 @@ class PetState {
             "energy": energy,
             "hygiene": hygiene,
             "careScore": careScore,
-            "stage": Double(stage)
+            "stage": Double(stage),
+            "obedience": obedience,
+            "isDisobedient": isDisobedient ? 1 : 0
         ]
         UserDefaults.standard.set(dict, forKey: "petState")
+        UserDefaults.standard.set(disobedienceMessage, forKey: "disobedienceMessage")
     }
 
     func load() {
@@ -160,5 +198,8 @@ class PetState {
         hygiene = dict["hygiene"] ?? 100
         careScore = dict["careScore"] ?? 50
         stage = Int(dict["stage"] ?? 2)
+        obedience = dict["obedience"] ?? 80
+        isDisobedient = (dict["isDisobedient"] ?? 0) == 1
+        disobedienceMessage = UserDefaults.standard.string(forKey: "disobedienceMessage") ?? ""
     }
 }

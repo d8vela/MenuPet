@@ -91,7 +91,27 @@ class SpriteRenderer {
         }
 
         drawNeedOverlay(on: img, frame: frame)
+
+        if pet.isDisobedient && frame % 6 < 3 {
+            drawDisobedientIcon(on: img)
+        }
+
         return img
+    }
+
+    private func drawDisobedientIcon(on image: NSImage) {
+        image.lockFocus()
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 0.9)
+        red.setFill()
+
+        let iconX = image.size.width / 2 - 2
+        let iconY = image.size.height - 8
+
+        NSRect(x: iconX, y: iconY, width: 4, height: 1).fill()
+        NSRect(x: iconX + 1, y: iconY + 1, width: 2, height: 1).fill()
+        NSRect(x: iconX, y: iconY + 2, width: 4, height: 1).fill()
+
+        image.unlockFocus()
     }
 
     private func drawSparkles(on image: NSImage, frame: Int) {
