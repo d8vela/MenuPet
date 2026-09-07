@@ -50,7 +50,25 @@ cp .build/release/MenuPet /usr/local/bin/
   - ⭐ Normal (40-64%) — default look
   - 🌟 Happy (65-84%) — brighter, more vivid colors with sparkles
   - 👑 Champion (85%+) — extra bright, extra vivid, sparkles
-- **Need Indicators** — when stats drop below 40%, a thought bubble appears above the sprite showing what it needs (🍕 food, 😢 happiness, 💤 sleep, 🧼 clean). Below 30%, an emoji appears next to the menu bar icon.
+- **Need Indicators** — when stats drop below 40%, a thought bubble appears above the sprite showing what it needs. Below 30%, an emoji appears next to the menu bar icon.
+
+### Indicator Reference
+
+| Icon | Stat | Color | Meaning |
+|------|------|-------|---------|
+| + cross shape | 🍕 Hunger | Orange | Pet needs food |
+| ○ ○ face | 😢 Happiness | Blue | Pet is sad/lonely |
+| Z shape | 😴 Energy | Gray | Pet is tired |
+| 💧 drops | 🧼 Hygiene | Light blue | Pet needs cleaning |
+
+Only the worst stat is shown — if both hunger and energy are low, whichever is lower displays.
+
+**Status Bar Emoji** (appears next to the sprite when stat < 30%):
+- 🍕 = hungry, 😢 = unhappy, 😴 = tired, 🧼 = dirty
+
+**Stage Effects** (based on care score):
+- Gold sparkles above sprite = Happy or Champion stage (doing well)
+- Darker colors + shadow underneath = Neglected or Baby stage (needs attention)
 - Enable **Random Rotation** under the Rotation submenu to cycle characters automatically
 - Set a custom **Rotation Interval** from 0.01 seconds to any value
 - Use **Rotate Within Category Only** to limit rotation to the current category
