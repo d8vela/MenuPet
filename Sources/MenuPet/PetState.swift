@@ -136,7 +136,7 @@ class PetState {
         }
         isDisobedient = false
         obedience = min(100, obedience + 5)
-        happiness = max(0, happiness - 10)
+        happiness = max(0, happiness - 25)
         save()
         return "Pet disciplined. Obedience increased."
     }

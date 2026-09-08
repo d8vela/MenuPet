@@ -84,7 +84,13 @@ class UpdateChecker {
     }
     
     func downloadAndInstallUpdate(from urlString: String, progressWindow: NSWindow? = nil, progressIndicator: NSProgressIndicator? = nil, statusLabel: NSTextField? = nil) {
-        guard let url = URL(string: urlString) else { return }
+        guard let url = URL(string: urlString), !urlString.isEmpty else {
+            DispatchQueue.main.async {
+                progressWindow?.close()
+                self.showError("No download URL available.")
+            }
+            return
+        }
         
         let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent("MenuPetUpdate")
         try? FileManager.default.removeItem(at: tempDir)
@@ -156,6 +162,18 @@ class UpdateChecker {
             try cpProcess.run()
             cpProcess.waitUntilExit()
             
+            guard cpProcess.terminationStatus == 0 else {
+                let detachProcess = Process()
+                detachProcess.executableURL = URL(fileURLWithPath: "/usr/bin/hdiutil")
+                detachProcess.arguments = ["detach", mountPoint.path, "-quiet"]
+                try? detachProcess.run()
+                detachProcess.waitUntilExit()
+                DispatchQueue.main.async {
+                    self.showError("Failed to copy update. The update was not installed.")
+                }
+                return
+            }
+            
             let detachProcess = Process()
             detachProcess.executableURL = URL(fileURLWithPath: "/usr/bin/hdiutil")
             detachProcess.arguments = ["detach", mountPoint.path, "-quiet"]
@@ -214,10 +232,15 @@ class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {}
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
         DispatchQueue.main.async {
-            self.progressIndicator?.doubleValue = progress
-            self.statusLabel?.stringValue = "\\(Int(progress))%"
+            if totalBytesExpectedToWrite > 0 {
+                let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
+                self.progressIndicator?.doubleValue = progress
+                self.statusLabel?.stringValue = "\(Int(progress))%"
+            } else {
+                self.progressIndicator?.isIndeterminate = true
+                self.statusLabel?.stringValue = "Downloading..."
+            }
         }
     }
 }

@@ -100,7 +100,7 @@ class SpriteAnimator {
     }
 
     func setRotationInterval(_ interval: TimeInterval) {
-        let clamped = max(interval, 0.01)
+        let clamped = max(interval, 1.0)
         rotationInterval = clamped
         UserDefaults.standard.set(clamped, forKey: "rotationInterval")
         if rotationEnabled {
@@ -237,7 +237,12 @@ class SpriteAnimator {
         startAnimation()
     }
 
+    var onFrameAdvanced: (() -> Void)?
+
     private func advanceFrame() {
         currentFrameIndex = (currentFrameIndex + 1) % 4
+        DispatchQueue.main.async {
+            self.onFrameAdvanced?()
+        }
     }
 }

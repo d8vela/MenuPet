@@ -215,6 +215,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.buildMenu()
             }
         }
+        spriteAnimator.onFrameAdvanced = { [weak self] in
+            self?.statusItem.button?.image = self?.spriteAnimator.currentFrame
+        }
 
         if let button = statusItem.button {
             button.image = spriteAnimator.currentFrame
@@ -241,7 +244,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         petDecayTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
             PetState.shared.decay()
             PetState.shared.checkDisobedience()
-            self?.updatePetMenu()
+            self?.buildMenu()
         }
     }
 
@@ -310,7 +313,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             disobeyItem.isEnabled = false
             menu.addItem(disobeyItem)
 
-            let disciplineItem = NSMenuItem(title: "👋 Disciplin", action: #selector(disciplinePet), keyEquivalent: "")
+            let disciplineItem = NSMenuItem(title: "👋 🫏 Discipline", action: #selector(disciplinePet), keyEquivalent: "")
             disciplineItem.target = self
             menu.addItem(disciplineItem)
         }
@@ -832,7 +835,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
 
         let speedItem = NSMenuItem(title: "Speed: \(spriteAnimator.speedLabel)", action: nil, keyEquivalent: "")
-        speedItem.tag = 200
+        speedItem.tag = 150
         menu.addItem(speedItem)
 
         let rotationSub = NSMenu()
@@ -919,7 +922,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(versionItem)
 
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q"))
+        let quitItem = NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
 
         statusItem.menu = menu
     }
