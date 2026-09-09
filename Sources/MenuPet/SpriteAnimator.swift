@@ -19,6 +19,14 @@ class SpriteAnimator {
     private(set) var characterHistory: [SelectableCharacter] = []
     private let maxHistorySize = 20
 
+    // Transformer transformation state
+    private var transformTimer: Timer?
+    private var transformHoldTimer: Timer?
+    private var transformFrameIndex = 0
+    private var isTransformingToVehicle = false
+    private var isTransformingToRobot = false
+    private var isInVehicleMode = false
+
     var currentPokemon: SelectableCharacter = {
         if let saved = UserDefaults.standard.string(forKey: "lastSelectedCharacter"),
            let character = SelectableCharacter.from(identifier: saved) {
@@ -29,7 +37,17 @@ class SpriteAnimator {
     var speedLabel: String = "Idle"
 
     var currentFrame: NSImage {
+        if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
+            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex)
+        } else if isTransformerCharacter(currentPokemon) {
+            return spriteRenderer.renderFrame(character: currentPokemon, frame: 0)
+        }
         return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex)
+    }
+
+    private func isTransformerCharacter(_ character: SelectableCharacter) -> Bool {
+        if case .transformers(_) = character { return true }
+        return false
     }
 
     init(cpuMonitor: CPUMonitor) {
@@ -39,13 +57,97 @@ class SpriteAnimator {
         if rotationEnabled {
             startRotation()
         }
+        if isTransformerCharacter(currentPokemon) {
+            scheduleNextTransformation()
+        }
     }
 
     func setPokemon(_ pokemon: SelectableCharacter) {
+        let wasTransformer = isTransformerCharacter(currentPokemon)
+        let isNowTransformer = isTransformerCharacter(pokemon)
+
         currentPokemon = pokemon
         selectionCounts[pokemon, default: 0] += 1
         addToHistory(pokemon)
         UserDefaults.standard.set(pokemon.identifier, forKey: "lastSelectedCharacter")
+
+        if wasTransformer && !isNowTransformer {
+            resetTransformationState()
+        } else if isNowTransformer {
+            resetTransformationState()
+            scheduleNextTransformation()
+        }
+    }
+
+    private func resetTransformationState() {
+        transformTimer?.invalidate()
+        transformTimer = nil
+        transformHoldTimer?.invalidate()
+        transformHoldTimer = nil
+        isTransformingToVehicle = false
+        isTransformingToRobot = false
+        isInVehicleMode = false
+        transformFrameIndex = 0
+    }
+
+    private func scheduleNextTransformation() {
+        transformTimer?.invalidate()
+        let delay = TimeInterval.random(in: 15...60)
+        transformTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
+            self?.startTransformation()
+        }
+    }
+
+    private func startTransformation() {
+        guard isTransformerCharacter(currentPokemon) else { return }
+        isTransformingToVehicle = true
+        transformFrameIndex = 0
+
+        let transformTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] timer in
+            guard let self = self else { timer.invalidate(); return }
+            if self.isTransformingToVehicle {
+                self.transformFrameIndex += 1
+                self.onFrameAdvanced?()
+                if self.transformFrameIndex >= 2 {
+                    timer.invalidate()
+                    self.isTransformingToVehicle = false
+                    self.isInVehicleMode = true
+                    self.startVehicleHold()
+                }
+            }
+        }
+        self.transformTimer = transformTimer
+    }
+
+    private func startVehicleHold() {
+        transformHoldTimer?.invalidate()
+        transformHoldTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false) { [weak self] _ in
+            self?.startReverseTransformation()
+        }
+    }
+
+    private func startReverseTransformation() {
+        guard isTransformerCharacter(currentPokemon) else { return }
+        isInVehicleMode = false
+        isTransformingToRobot = true
+        transformFrameIndex = 2
+
+        let reverseTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] timer in
+            guard let self = self else { timer.invalidate(); return }
+            if self.isTransformingToRobot {
+                self.transformFrameIndex += 1
+                if self.transformFrameIndex > 3 {
+                    self.transformFrameIndex = 0
+                }
+                self.onFrameAdvanced?()
+                if self.transformFrameIndex == 0 {
+                    timer.invalidate()
+                    self.isTransformingToRobot = false
+                    self.scheduleNextTransformation()
+                }
+            }
+        }
+        self.transformTimer = reverseTimer
     }
 
     func setOnPokemonChanged(_ handler: @escaping () -> Void) {
@@ -147,7 +249,8 @@ class SpriteAnimator {
             KingOfTheHillCharacter.allCases.map { .kingOfTheHill($0) } +
             FamilyGuyCharacter.allCases.map { .familyGuy($0) } +
             FuturamaCharacter.allCases.map { .futurama($0) } +
-            BatmanCharacter.allCases.map { .batman($0) }
+            BatmanCharacter.allCases.map { .batman($0) } +
+            TransformersCharacter.allCases.map { .transformers($0) }
 
         rotationTimer = Timer.scheduledTimer(withTimeInterval: rotationInterval, repeats: true) { [weak self] _ in
             guard let self = self else { return }
