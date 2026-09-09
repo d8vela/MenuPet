@@ -90,7 +90,7 @@ class SpriteAnimator {
 
     private func scheduleNextTransformation() {
         transformTimer?.invalidate()
-        let delay = TimeInterval.random(in: 15...60)
+        let delay = TimeInterval.random(in: 300...900)
         transformTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
             self?.startTransformation()
         }
