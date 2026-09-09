@@ -203,6 +203,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         .catwoman, .twoFace, .mrFreeze, .redHood, .rasAlGhul, .deathstroke
     ]
 
+    let transformersCharacters: [TransformersCharacter] = [
+        .optimusPrime, .bumblebee, .megatron, .starscream, .soundwave, .prowl, .jazz, .ironhide,
+        .ratchet, .shockwave, .soundBlaster, .galvatron, .cyclonus, .devestator
+    ]
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
@@ -818,6 +823,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if case .batman(_) = spriteAnimator.currentPokemon { batMI.state = .on }
         moviesTVMenu.addItem(batMI)
 
+        // Transformers
+        let tfSub = NSMenu()
+        for c in transformersCharacters {
+            let i = NSMenuItem(title: c.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
+            i.target = self; i.representedObject = SelectableCharacter.transformers(c)
+            if case .transformers(let x) = spriteAnimator.currentPokemon, x == c { i.state = .on }
+            tfSub.addItem(i)
+        }
+        let tfMI = NSMenuItem(title: "Transformers", action: nil, keyEquivalent: "")
+        tfMI.submenu = tfSub
+        if case .transformers(_) = spriteAnimator.currentPokemon { tfMI.state = .on }
+        moviesTVMenu.addItem(tfMI)
+
         let moviesTVMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
         moviesTVMI.submenu = moviesTVMenu
         // Check if current character is from Movies & TV
@@ -830,6 +848,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if case .minions(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
         if case .futurama(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
         if case .batman(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
+        if case .transformers(_) = spriteAnimator.currentPokemon { moviesTVMI.state = .on }
         menu.addItem(moviesTVMI)
 
         menu.addItem(NSMenuItem.separator())

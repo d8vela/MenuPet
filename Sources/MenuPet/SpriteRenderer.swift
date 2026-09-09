@@ -668,6 +668,23 @@ class SpriteRenderer {
             case .rasAlGhul: drawBatmanRasAlGhul(grid: &grid, frame: frame)
             case .deathstroke: drawBatmanDeathstroke(grid: &grid, frame: frame)
             }
+        case .transformers(let tChar):
+            switch tChar {
+            case .optimusPrime: drawTransformersOptimusPrime(grid: &grid, frame: frame)
+            case .bumblebee: drawTransformersBumblebee(grid: &grid, frame: frame)
+            case .megatron: drawTransformersMegatron(grid: &grid, frame: frame)
+            case .starscream: drawTransformersStarscream(grid: &grid, frame: frame)
+            case .soundwave: drawTransformersSoundwave(grid: &grid, frame: frame)
+            case .prowl: drawTransformersProwl(grid: &grid, frame: frame)
+            case .jazz: drawTransformersJazz(grid: &grid, frame: frame)
+            case .ironhide: drawTransformersIronhide(grid: &grid, frame: frame)
+            case .ratchet: drawTransformersRatchet(grid: &grid, frame: frame)
+            case .shockwave: drawTransformersShockwave(grid: &grid, frame: frame)
+            case .soundBlaster: drawTransformersSoundBlaster(grid: &grid, frame: frame)
+            case .galvatron: drawTransformersGalvatron(grid: &grid, frame: frame)
+            case .cyclonus: drawTransformersCyclonus(grid: &grid, frame: frame)
+            case .devestator: drawTransformersDevestator(grid: &grid, frame: frame)
+            }
         }
 
         return grid
@@ -10062,6 +10079,807 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 6, color: beige); setPixel(&grid, x: 9, y: 6, color: beige)
         } else {
             setPixel(&grid, x: 5, y: 6, color: beige); setPixel(&grid, x: 10, y: 6, color: beige)
+        }
+    }
+
+    private func drawTransformersOptimusPrime(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let black = NSColor.black
+        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.2, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head
+        setPixel(&grid, x: 6, y: 0, color: red)
+        setPixel(&grid, x: 7, y: 0, color: red)
+        setPixel(&grid, x: 8, y: 0, color: red)
+        setPixel(&grid, x: 9, y: 0, color: red)
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: blue)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: blue)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: red) }
+        setPixel(&grid, x: 7, y: 3, color: blue)
+        setPixel(&grid, x: 8, y: 3, color: blue)
+        setPixel(&grid, x: 7, y: 4, color: yellow)
+        setPixel(&grid, x: 8, y: 4, color: yellow)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: blue)
+        setPixel(&grid, x: 4, y: 4, color: blue)
+        setPixel(&grid, x: 11, y: 3, color: blue)
+        setPixel(&grid, x: 11, y: 4, color: blue)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: red)
+            setPixel(&grid, x: 6, y: 6, color: red)
+            setPixel(&grid, x: 9, y: 6, color: red)
+            setPixel(&grid, x: 10, y: 6, color: red)
+            setPixel(&grid, x: 5, y: 7, color: blue)
+            setPixel(&grid, x: 6, y: 7, color: blue)
+            setPixel(&grid, x: 9, y: 7, color: blue)
+            setPixel(&grid, x: 10, y: 7, color: blue)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: red)
+            setPixel(&grid, x: 5, y: 6, color: red)
+            setPixel(&grid, x: 10, y: 6, color: red)
+            setPixel(&grid, x: 11, y: 6, color: red)
+            setPixel(&grid, x: 4, y: 7, color: blue)
+            setPixel(&grid, x: 5, y: 7, color: blue)
+            setPixel(&grid, x: 10, y: 7, color: blue)
+            setPixel(&grid, x: 11, y: 7, color: blue)
+        }
+    }
+
+    private func drawTransformersBumblebee(grid: inout [[NSColor]], frame: Int) {
+        let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.2, alpha: 1.0)
+        let black = NSColor.black
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: yellow) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: blue)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: blue)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: yellow) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: black) }
+        setPixel(&grid, x: 7, y: 3, color: black)
+        setPixel(&grid, x: 8, y: 3, color: black)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: yellow)
+        setPixel(&grid, x: 4, y: 4, color: yellow)
+        setPixel(&grid, x: 11, y: 3, color: yellow)
+        setPixel(&grid, x: 11, y: 4, color: yellow)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: yellow) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black)
+            setPixel(&grid, x: 6, y: 6, color: black)
+            setPixel(&grid, x: 9, y: 6, color: black)
+            setPixel(&grid, x: 10, y: 6, color: black)
+            setPixel(&grid, x: 5, y: 7, color: yellow)
+            setPixel(&grid, x: 6, y: 7, color: yellow)
+            setPixel(&grid, x: 9, y: 7, color: yellow)
+            setPixel(&grid, x: 10, y: 7, color: yellow)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: black)
+            setPixel(&grid, x: 5, y: 6, color: black)
+            setPixel(&grid, x: 10, y: 6, color: black)
+            setPixel(&grid, x: 11, y: 6, color: black)
+            setPixel(&grid, x: 4, y: 7, color: yellow)
+            setPixel(&grid, x: 5, y: 7, color: yellow)
+            setPixel(&grid, x: 10, y: 7, color: yellow)
+            setPixel(&grid, x: 11, y: 7, color: yellow)
+        }
+    }
+
+    private func drawTransformersMegatron(grid: inout [[NSColor]], frame: Int) {
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
+        let black = NSColor.black
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head with helmet
+        setPixel(&grid, x: 6, y: 0, color: gray)
+        setPixel(&grid, x: 7, y: 0, color: gray)
+        setPixel(&grid, x: 8, y: 0, color: gray)
+        setPixel(&grid, x: 9, y: 0, color: gray)
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: red)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: gray) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: gray) }
+        setPixel(&grid, x: 7, y: 3, color: black)
+        setPixel(&grid, x: 8, y: 3, color: black)
+
+        // Arms with cannon
+        setPixel(&grid, x: 4, y: 3, color: silver)
+        setPixel(&grid, x: 3, y: 3, color: gray)
+        setPixel(&grid, x: 11, y: 3, color: silver)
+        setPixel(&grid, x: 12, y: 3, color: gray)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: gray)
+            setPixel(&grid, x: 6, y: 6, color: gray)
+            setPixel(&grid, x: 9, y: 6, color: gray)
+            setPixel(&grid, x: 10, y: 6, color: gray)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 6, y: 7, color: black)
+            setPixel(&grid, x: 9, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: gray)
+            setPixel(&grid, x: 5, y: 6, color: gray)
+            setPixel(&grid, x: 10, y: 6, color: gray)
+            setPixel(&grid, x: 11, y: 6, color: gray)
+            setPixel(&grid, x: 4, y: 7, color: black)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+            setPixel(&grid, x: 11, y: 7, color: black)
+        }
+    }
+
+    private func drawTransformersStarscream(grid: inout [[NSColor]], frame: Int) {
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: gray) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: red)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest with wings
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: gray) }
+        setPixel(&grid, x: 3, y: 3, color: blue)
+        setPixel(&grid, x: 4, y: 3, color: blue)
+        setPixel(&grid, x: 11, y: 3, color: blue)
+        setPixel(&grid, x: 12, y: 3, color: blue)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 4, color: silver)
+        setPixel(&grid, x: 11, y: 4, color: silver)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: red)
+            setPixel(&grid, x: 6, y: 6, color: red)
+            setPixel(&grid, x: 9, y: 6, color: red)
+            setPixel(&grid, x: 10, y: 6, color: red)
+            setPixel(&grid, x: 5, y: 7, color: gray)
+            setPixel(&grid, x: 6, y: 7, color: gray)
+            setPixel(&grid, x: 9, y: 7, color: gray)
+            setPixel(&grid, x: 10, y: 7, color: gray)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: red)
+            setPixel(&grid, x: 5, y: 6, color: red)
+            setPixel(&grid, x: 10, y: 6, color: red)
+            setPixel(&grid, x: 11, y: 6, color: red)
+            setPixel(&grid, x: 4, y: 7, color: gray)
+            setPixel(&grid, x: 5, y: 7, color: gray)
+            setPixel(&grid, x: 10, y: 7, color: gray)
+            setPixel(&grid, x: 11, y: 7, color: gray)
+        }
+    }
+
+    private func drawTransformersSoundwave(grid: inout [[NSColor]], frame: Int) {
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: blue) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: red)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest with cassette door
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: blue) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: blue) }
+        setPixel(&grid, x: 6, y: 3, color: black)
+        setPixel(&grid, x: 7, y: 3, color: black)
+        setPixel(&grid, x: 8, y: 3, color: black)
+        setPixel(&grid, x: 9, y: 3, color: black)
+        setPixel(&grid, x: 6, y: 4, color: silver)
+        setPixel(&grid, x: 9, y: 4, color: silver)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: silver)
+        setPixel(&grid, x: 4, y: 4, color: silver)
+        setPixel(&grid, x: 11, y: 3, color: silver)
+        setPixel(&grid, x: 11, y: 4, color: silver)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: blue)
+            setPixel(&grid, x: 6, y: 6, color: blue)
+            setPixel(&grid, x: 9, y: 6, color: blue)
+            setPixel(&grid, x: 10, y: 6, color: blue)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 6, y: 7, color: black)
+            setPixel(&grid, x: 9, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: blue)
+            setPixel(&grid, x: 5, y: 6, color: blue)
+            setPixel(&grid, x: 10, y: 6, color: blue)
+            setPixel(&grid, x: 11, y: 6, color: blue)
+            setPixel(&grid, x: 4, y: 7, color: black)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+            setPixel(&grid, x: 11, y: 7, color: black)
+        }
+    }
+
+    private func drawTransformersProwl(grid: inout [[NSColor]], frame: Int) {
+        let black = NSColor.black
+        let white = NSColor.white
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head with police lights
+        setPixel(&grid, x: 6, y: 0, color: black)
+        setPixel(&grid, x: 7, y: 0, color: red)
+        setPixel(&grid, x: 8, y: 0, color: red)
+        setPixel(&grid, x: 9, y: 0, color: black)
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: white)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: white)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: white) }
+        setPixel(&grid, x: 7, y: 3, color: white)
+        setPixel(&grid, x: 8, y: 3, color: white)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: black)
+        setPixel(&grid, x: 4, y: 4, color: black)
+        setPixel(&grid, x: 11, y: 3, color: black)
+        setPixel(&grid, x: 11, y: 4, color: black)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black)
+            setPixel(&grid, x: 6, y: 6, color: black)
+            setPixel(&grid, x: 9, y: 6, color: black)
+            setPixel(&grid, x: 10, y: 6, color: black)
+            setPixel(&grid, x: 5, y: 7, color: white)
+            setPixel(&grid, x: 6, y: 7, color: white)
+            setPixel(&grid, x: 9, y: 7, color: white)
+            setPixel(&grid, x: 10, y: 7, color: white)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: black)
+            setPixel(&grid, x: 5, y: 6, color: black)
+            setPixel(&grid, x: 10, y: 6, color: black)
+            setPixel(&grid, x: 11, y: 6, color: black)
+            setPixel(&grid, x: 4, y: 7, color: white)
+            setPixel(&grid, x: 5, y: 7, color: white)
+            setPixel(&grid, x: 10, y: 7, color: white)
+            setPixel(&grid, x: 11, y: 7, color: white)
+        }
+    }
+
+    private func drawTransformersJazz(grid: inout [[NSColor]], frame: Int) {
+        let white = NSColor.white
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        // Head with visor
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: white) }
+        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: blue) }
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: white) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: white) }
+        setPixel(&grid, x: 7, y: 3, color: blue)
+        setPixel(&grid, x: 8, y: 3, color: blue)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: silver)
+        setPixel(&grid, x: 4, y: 4, color: silver)
+        setPixel(&grid, x: 11, y: 3, color: silver)
+        setPixel(&grid, x: 11, y: 4, color: silver)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: white)
+            setPixel(&grid, x: 6, y: 6, color: white)
+            setPixel(&grid, x: 9, y: 6, color: white)
+            setPixel(&grid, x: 10, y: 6, color: white)
+            setPixel(&grid, x: 5, y: 7, color: blue)
+            setPixel(&grid, x: 6, y: 7, color: blue)
+            setPixel(&grid, x: 9, y: 7, color: blue)
+            setPixel(&grid, x: 10, y: 7, color: blue)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: white)
+            setPixel(&grid, x: 5, y: 6, color: white)
+            setPixel(&grid, x: 10, y: 6, color: white)
+            setPixel(&grid, x: 11, y: 6, color: white)
+            setPixel(&grid, x: 4, y: 7, color: blue)
+            setPixel(&grid, x: 5, y: 7, color: blue)
+            setPixel(&grid, x: 10, y: 7, color: blue)
+            setPixel(&grid, x: 11, y: 7, color: blue)
+        }
+    }
+
+    private func drawTransformersIronhide(grid: inout [[NSColor]], frame: Int) {
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: red) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: silver)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: silver)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: gray) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: red) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: red) }
+        setPixel(&grid, x: 7, y: 3, color: black)
+        setPixel(&grid, x: 8, y: 3, color: black)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: gray)
+        setPixel(&grid, x: 4, y: 4, color: gray)
+        setPixel(&grid, x: 11, y: 3, color: gray)
+        setPixel(&grid, x: 11, y: 4, color: gray)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: red)
+            setPixel(&grid, x: 6, y: 6, color: red)
+            setPixel(&grid, x: 9, y: 6, color: red)
+            setPixel(&grid, x: 10, y: 6, color: red)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 6, y: 7, color: black)
+            setPixel(&grid, x: 9, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: red)
+            setPixel(&grid, x: 5, y: 6, color: red)
+            setPixel(&grid, x: 10, y: 6, color: red)
+            setPixel(&grid, x: 11, y: 6, color: red)
+            setPixel(&grid, x: 4, y: 7, color: black)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+            setPixel(&grid, x: 11, y: 7, color: black)
+        }
+    }
+
+    private func drawTransformersRatchet(grid: inout [[NSColor]], frame: Int) {
+        let white = NSColor.white
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let black = NSColor.black
+        let anim = frame % 2
+
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: white) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: red)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: white) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: white) }
+        setPixel(&grid, x: 7, y: 3, color: red)
+        setPixel(&grid, x: 8, y: 3, color: red)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: silver)
+        setPixel(&grid, x: 4, y: 4, color: silver)
+        setPixel(&grid, x: 11, y: 3, color: silver)
+        setPixel(&grid, x: 11, y: 4, color: silver)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: white)
+            setPixel(&grid, x: 6, y: 6, color: white)
+            setPixel(&grid, x: 9, y: 6, color: white)
+            setPixel(&grid, x: 10, y: 6, color: white)
+            setPixel(&grid, x: 5, y: 7, color: red)
+            setPixel(&grid, x: 6, y: 7, color: red)
+            setPixel(&grid, x: 9, y: 7, color: red)
+            setPixel(&grid, x: 10, y: 7, color: red)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: white)
+            setPixel(&grid, x: 5, y: 6, color: white)
+            setPixel(&grid, x: 10, y: 6, color: white)
+            setPixel(&grid, x: 11, y: 6, color: white)
+            setPixel(&grid, x: 4, y: 7, color: red)
+            setPixel(&grid, x: 5, y: 7, color: red)
+            setPixel(&grid, x: 10, y: 7, color: red)
+            setPixel(&grid, x: 11, y: 7, color: red)
+        }
+    }
+
+    private func drawTransformersShockwave(grid: inout [[NSColor]], frame: Int) {
+        let purple = NSColor(red: 0.6, green: 0.2, blue: 0.8, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head with cyclops eye
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: purple) }
+        setPixel(&grid, x: 7, y: 1, color: red)
+        setPixel(&grid, x: 8, y: 1, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: purple) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: purple) }
+        setPixel(&grid, x: 7, y: 3, color: black)
+        setPixel(&grid, x: 8, y: 3, color: black)
+
+        // Arms with cannon
+        setPixel(&grid, x: 4, y: 3, color: silver)
+        setPixel(&grid, x: 3, y: 3, color: purple)
+        setPixel(&grid, x: 11, y: 3, color: silver)
+        setPixel(&grid, x: 12, y: 3, color: purple)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: purple)
+            setPixel(&grid, x: 6, y: 6, color: purple)
+            setPixel(&grid, x: 9, y: 6, color: purple)
+            setPixel(&grid, x: 10, y: 6, color: purple)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 6, y: 7, color: black)
+            setPixel(&grid, x: 9, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: purple)
+            setPixel(&grid, x: 5, y: 6, color: purple)
+            setPixel(&grid, x: 10, y: 6, color: purple)
+            setPixel(&grid, x: 11, y: 6, color: purple)
+            setPixel(&grid, x: 4, y: 7, color: black)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+            setPixel(&grid, x: 11, y: 7, color: black)
+        }
+    }
+
+    private func drawTransformersSoundBlaster(grid: inout [[NSColor]], frame: Int) {
+        let black = NSColor.black
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let purple = NSColor(red: 0.6, green: 0.2, blue: 0.8, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: black) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: red)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: black) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: black) }
+        setPixel(&grid, x: 6, y: 3, color: purple)
+        setPixel(&grid, x: 7, y: 3, color: purple)
+        setPixel(&grid, x: 8, y: 3, color: purple)
+        setPixel(&grid, x: 9, y: 3, color: purple)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 3, color: silver)
+        setPixel(&grid, x: 4, y: 4, color: silver)
+        setPixel(&grid, x: 11, y: 3, color: silver)
+        setPixel(&grid, x: 11, y: 4, color: silver)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: black)
+            setPixel(&grid, x: 6, y: 6, color: black)
+            setPixel(&grid, x: 9, y: 6, color: black)
+            setPixel(&grid, x: 10, y: 6, color: black)
+            setPixel(&grid, x: 5, y: 7, color: purple)
+            setPixel(&grid, x: 6, y: 7, color: purple)
+            setPixel(&grid, x: 9, y: 7, color: purple)
+            setPixel(&grid, x: 10, y: 7, color: purple)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: black)
+            setPixel(&grid, x: 5, y: 6, color: black)
+            setPixel(&grid, x: 10, y: 6, color: black)
+            setPixel(&grid, x: 11, y: 6, color: black)
+            setPixel(&grid, x: 4, y: 7, color: purple)
+            setPixel(&grid, x: 5, y: 7, color: purple)
+            setPixel(&grid, x: 10, y: 7, color: purple)
+            setPixel(&grid, x: 11, y: 7, color: purple)
+        }
+    }
+
+    private func drawTransformersGalvatron(grid: inout [[NSColor]], frame: Int) {
+        let purple = NSColor(red: 0.6, green: 0.2, blue: 0.8, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let orange = NSColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head with helmet
+        setPixel(&grid, x: 6, y: 0, color: purple)
+        setPixel(&grid, x: 7, y: 0, color: purple)
+        setPixel(&grid, x: 8, y: 0, color: purple)
+        setPixel(&grid, x: 9, y: 0, color: purple)
+        setPixel(&grid, x: 7, y: 0, color: orange)
+        setPixel(&grid, x: 8, y: 0, color: orange)
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: red)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: purple) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: purple) }
+        setPixel(&grid, x: 7, y: 3, color: orange)
+        setPixel(&grid, x: 8, y: 3, color: orange)
+
+        // Arms with cannon
+        setPixel(&grid, x: 4, y: 3, color: silver)
+        setPixel(&grid, x: 3, y: 3, color: purple)
+        setPixel(&grid, x: 11, y: 3, color: silver)
+        setPixel(&grid, x: 12, y: 3, color: purple)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 6, color: purple)
+            setPixel(&grid, x: 6, y: 6, color: purple)
+            setPixel(&grid, x: 9, y: 6, color: purple)
+            setPixel(&grid, x: 10, y: 6, color: purple)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 6, y: 7, color: black)
+            setPixel(&grid, x: 9, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 6, color: purple)
+            setPixel(&grid, x: 5, y: 6, color: purple)
+            setPixel(&grid, x: 10, y: 6, color: purple)
+            setPixel(&grid, x: 11, y: 6, color: purple)
+            setPixel(&grid, x: 4, y: 7, color: black)
+            setPixel(&grid, x: 5, y: 7, color: black)
+            setPixel(&grid, x: 10, y: 7, color: black)
+            setPixel(&grid, x: 11, y: 7, color: black)
+        }
+    }
+
+    private func drawTransformersCyclonus(grid: inout [[NSColor]], frame: Int) {
+        let purple = NSColor(red: 0.6, green: 0.2, blue: 0.8, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
+        let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head with pointed helmet
+        setPixel(&grid, x: 7, y: 0, color: purple)
+        setPixel(&grid, x: 8, y: 0, color: purple)
+        for x in 6...9 { setPixel(&grid, x: x, y: 1, color: purple) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 2, color: red)
+        setPixel(&grid, x: 7, y: 2, color: black)
+        setPixel(&grid, x: 8, y: 2, color: black)
+        setPixel(&grid, x: 9, y: 2, color: red)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 3, color: silver) }
+
+        // Chest
+        for x in 5...10 { setPixel(&grid, x: x, y: 4, color: purple) }
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: purple) }
+        setPixel(&grid, x: 7, y: 4, color: blue)
+        setPixel(&grid, x: 8, y: 4, color: blue)
+
+        // Arms
+        setPixel(&grid, x: 4, y: 4, color: silver)
+        setPixel(&grid, x: 4, y: 5, color: silver)
+        setPixel(&grid, x: 11, y: 4, color: silver)
+        setPixel(&grid, x: 11, y: 5, color: silver)
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: silver) }
+
+        // Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 7, color: purple)
+            setPixel(&grid, x: 6, y: 7, color: purple)
+            setPixel(&grid, x: 9, y: 7, color: purple)
+            setPixel(&grid, x: 10, y: 7, color: purple)
+            setPixel(&grid, x: 5, y: 8, color: black)
+            setPixel(&grid, x: 6, y: 8, color: black)
+            setPixel(&grid, x: 9, y: 8, color: black)
+            setPixel(&grid, x: 10, y: 8, color: black)
+        } else {
+            setPixel(&grid, x: 4, y: 7, color: purple)
+            setPixel(&grid, x: 5, y: 7, color: purple)
+            setPixel(&grid, x: 10, y: 7, color: purple)
+            setPixel(&grid, x: 11, y: 7, color: purple)
+            setPixel(&grid, x: 4, y: 8, color: black)
+            setPixel(&grid, x: 5, y: 8, color: black)
+            setPixel(&grid, x: 10, y: 8, color: black)
+            setPixel(&grid, x: 11, y: 8, color: black)
+        }
+    }
+
+    private func drawTransformersDevestator(grid: inout [[NSColor]], frame: Int) {
+        let green = NSColor(red: 0.2, green: 0.6, blue: 0.2, alpha: 1.0)
+        let black = NSColor.black
+        let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
+        let purple = NSColor(red: 0.6, green: 0.2, blue: 0.8, alpha: 1.0)
+        let anim = frame % 2
+
+        // Head
+        for x in 6...9 { setPixel(&grid, x: x, y: 0, color: green) }
+
+        // Eyes
+        setPixel(&grid, x: 6, y: 1, color: purple)
+        setPixel(&grid, x: 7, y: 1, color: black)
+        setPixel(&grid, x: 8, y: 1, color: black)
+        setPixel(&grid, x: 9, y: 1, color: purple)
+
+        // Face
+        for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
+
+        // Chest
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: green) }
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: green) }
+        setPixel(&grid, x: 7, y: 3, color: purple)
+        setPixel(&grid, x: 8, y: 3, color: purple)
+
+        // Arms (thick for combiner)
+        for y in 3...4 {
+            setPixel(&grid, x: 3, y: y, color: green)
+            setPixel(&grid, x: 4, y: y, color: green)
+            setPixel(&grid, x: 11, y: y, color: green)
+            setPixel(&grid, x: 12, y: y, color: green)
+        }
+
+        // Waist
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
+
+        // Legs (thick)
+        if anim == 0 {
+            for y in 6...7 {
+                setPixel(&grid, x: 5, y: y, color: green)
+                setPixel(&grid, x: 6, y: y, color: green)
+                setPixel(&grid, x: 9, y: y, color: green)
+                setPixel(&grid, x: 10, y: y, color: green)
+            }
+        } else {
+            for y in 6...7 {
+                setPixel(&grid, x: 4, y: y, color: green)
+                setPixel(&grid, x: 5, y: y, color: green)
+                setPixel(&grid, x: 10, y: y, color: green)
+                setPixel(&grid, x: 11, y: y, color: green)
+            }
         }
     }
 
