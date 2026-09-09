@@ -6,7 +6,7 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 
 ## Features
 
-- **140+ characters** across 25 categories — Pokémon, Mario, Mario Kart, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama
+- **140+ characters** across 26 categories — Pokémon, Mario, Mario Kart, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama, Transformers
 - **CPU-reactive animation** — sprite speed adjusts based on system load (sleeping → walking → jogging → sprinting → overdrive)
 - **Tamagotchi pet care** — Feed, Play, Clean, Sleep your pet; stats decay over time
 - **Pet evolution** — 5 stages based on care quality: Neglected → Baby → Normal → Happy → Champion
@@ -105,6 +105,7 @@ Only the worst stat is shown — if both hunger and energy are low, whichever is
 | Family Guy | Peter Griffin, Lois, Stewie, Brian, Chris, Meg, Quagmire, Cleveland, Joe, Mayor Adam West, Herbert, Tom Tucker |
 | Futurama | Fry, Leela, Bender, Amy, Professor Farnsworth, Hermes, Zoidberg, Cubert, Ndnd, Zapp Brannigan |
 | Batman | Joker, Bane, Riddler, Penguin, Harley Quinn, Scarecrow, Killer Croc, Poison Ivy, Catwoman, Two-Face, Mr. Freeze, Red Hood, Ra's al Ghul, Deathstroke |
+| Transformers | Optimus Prime, Bumblebee, Megatron, Starscream, Soundwave, Prowl, Jazz, Ironhide, Ratchet, Shockwave, Sound Blaster, Galvatron, Cyclonus, Devastator |
 
 ## Requirements
 
