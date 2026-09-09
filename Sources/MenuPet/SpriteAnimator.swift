@@ -38,7 +38,10 @@ class SpriteAnimator {
 
     var currentFrame: NSImage {
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
-            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex)
+            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: transformFrameIndex)
+        }
+        if isTransformerCharacter(currentPokemon) {
+            return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex)
         }
         return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex)
     }
@@ -101,17 +104,21 @@ class SpriteAnimator {
         isTransformingToVehicle = true
         transformFrameIndex = 0
 
+        var forwardSteps = 0
         let transformTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { timer.invalidate(); return }
             if self.isTransformingToVehicle {
-                self.transformFrameIndex += 1
-                self.onFrameAdvanced?()
-                if self.transformFrameIndex >= 2 {
+                forwardSteps += 1
+                if forwardSteps == 1 {
+                    self.transformFrameIndex = 2
+                } else if forwardSteps >= 2 {
+                    self.transformFrameIndex = 3
                     timer.invalidate()
                     self.isTransformingToVehicle = false
                     self.isInVehicleMode = true
                     self.startVehicleHold()
                 }
+                self.onFrameAdvanced?()
             }
         }
         self.transformTimer = transformTimer
@@ -128,21 +135,22 @@ class SpriteAnimator {
         guard isTransformerCharacter(currentPokemon) else { return }
         isInVehicleMode = false
         isTransformingToRobot = true
-        transformFrameIndex = 2
+        transformFrameIndex = 3
 
+        var reverseSteps = 0
         let reverseTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { timer.invalidate(); return }
             if self.isTransformingToRobot {
-                self.transformFrameIndex += 1
-                if self.transformFrameIndex > 3 {
+                reverseSteps += 1
+                if reverseSteps == 1 {
+                    self.transformFrameIndex = 4
+                } else if reverseSteps >= 2 {
                     self.transformFrameIndex = 0
-                }
-                self.onFrameAdvanced?()
-                if self.transformFrameIndex == 0 {
                     timer.invalidate()
                     self.isTransformingToRobot = false
                     self.scheduleNextTransformation()
                 }
+                self.onFrameAdvanced?()
             }
         }
         self.transformTimer = reverseTimer

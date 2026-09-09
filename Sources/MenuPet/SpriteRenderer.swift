@@ -5,8 +5,9 @@ class SpriteRenderer {
     let frameWidth = 48
     let frameHeight = 48
 
-    func renderFrame(character: SelectableCharacter, frame: Int) -> NSImage {
+    func renderFrame(character: SelectableCharacter, frame: Int, sparkleFrame: Int? = nil) -> NSImage {
         let pixels = getPixels(character: character, frame: frame)
+        let overlayFrame = sparkleFrame ?? frame
 
         let isBoo: Bool
         if case .marioItem(.boo) = character { isBoo = true } else { isBoo = false }
@@ -86,13 +87,13 @@ class SpriteRenderer {
         img.unlockFocus()
         img.isTemplate = false
 
-        if pet.showSparkles && frame % 6 < 3 {
-            drawSparkles(on: img, frame: frame)
+        if pet.showSparkles && overlayFrame % 6 < 3 {
+            drawSparkles(on: img, frame: overlayFrame)
         }
 
-        drawNeedOverlay(on: img, frame: frame)
+        drawNeedOverlay(on: img, frame: overlayFrame)
 
-        if pet.isDisobedient && frame % 6 < 3 {
+        if pet.isDisobedient && overlayFrame % 6 < 3 {
             drawDisobedientIcon(on: img)
         }
 
@@ -10089,10 +10090,9 @@ class SpriteRenderer {
         let black = NSColor.black
         let yellow = NSColor(red: 1.0, green: 0.85, blue: 0.2, alpha: 1.0)
         let darkRed = NSColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
-        let anim = frame % 4
 
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             setPixel(&grid, x: 6, y: 0, color: red)
             setPixel(&grid, x: 7, y: 0, color: red)
             setPixel(&grid, x: 8, y: 0, color: red)
@@ -10113,15 +10113,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: blue)
             setPixel(&grid, x: 11, y: 4, color: blue)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: red)
-            setPixel(&grid, x: 6, y: 6, color: red)
-            setPixel(&grid, x: 9, y: 6, color: red)
-            setPixel(&grid, x: 10, y: 6, color: red)
-            setPixel(&grid, x: 5, y: 7, color: blue)
-            setPixel(&grid, x: 6, y: 7, color: blue)
-            setPixel(&grid, x: 9, y: 7, color: blue)
-            setPixel(&grid, x: 10, y: 7, color: blue)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: red)
+                setPixel(&grid, x: 6, y: 6, color: red)
+                setPixel(&grid, x: 9, y: 6, color: red)
+                setPixel(&grid, x: 10, y: 6, color: red)
+                setPixel(&grid, x: 5, y: 7, color: blue)
+                setPixel(&grid, x: 6, y: 7, color: blue)
+                setPixel(&grid, x: 9, y: 7, color: blue)
+                setPixel(&grid, x: 10, y: 7, color: blue)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: red)
+                setPixel(&grid, x: 5, y: 6, color: red)
+                setPixel(&grid, x: 10, y: 6, color: red)
+                setPixel(&grid, x: 11, y: 6, color: red)
+                setPixel(&grid, x: 4, y: 7, color: blue)
+                setPixel(&grid, x: 5, y: 7, color: blue)
+                setPixel(&grid, x: 10, y: 7, color: blue)
+                setPixel(&grid, x: 11, y: 7, color: blue)
+            }
+        } else if frame == 2 {
             // Mid-transformation - arms folding, legs compressing
             setPixel(&grid, x: 6, y: 1, color: red)
             setPixel(&grid, x: 7, y: 1, color: red)
@@ -10144,7 +10155,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - semi truck cab
             for x in 4...11 { setPixel(&grid, x: x, y: 2, color: red) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: red) }
@@ -10165,7 +10176,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 5, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
             setPixel(&grid, x: 11, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation - unfolding
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
             setPixel(&grid, x: 5, y: 2, color: blue)
@@ -10196,10 +10207,9 @@ class SpriteRenderer {
         let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let darkYellow = NSColor(red: 0.8, green: 0.65, blue: 0.1, alpha: 1.0)
-        let anim = frame % 4
 
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: yellow) }
             setPixel(&grid, x: 6, y: 1, color: blue)
             setPixel(&grid, x: 7, y: 1, color: black)
@@ -10215,15 +10225,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: yellow)
             setPixel(&grid, x: 11, y: 4, color: yellow)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: yellow) }
-            setPixel(&grid, x: 5, y: 6, color: black)
-            setPixel(&grid, x: 6, y: 6, color: black)
-            setPixel(&grid, x: 9, y: 6, color: black)
-            setPixel(&grid, x: 10, y: 6, color: black)
-            setPixel(&grid, x: 5, y: 7, color: yellow)
-            setPixel(&grid, x: 6, y: 7, color: yellow)
-            setPixel(&grid, x: 9, y: 7, color: yellow)
-            setPixel(&grid, x: 10, y: 7, color: yellow)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: black)
+                setPixel(&grid, x: 6, y: 6, color: black)
+                setPixel(&grid, x: 9, y: 6, color: black)
+                setPixel(&grid, x: 10, y: 6, color: black)
+                setPixel(&grid, x: 5, y: 7, color: yellow)
+                setPixel(&grid, x: 6, y: 7, color: yellow)
+                setPixel(&grid, x: 9, y: 7, color: yellow)
+                setPixel(&grid, x: 10, y: 7, color: yellow)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: black)
+                setPixel(&grid, x: 5, y: 6, color: black)
+                setPixel(&grid, x: 10, y: 6, color: black)
+                setPixel(&grid, x: 11, y: 6, color: black)
+                setPixel(&grid, x: 4, y: 7, color: yellow)
+                setPixel(&grid, x: 5, y: 7, color: yellow)
+                setPixel(&grid, x: 10, y: 7, color: yellow)
+                setPixel(&grid, x: 11, y: 7, color: yellow)
+            }
+        } else if frame == 2 {
             // Mid-transformation - compacting
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: yellow) }
             setPixel(&grid, x: 5, y: 2, color: blue)
@@ -10243,7 +10264,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - yellow Beetle car
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: yellow) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: yellow) }
@@ -10266,7 +10287,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation - unfolding
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: yellow) }
             setPixel(&grid, x: 5, y: 2, color: blue)
@@ -10295,10 +10316,9 @@ class SpriteRenderer {
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let darkGray = NSColor(red: 0.35, green: 0.35, blue: 0.4, alpha: 1.0)
-        let anim = frame % 4
 
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             setPixel(&grid, x: 6, y: 0, color: gray)
             setPixel(&grid, x: 7, y: 0, color: gray)
             setPixel(&grid, x: 8, y: 0, color: gray)
@@ -10317,15 +10337,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: silver)
             setPixel(&grid, x: 12, y: 3, color: gray)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: gray)
-            setPixel(&grid, x: 6, y: 6, color: gray)
-            setPixel(&grid, x: 9, y: 6, color: gray)
-            setPixel(&grid, x: 10, y: 6, color: gray)
-            setPixel(&grid, x: 5, y: 7, color: black)
-            setPixel(&grid, x: 6, y: 7, color: black)
-            setPixel(&grid, x: 9, y: 7, color: black)
-            setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: gray)
+                setPixel(&grid, x: 6, y: 6, color: gray)
+                setPixel(&grid, x: 9, y: 6, color: gray)
+                setPixel(&grid, x: 10, y: 6, color: gray)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 6, y: 7, color: black)
+                setPixel(&grid, x: 9, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: gray)
+                setPixel(&grid, x: 5, y: 6, color: gray)
+                setPixel(&grid, x: 10, y: 6, color: gray)
+                setPixel(&grid, x: 11, y: 6, color: gray)
+                setPixel(&grid, x: 4, y: 7, color: black)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+                setPixel(&grid, x: 11, y: 7, color: black)
+            }
+        } else if frame == 2 {
             // Mid-transformation - cannon extending
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: gray) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -10342,7 +10373,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - tank
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: gray) }
             setPixel(&grid, x: 7, y: 1, color: gray)
@@ -10363,8 +10394,8 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else {
-            // Mid-transformation - unfolding
+        } else if frame == 4 {
+            // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: gray) }
             setPixel(&grid, x: 5, y: 2, color: red)
             setPixel(&grid, x: 6, y: 2, color: black)
@@ -10393,10 +10424,8 @@ class SpriteRenderer {
         let black = NSColor.black
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let darkGray = NSColor(red: 0.35, green: 0.35, blue: 0.4, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: gray) }
             setPixel(&grid, x: 6, y: 1, color: red)
             setPixel(&grid, x: 7, y: 1, color: black)
@@ -10412,15 +10441,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 4, y: 4, color: silver)
             setPixel(&grid, x: 11, y: 4, color: silver)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: red)
-            setPixel(&grid, x: 6, y: 6, color: red)
-            setPixel(&grid, x: 9, y: 6, color: red)
-            setPixel(&grid, x: 10, y: 6, color: red)
-            setPixel(&grid, x: 5, y: 7, color: gray)
-            setPixel(&grid, x: 6, y: 7, color: gray)
-            setPixel(&grid, x: 9, y: 7, color: gray)
-            setPixel(&grid, x: 10, y: 7, color: gray)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: red)
+                setPixel(&grid, x: 6, y: 6, color: red)
+                setPixel(&grid, x: 9, y: 6, color: red)
+                setPixel(&grid, x: 10, y: 6, color: red)
+                setPixel(&grid, x: 5, y: 7, color: gray)
+                setPixel(&grid, x: 6, y: 7, color: gray)
+                setPixel(&grid, x: 9, y: 7, color: gray)
+                setPixel(&grid, x: 10, y: 7, color: gray)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: red)
+                setPixel(&grid, x: 5, y: 6, color: red)
+                setPixel(&grid, x: 10, y: 6, color: red)
+                setPixel(&grid, x: 11, y: 6, color: red)
+                setPixel(&grid, x: 4, y: 7, color: gray)
+                setPixel(&grid, x: 5, y: 7, color: gray)
+                setPixel(&grid, x: 10, y: 7, color: gray)
+                setPixel(&grid, x: 11, y: 7, color: gray)
+            }
+        } else if frame == 2 {
             // Mid-transformation - wings folding
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: gray) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -10440,7 +10480,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - fighter jet
             for x in 7...8 { setPixel(&grid, x: x, y: 1, color: gray) }
             for x in 6...9 { setPixel(&grid, x: x, y: 2, color: gray) }
@@ -10460,7 +10500,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 9, y: 6, color: red)
             setPixel(&grid, x: 7, y: 7, color: black)
             setPixel(&grid, x: 8, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation - wings unfolding
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: gray) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -10489,10 +10529,8 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
         let darkBlue = NSColor(red: 0.1, green: 0.2, blue: 0.6, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: blue) }
             setPixel(&grid, x: 6, y: 1, color: red)
             setPixel(&grid, x: 7, y: 1, color: black)
@@ -10512,15 +10550,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: silver)
             setPixel(&grid, x: 11, y: 4, color: silver)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: blue)
-            setPixel(&grid, x: 6, y: 6, color: blue)
-            setPixel(&grid, x: 9, y: 6, color: blue)
-            setPixel(&grid, x: 10, y: 6, color: blue)
-            setPixel(&grid, x: 5, y: 7, color: black)
-            setPixel(&grid, x: 6, y: 7, color: black)
-            setPixel(&grid, x: 9, y: 7, color: black)
-            setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: blue)
+                setPixel(&grid, x: 6, y: 6, color: blue)
+                setPixel(&grid, x: 9, y: 6, color: blue)
+                setPixel(&grid, x: 10, y: 6, color: blue)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 6, y: 7, color: black)
+                setPixel(&grid, x: 9, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: blue)
+                setPixel(&grid, x: 5, y: 6, color: blue)
+                setPixel(&grid, x: 10, y: 6, color: blue)
+                setPixel(&grid, x: 11, y: 6, color: blue)
+                setPixel(&grid, x: 4, y: 7, color: black)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+                setPixel(&grid, x: 11, y: 7, color: black)
+            }
+        } else if frame == 2 {
             // Mid-transformation - compacting
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: blue) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -10540,7 +10589,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - cassette player
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: blue) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: blue) }
@@ -10565,7 +10614,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 7, y: 7, color: black)
             setPixel(&grid, x: 8, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation - unfolding
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: blue) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -10594,10 +10643,8 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
         let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             setPixel(&grid, x: 6, y: 0, color: black)
             setPixel(&grid, x: 7, y: 0, color: red)
             setPixel(&grid, x: 8, y: 0, color: red)
@@ -10616,15 +10663,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: black)
             setPixel(&grid, x: 11, y: 4, color: black)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: black)
-            setPixel(&grid, x: 6, y: 6, color: black)
-            setPixel(&grid, x: 9, y: 6, color: black)
-            setPixel(&grid, x: 10, y: 6, color: black)
-            setPixel(&grid, x: 5, y: 7, color: white)
-            setPixel(&grid, x: 6, y: 7, color: white)
-            setPixel(&grid, x: 9, y: 7, color: white)
-            setPixel(&grid, x: 10, y: 7, color: white)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: black)
+                setPixel(&grid, x: 6, y: 6, color: black)
+                setPixel(&grid, x: 9, y: 6, color: black)
+                setPixel(&grid, x: 10, y: 6, color: black)
+                setPixel(&grid, x: 5, y: 7, color: white)
+                setPixel(&grid, x: 6, y: 7, color: white)
+                setPixel(&grid, x: 9, y: 7, color: white)
+                setPixel(&grid, x: 10, y: 7, color: white)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: black)
+                setPixel(&grid, x: 5, y: 6, color: black)
+                setPixel(&grid, x: 10, y: 6, color: black)
+                setPixel(&grid, x: 11, y: 6, color: black)
+                setPixel(&grid, x: 4, y: 7, color: white)
+                setPixel(&grid, x: 5, y: 7, color: white)
+                setPixel(&grid, x: 10, y: 7, color: white)
+                setPixel(&grid, x: 11, y: 7, color: white)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: black) }
             setPixel(&grid, x: 6, y: 1, color: red)
@@ -10646,7 +10704,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - police car
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: white) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: white) }
@@ -10669,7 +10727,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: black) }
             setPixel(&grid, x: 6, y: 1, color: red)
@@ -10700,10 +10758,8 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let black = NSColor.black
         let darkWhite = NSColor(red: 0.9, green: 0.9, blue: 0.92, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: white) }
             for x in 6...9 { setPixel(&grid, x: x, y: 1, color: blue) }
             for x in 6...9 { setPixel(&grid, x: x, y: 2, color: silver) }
@@ -10716,15 +10772,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: silver)
             setPixel(&grid, x: 11, y: 4, color: silver)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: white)
-            setPixel(&grid, x: 6, y: 6, color: white)
-            setPixel(&grid, x: 9, y: 6, color: white)
-            setPixel(&grid, x: 10, y: 6, color: white)
-            setPixel(&grid, x: 5, y: 7, color: blue)
-            setPixel(&grid, x: 6, y: 7, color: blue)
-            setPixel(&grid, x: 9, y: 7, color: blue)
-            setPixel(&grid, x: 10, y: 7, color: blue)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: white)
+                setPixel(&grid, x: 6, y: 6, color: white)
+                setPixel(&grid, x: 9, y: 6, color: white)
+                setPixel(&grid, x: 10, y: 6, color: white)
+                setPixel(&grid, x: 5, y: 7, color: blue)
+                setPixel(&grid, x: 6, y: 7, color: blue)
+                setPixel(&grid, x: 9, y: 7, color: blue)
+                setPixel(&grid, x: 10, y: 7, color: blue)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: white)
+                setPixel(&grid, x: 5, y: 6, color: white)
+                setPixel(&grid, x: 10, y: 6, color: white)
+                setPixel(&grid, x: 11, y: 6, color: white)
+                setPixel(&grid, x: 4, y: 7, color: blue)
+                setPixel(&grid, x: 5, y: 7, color: blue)
+                setPixel(&grid, x: 10, y: 7, color: blue)
+                setPixel(&grid, x: 11, y: 7, color: blue)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: white) }
             setPixel(&grid, x: 5, y: 2, color: blue)
@@ -10744,7 +10811,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - white sports car
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: white) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: white) }
@@ -10765,7 +10832,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: white) }
             setPixel(&grid, x: 5, y: 2, color: blue)
@@ -10794,10 +10861,9 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let gray = NSColor(red: 0.5, green: 0.5, blue: 0.55, alpha: 1.0)
         let darkRed = NSColor(red: 0.7, green: 0.1, blue: 0.1, alpha: 1.0)
-        let anim = frame % 4
 
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: red) }
             setPixel(&grid, x: 6, y: 1, color: silver)
             setPixel(&grid, x: 7, y: 1, color: black)
@@ -10813,15 +10879,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: gray)
             setPixel(&grid, x: 11, y: 4, color: gray)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: red)
-            setPixel(&grid, x: 6, y: 6, color: red)
-            setPixel(&grid, x: 9, y: 6, color: red)
-            setPixel(&grid, x: 10, y: 6, color: red)
-            setPixel(&grid, x: 5, y: 7, color: black)
-            setPixel(&grid, x: 6, y: 7, color: black)
-            setPixel(&grid, x: 9, y: 7, color: black)
-            setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: red)
+                setPixel(&grid, x: 6, y: 6, color: red)
+                setPixel(&grid, x: 9, y: 6, color: red)
+                setPixel(&grid, x: 10, y: 6, color: red)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 6, y: 7, color: black)
+                setPixel(&grid, x: 9, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: red)
+                setPixel(&grid, x: 5, y: 6, color: red)
+                setPixel(&grid, x: 10, y: 6, color: red)
+                setPixel(&grid, x: 11, y: 6, color: red)
+                setPixel(&grid, x: 4, y: 7, color: black)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+                setPixel(&grid, x: 11, y: 7, color: black)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
             setPixel(&grid, x: 5, y: 2, color: silver)
@@ -10841,7 +10918,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - red van
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: red) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: red) }
@@ -10862,7 +10939,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: red) }
             setPixel(&grid, x: 5, y: 2, color: silver)
@@ -10891,10 +10968,8 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let black = NSColor.black
         let darkWhite = NSColor(red: 0.9, green: 0.9, blue: 0.92, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: white) }
             setPixel(&grid, x: 6, y: 1, color: red)
             setPixel(&grid, x: 7, y: 1, color: black)
@@ -10910,15 +10985,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: silver)
             setPixel(&grid, x: 11, y: 4, color: silver)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: white)
-            setPixel(&grid, x: 6, y: 6, color: white)
-            setPixel(&grid, x: 9, y: 6, color: white)
-            setPixel(&grid, x: 10, y: 6, color: white)
-            setPixel(&grid, x: 5, y: 7, color: red)
-            setPixel(&grid, x: 6, y: 7, color: red)
-            setPixel(&grid, x: 9, y: 7, color: red)
-            setPixel(&grid, x: 10, y: 7, color: red)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: white)
+                setPixel(&grid, x: 6, y: 6, color: white)
+                setPixel(&grid, x: 9, y: 6, color: white)
+                setPixel(&grid, x: 10, y: 6, color: white)
+                setPixel(&grid, x: 5, y: 7, color: red)
+                setPixel(&grid, x: 6, y: 7, color: red)
+                setPixel(&grid, x: 9, y: 7, color: red)
+                setPixel(&grid, x: 10, y: 7, color: red)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: white)
+                setPixel(&grid, x: 5, y: 6, color: white)
+                setPixel(&grid, x: 10, y: 6, color: white)
+                setPixel(&grid, x: 11, y: 6, color: white)
+                setPixel(&grid, x: 4, y: 7, color: red)
+                setPixel(&grid, x: 5, y: 7, color: red)
+                setPixel(&grid, x: 10, y: 7, color: red)
+                setPixel(&grid, x: 11, y: 7, color: red)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: white) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -10938,7 +11024,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - ambulance
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: white) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: white) }
@@ -10961,7 +11047,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: white) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -10990,10 +11076,8 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
         let darkPurple = NSColor(red: 0.4, green: 0.15, blue: 0.6, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: purple) }
             setPixel(&grid, x: 7, y: 1, color: red)
             setPixel(&grid, x: 8, y: 1, color: red)
@@ -11007,15 +11091,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: silver)
             setPixel(&grid, x: 12, y: 3, color: purple)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: purple)
-            setPixel(&grid, x: 6, y: 6, color: purple)
-            setPixel(&grid, x: 9, y: 6, color: purple)
-            setPixel(&grid, x: 10, y: 6, color: purple)
-            setPixel(&grid, x: 5, y: 7, color: black)
-            setPixel(&grid, x: 6, y: 7, color: black)
-            setPixel(&grid, x: 9, y: 7, color: black)
-            setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: purple)
+                setPixel(&grid, x: 6, y: 6, color: purple)
+                setPixel(&grid, x: 9, y: 6, color: purple)
+                setPixel(&grid, x: 10, y: 6, color: purple)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 6, y: 7, color: black)
+                setPixel(&grid, x: 9, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: purple)
+                setPixel(&grid, x: 5, y: 6, color: purple)
+                setPixel(&grid, x: 10, y: 6, color: purple)
+                setPixel(&grid, x: 11, y: 6, color: purple)
+                setPixel(&grid, x: 4, y: 7, color: black)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+                setPixel(&grid, x: 11, y: 7, color: black)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: purple) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -11032,7 +11127,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - cannon tank
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: purple) }
             setPixel(&grid, x: 7, y: 1, color: purple)
@@ -11082,10 +11177,8 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let purple = NSColor(red: 0.6, green: 0.2, blue: 0.8, alpha: 1.0)
         let darkBlack = NSColor(red: 0.15, green: 0.15, blue: 0.18, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: black) }
             setPixel(&grid, x: 6, y: 1, color: red)
             setPixel(&grid, x: 7, y: 1, color: black)
@@ -11103,15 +11196,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: silver)
             setPixel(&grid, x: 11, y: 4, color: silver)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: black)
-            setPixel(&grid, x: 6, y: 6, color: black)
-            setPixel(&grid, x: 9, y: 6, color: black)
-            setPixel(&grid, x: 10, y: 6, color: black)
-            setPixel(&grid, x: 5, y: 7, color: purple)
-            setPixel(&grid, x: 6, y: 7, color: purple)
-            setPixel(&grid, x: 9, y: 7, color: purple)
-            setPixel(&grid, x: 10, y: 7, color: purple)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: black)
+                setPixel(&grid, x: 6, y: 6, color: black)
+                setPixel(&grid, x: 9, y: 6, color: black)
+                setPixel(&grid, x: 10, y: 6, color: black)
+                setPixel(&grid, x: 5, y: 7, color: purple)
+                setPixel(&grid, x: 6, y: 7, color: purple)
+                setPixel(&grid, x: 9, y: 7, color: purple)
+                setPixel(&grid, x: 10, y: 7, color: purple)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: black)
+                setPixel(&grid, x: 5, y: 6, color: black)
+                setPixel(&grid, x: 10, y: 6, color: black)
+                setPixel(&grid, x: 11, y: 6, color: black)
+                setPixel(&grid, x: 4, y: 7, color: purple)
+                setPixel(&grid, x: 5, y: 7, color: purple)
+                setPixel(&grid, x: 10, y: 7, color: purple)
+                setPixel(&grid, x: 11, y: 7, color: purple)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: black) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -11131,7 +11235,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - black cassette player
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: black) }
             for x in 4...11 { setPixel(&grid, x: x, y: 3, color: black) }
@@ -11156,7 +11260,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 7, y: 7, color: black)
             setPixel(&grid, x: 8, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: black) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -11186,10 +11290,8 @@ class SpriteRenderer {
         let orange = NSColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1.0)
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
         let darkPurple = NSColor(red: 0.4, green: 0.15, blue: 0.6, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             setPixel(&grid, x: 6, y: 0, color: purple)
             setPixel(&grid, x: 7, y: 0, color: orange)
             setPixel(&grid, x: 8, y: 0, color: orange)
@@ -11208,15 +11310,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 3, color: silver)
             setPixel(&grid, x: 12, y: 3, color: purple)
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            setPixel(&grid, x: 5, y: 6, color: purple)
-            setPixel(&grid, x: 6, y: 6, color: purple)
-            setPixel(&grid, x: 9, y: 6, color: purple)
-            setPixel(&grid, x: 10, y: 6, color: purple)
-            setPixel(&grid, x: 5, y: 7, color: black)
-            setPixel(&grid, x: 6, y: 7, color: black)
-            setPixel(&grid, x: 9, y: 7, color: black)
-            setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 6, color: purple)
+                setPixel(&grid, x: 6, y: 6, color: purple)
+                setPixel(&grid, x: 9, y: 6, color: purple)
+                setPixel(&grid, x: 10, y: 6, color: purple)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 6, y: 7, color: black)
+                setPixel(&grid, x: 9, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+            } else {
+                setPixel(&grid, x: 4, y: 6, color: purple)
+                setPixel(&grid, x: 5, y: 6, color: purple)
+                setPixel(&grid, x: 10, y: 6, color: purple)
+                setPixel(&grid, x: 11, y: 6, color: purple)
+                setPixel(&grid, x: 4, y: 7, color: black)
+                setPixel(&grid, x: 5, y: 7, color: black)
+                setPixel(&grid, x: 10, y: 7, color: black)
+                setPixel(&grid, x: 11, y: 7, color: black)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: purple) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -11233,7 +11346,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 7, color: black)
             setPixel(&grid, x: 9, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - purple tank
             for x in 5...10 { setPixel(&grid, x: x, y: 2, color: purple) }
             setPixel(&grid, x: 7, y: 1, color: orange)
@@ -11284,10 +11397,8 @@ class SpriteRenderer {
         let blue = NSColor(red: 0.15, green: 0.3, blue: 0.85, alpha: 1.0)
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 1.0)
         let darkPurple = NSColor(red: 0.4, green: 0.15, blue: 0.6, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             setPixel(&grid, x: 7, y: 0, color: purple)
             setPixel(&grid, x: 8, y: 0, color: purple)
             for x in 6...9 { setPixel(&grid, x: x, y: 1, color: purple) }
@@ -11305,15 +11416,26 @@ class SpriteRenderer {
             setPixel(&grid, x: 11, y: 4, color: silver)
             setPixel(&grid, x: 11, y: 5, color: silver)
             for x in 5...10 { setPixel(&grid, x: x, y: 6, color: silver) }
-            setPixel(&grid, x: 5, y: 7, color: purple)
-            setPixel(&grid, x: 6, y: 7, color: purple)
-            setPixel(&grid, x: 9, y: 7, color: purple)
-            setPixel(&grid, x: 10, y: 7, color: purple)
-            setPixel(&grid, x: 5, y: 8, color: black)
-            setPixel(&grid, x: 6, y: 8, color: black)
-            setPixel(&grid, x: 9, y: 8, color: black)
-            setPixel(&grid, x: 10, y: 8, color: black)
-        } else if anim == 1 {
+            if frame == 0 {
+                setPixel(&grid, x: 5, y: 7, color: purple)
+                setPixel(&grid, x: 6, y: 7, color: purple)
+                setPixel(&grid, x: 9, y: 7, color: purple)
+                setPixel(&grid, x: 10, y: 7, color: purple)
+                setPixel(&grid, x: 5, y: 8, color: black)
+                setPixel(&grid, x: 6, y: 8, color: black)
+                setPixel(&grid, x: 9, y: 8, color: black)
+                setPixel(&grid, x: 10, y: 8, color: black)
+            } else {
+                setPixel(&grid, x: 4, y: 7, color: purple)
+                setPixel(&grid, x: 5, y: 7, color: purple)
+                setPixel(&grid, x: 10, y: 7, color: purple)
+                setPixel(&grid, x: 11, y: 7, color: purple)
+                setPixel(&grid, x: 4, y: 8, color: black)
+                setPixel(&grid, x: 5, y: 8, color: black)
+                setPixel(&grid, x: 10, y: 8, color: black)
+                setPixel(&grid, x: 11, y: 8, color: black)
+            }
+        } else if frame == 2 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: purple) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -11334,7 +11456,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 8, color: black)
             setPixel(&grid, x: 9, y: 8, color: black)
             setPixel(&grid, x: 10, y: 8, color: black)
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - purple jet
             for x in 7...8 { setPixel(&grid, x: x, y: 1, color: purple) }
             for x in 6...9 { setPixel(&grid, x: x, y: 2, color: purple) }
@@ -11358,7 +11480,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 6, y: 8, color: black)
             setPixel(&grid, x: 9, y: 8, color: black)
             setPixel(&grid, x: 10, y: 8, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation
             for x in 5...10 { setPixel(&grid, x: x, y: 1, color: purple) }
             setPixel(&grid, x: 5, y: 2, color: red)
@@ -11388,10 +11510,8 @@ class SpriteRenderer {
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
         let purple = NSColor(red: 0.6, green: 0.2, blue: 0.8, alpha: 1.0)
         let darkGreen = NSColor(red: 0.15, green: 0.45, blue: 0.15, alpha: 1.0)
-        let anim = frame % 4
-
-        if anim == 0 {
-            // Robot mode
+        if frame <= 1 {
+            // Robot mode with walking animation
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: green) }
             setPixel(&grid, x: 6, y: 1, color: purple)
             setPixel(&grid, x: 7, y: 1, color: black)
@@ -11409,13 +11529,22 @@ class SpriteRenderer {
                 setPixel(&grid, x: 12, y: y, color: green)
             }
             for x in 5...10 { setPixel(&grid, x: x, y: 5, color: silver) }
-            for y in 6...7 {
-                setPixel(&grid, x: 5, y: y, color: green)
-                setPixel(&grid, x: 6, y: y, color: green)
-                setPixel(&grid, x: 9, y: y, color: green)
-                setPixel(&grid, x: 10, y: y, color: green)
+            if frame == 0 {
+                for y in 6...7 {
+                    setPixel(&grid, x: 5, y: y, color: green)
+                    setPixel(&grid, x: 6, y: y, color: green)
+                    setPixel(&grid, x: 9, y: y, color: green)
+                    setPixel(&grid, x: 10, y: y, color: green)
+                }
+            } else {
+                for y in 6...7 {
+                    setPixel(&grid, x: 4, y: y, color: green)
+                    setPixel(&grid, x: 5, y: y, color: green)
+                    setPixel(&grid, x: 10, y: y, color: green)
+                    setPixel(&grid, x: 11, y: y, color: green)
+                }
             }
-        } else if anim == 1 {
+        } else if frame == 2 {
             // Mid-transformation - splitting apart
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: green) }
             setPixel(&grid, x: 6, y: 1, color: purple)
@@ -11440,7 +11569,7 @@ class SpriteRenderer {
                 setPixel(&grid, x: 10, y: y, color: green)
                 setPixel(&grid, x: 11, y: y, color: green)
             }
-        } else if anim == 2 {
+        } else if frame == 3 {
             // Vehicle mode - combined vehicles (construction trucks)
             for x in 3...12 { setPixel(&grid, x: x, y: 2, color: green) }
             for x in 3...12 { setPixel(&grid, x: x, y: 3, color: darkGreen) }
@@ -11461,7 +11590,7 @@ class SpriteRenderer {
             setPixel(&grid, x: 5, y: 7, color: black)
             setPixel(&grid, x: 10, y: 7, color: black)
             setPixel(&grid, x: 11, y: 7, color: black)
-        } else {
+        } else if frame == 4 {
             // Mid-transformation - recombining
             for x in 6...9 { setPixel(&grid, x: x, y: 0, color: green) }
             setPixel(&grid, x: 6, y: 1, color: purple)
