@@ -5540,40 +5540,123 @@ class SpriteRenderer {
         let skin = NSColor(red: 1.0, green: 0.8, blue: 0.6, alpha: 1.0)
         let black = NSColor.black
         let brown = NSColor(red: 0.55, green: 0.35, blue: 0.15, alpha: 1.0)
+        let white = NSColor.white
+        let darkBrown = NSColor(red: 0.4, green: 0.25, blue: 0.1, alpha: 1.0)
+        let anim = frame % 2
 
-        // Hair buns
-        setPixel(&grid, x: 4, y: 0, color: brown)
-        setPixel(&grid, x: 11, y: 0, color: brown)
+        // Row 0: Hair outline
+        setPixel(&grid, x: 5, y: 0, color: black)
+        setPixel(&grid, x: 10, y: 0, color: black)
+
+        // Row 1: Hair buns with yellow decorations
+        setPixel(&grid, x: 3, y: 1, color: brown)
         setPixel(&grid, x: 4, y: 1, color: yellow)
+        setPixel(&grid, x: 5, y: 1, color: brown)
+        setPixel(&grid, x: 6, y: 1, color: brown)
+        setPixel(&grid, x: 7, y: 1, color: brown)
+        setPixel(&grid, x: 8, y: 1, color: brown)
+        setPixel(&grid, x: 9, y: 1, color: brown)
+        setPixel(&grid, x: 10, y: 1, color: brown)
         setPixel(&grid, x: 11, y: 1, color: yellow)
+        setPixel(&grid, x: 12, y: 1, color: brown)
 
-        // Head
-        for x in 5...10 { setPixel(&grid, x: x, y: 1, color: skin) }
-        for x in 5...10 { setPixel(&grid, x: x, y: 2, color: skin) }
+        // Row 2: Hair
+        for x in 4...11 { setPixel(&grid, x: x, y: 2, color: brown) }
+        setPixel(&grid, x: 3, y: 2, color: black)
+        setPixel(&grid, x: 12, y: 2, color: black)
 
-        // Eyes
-        setPixel(&grid, x: 6, y: 1, color: black)
-        setPixel(&grid, x: 9, y: 1, color: black)
+        // Row 3: Forehead with hair sides
+        for x in 4...11 { setPixel(&grid, x: x, y: 3, color: skin) }
+        setPixel(&grid, x: 4, y: 3, color: brown)
+        setPixel(&grid, x: 11, y: 3, color: brown)
+        setPixel(&grid, x: 3, y: 3, color: black)
+        setPixel(&grid, x: 12, y: 3, color: black)
 
-        // Dress
-        for x in 5...10 { setPixel(&grid, x: x, y: 3, color: blue) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: blue) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 5, color: blue) }
-        for x in 4...11 { setPixel(&grid, x: x, y: 6, color: blue) }
-        for x in 3...12 { setPixel(&grid, x: x, y: 7, color: blue) }
+        // Row 4: Eyes
+        for x in 4...11 { setPixel(&grid, x: x, y: 4, color: skin) }
+        setPixel(&grid, x: 4, y: 4, color: brown)
+        setPixel(&grid, x: 11, y: 4, color: brown)
+        setPixel(&grid, x: 6, y: 4, color: white)
+        setPixel(&grid, x: 7, y: 4, color: black)
+        setPixel(&grid, x: 8, y: 4, color: white)
+        setPixel(&grid, x: 9, y: 4, color: black)
+        setPixel(&grid, x: 3, y: 4, color: black)
+        setPixel(&grid, x: 12, y: 4, color: black)
 
-        // Spikes on dress
-        setPixel(&grid, x: 3, y: 7, color: yellow)
-        setPixel(&grid, x: 12, y: 7, color: yellow)
+        // Row 5: Nose/mouth
+        for x in 5...10 { setPixel(&grid, x: x, y: 5, color: skin) }
+        setPixel(&grid, x: 3, y: 5, color: black)
+        setPixel(&grid, x: 12, y: 5, color: black)
 
-        // Legs (power!)
-        if frame % 2 == 0 {
-            setPixel(&grid, x: 5, y: 8, color: skin)
-            setPixel(&grid, x: 10, y: 8, color: skin)
+        // Row 6: Chin/neck
+        for x in 5...10 { setPixel(&grid, x: x, y: 6, color: skin) }
+        setPixel(&grid, x: 3, y: 6, color: black)
+        setPixel(&grid, x: 12, y: 6, color: black)
+
+        // Row 7: Shoulders with blue outfit
+        for x in 4...11 { setPixel(&grid, x: x, y: 7, color: blue) }
+        setPixel(&grid, x: 4, y: 7, color: yellow)
+        setPixel(&grid, x: 11, y: 7, color: yellow)
+        setPixel(&grid, x: 3, y: 7, color: black)
+        setPixel(&grid, x: 12, y: 7, color: black)
+
+        // Row 8: Blue outfit with yellow details
+        for x in 4...11 { setPixel(&grid, x: x, y: 8, color: blue) }
+        setPixel(&grid, x: 5, y: 8, color: yellow)
+        setPixel(&grid, x: 10, y: 8, color: yellow)
+        setPixel(&grid, x: 3, y: 8, color: black)
+        setPixel(&grid, x: 12, y: 8, color: black)
+
+        // Row 9: Blue outfit
+        for x in 4...11 { setPixel(&grid, x: x, y: 9, color: blue) }
+        setPixel(&grid, x: 6, y: 9, color: yellow)
+        setPixel(&grid, x: 9, y: 9, color: yellow)
+        setPixel(&grid, x: 3, y: 9, color: black)
+        setPixel(&grid, x: 12, y: 9, color: black)
+
+        // Row 10: Arms
+        setPixel(&grid, x: 3, y: 10, color: skin)
+        setPixel(&grid, x: 4, y: 10, color: blue)
+        for x in 5...10 { setPixel(&grid, x: x, y: 10, color: blue) }
+        setPixel(&grid, x: 11, y: 10, color: blue)
+        setPixel(&grid, x: 12, y: 10, color: skin)
+        setPixel(&grid, x: 2, y: 10, color: black)
+        setPixel(&grid, x: 13, y: 10, color: black)
+
+        // Row 11: Lower body
+        for x in 4...11 { setPixel(&grid, x: x, y: 11, color: blue) }
+        setPixel(&grid, x: 3, y: 11, color: black)
+        setPixel(&grid, x: 12, y: 11, color: black)
+
+        // Row 12: Legs
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 12, color: skin)
+            setPixel(&grid, x: 6, y: 12, color: skin)
+            setPixel(&grid, x: 9, y: 12, color: skin)
+            setPixel(&grid, x: 10, y: 12, color: skin)
         } else {
-            setPixel(&grid, x: 4, y: 8, color: skin)
-            setPixel(&grid, x: 11, y: 8, color: skin)
+            setPixel(&grid, x: 4, y: 12, color: skin)
+            setPixel(&grid, x: 5, y: 12, color: skin)
+            setPixel(&grid, x: 10, y: 12, color: skin)
+            setPixel(&grid, x: 11, y: 12, color: skin)
         }
+        setPixel(&grid, x: 3, y: 12, color: black)
+        setPixel(&grid, x: 12, y: 12, color: black)
+
+        // Row 13: Boots
+        if anim == 0 {
+            setPixel(&grid, x: 5, y: 13, color: white)
+            setPixel(&grid, x: 6, y: 13, color: white)
+            setPixel(&grid, x: 9, y: 13, color: white)
+            setPixel(&grid, x: 10, y: 13, color: white)
+        } else {
+            setPixel(&grid, x: 4, y: 13, color: white)
+            setPixel(&grid, x: 5, y: 13, color: white)
+            setPixel(&grid, x: 10, y: 13, color: white)
+            setPixel(&grid, x: 11, y: 13, color: white)
+        }
+        setPixel(&grid, x: 3, y: 13, color: black)
+        setPixel(&grid, x: 12, y: 13, color: black)
     }
 
     private func drawSFGuile(grid: inout [[NSColor]], frame: Int) {

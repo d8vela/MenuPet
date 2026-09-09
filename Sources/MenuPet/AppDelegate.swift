@@ -1183,12 +1183,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func disciplinePet() {
-        let result = PetState.shared.discipline()
-        let alert = NSAlert()
-        alert.messageText = "Discipline"
-        alert.informativeText = result
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
+        _ = PetState.shared.discipline()
         buildMenu()
     }
 }
