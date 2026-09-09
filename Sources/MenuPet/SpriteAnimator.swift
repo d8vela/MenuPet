@@ -101,7 +101,7 @@ class SpriteAnimator {
         isTransformingToVehicle = true
         transformFrameIndex = 0
 
-        let transformTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] timer in
+        let transformTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { timer.invalidate(); return }
             if self.isTransformingToVehicle {
                 self.transformFrameIndex += 1
@@ -130,7 +130,7 @@ class SpriteAnimator {
         isTransformingToRobot = true
         transformFrameIndex = 2
 
-        let reverseTimer = Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { [weak self] timer in
+        let reverseTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { timer.invalidate(); return }
             if self.isTransformingToRobot {
                 self.transformFrameIndex += 1
