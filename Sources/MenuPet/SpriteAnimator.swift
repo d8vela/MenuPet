@@ -126,7 +126,8 @@ class SpriteAnimator {
 
     private func startVehicleHold() {
         transformHoldTimer?.invalidate()
-        transformHoldTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: false) { [weak self] _ in
+        let delay = TimeInterval.random(in: 300...900)
+        transformHoldTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
             self?.startReverseTransformation()
         }
     }
