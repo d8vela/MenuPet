@@ -6,7 +6,7 @@ class SpriteRenderer {
     let frameHeight = 48
 
     func renderFrame(character: SelectableCharacter, frame: Int, sparkleFrame: Int? = nil) -> NSImage {
-        let pixels = getPixels(character: character, frame: frame)
+        let pixels = getPixels(character: character, frame: frame, sparkleFrame: overlayFrame)
         let overlayFrame = sparkleFrame ?? frame
 
         let isBoo: Bool
@@ -234,7 +234,7 @@ class SpriteRenderer {
         image.unlockFocus()
     }
 
-    private func getPixels(character: SelectableCharacter, frame: Int) -> [[NSColor]] {
+    private func getPixels(character: SelectableCharacter, frame: Int, sparkleFrame: Int = 0) -> [[NSColor]] {
         var grid = Array(repeating: Array(repeating: NSColor.clear, count: frameWidth), count: frameHeight)
 
         switch character {
@@ -676,7 +676,7 @@ class SpriteRenderer {
             case .megatron: drawTransformersMegatron(grid: &grid, frame: frame)
             case .starscream: drawTransformersStarscream(grid: &grid, frame: frame)
             case .soundwave: drawTransformersSoundwave(grid: &grid, frame: frame)
-            case .prowl: drawTransformersProwl(grid: &grid, frame: frame)
+            case .prowl: drawTransformersProwl(grid: &grid, frame: frame, sparkleFrame: sparkleFrame)
             case .jazz: drawTransformersJazz(grid: &grid, frame: frame)
             case .ironhide: drawTransformersIronhide(grid: &grid, frame: frame)
             case .ratchet: drawTransformersRatchet(grid: &grid, frame: frame)
@@ -10637,7 +10637,7 @@ class SpriteRenderer {
         }
     }
 
-    private func drawTransformersProwl(grid: inout [[NSColor]], frame: Int) {
+    private func drawTransformersProwl(grid: inout [[NSColor]], frame: Int, sparkleFrame: Int = 0) {
         let black = NSColor.black
         let white = NSColor.white
         let silver = NSColor(red: 0.8, green: 0.8, blue: 0.85, alpha: 1.0)
@@ -10715,8 +10715,10 @@ class SpriteRenderer {
             for x in 3...12 { setPixel(&grid, x: x, y: 4, color: black) }
             setPixel(&grid, x: 4, y: 4, color: white)
             setPixel(&grid, x: 11, y: 4, color: white)
-            setPixel(&grid, x: 6, y: 4, color: red)
-            setPixel(&grid, x: 9, y: 4, color: red)
+            if sparkleFrame % 2 == 0 {
+                setPixel(&grid, x: 6, y: 4, color: red)
+                setPixel(&grid, x: 9, y: 4, color: red)
+            }
             for x in 3...12 { setPixel(&grid, x: x, y: 5, color: white) }
             for x in 4...11 { setPixel(&grid, x: x, y: 6, color: black) }
             setPixel(&grid, x: 5, y: 6, color: white)
