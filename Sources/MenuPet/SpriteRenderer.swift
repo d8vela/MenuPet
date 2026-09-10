@@ -6,8 +6,8 @@ class SpriteRenderer {
     let frameHeight = 48
 
     func renderFrame(character: SelectableCharacter, frame: Int, sparkleFrame: Int? = nil) -> NSImage {
-        let pixels = getPixels(character: character, frame: frame, sparkleFrame: overlayFrame)
         let overlayFrame = sparkleFrame ?? frame
+        let pixels = getPixels(character: character, frame: frame, sparkleFrame: overlayFrame)
 
         let isBoo: Bool
         if case .marioItem(.boo) = character { isBoo = true } else { isBoo = false }

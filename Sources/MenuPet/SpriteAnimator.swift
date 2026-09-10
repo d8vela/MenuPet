@@ -38,7 +38,7 @@ class SpriteAnimator {
 
     var currentFrame: NSImage {
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
-            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: transformFrameIndex)
+            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: currentFrameIndex)
         }
         if isTransformerCharacter(currentPokemon) {
             return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex)
