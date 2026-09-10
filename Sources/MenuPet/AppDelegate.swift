@@ -286,15 +286,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         happyItem.isEnabled = false
         menu.addItem(happyItem)
 
-        let energyItem = NSMenuItem(title: "  ⚡ Energy: \(Int(PetState.shared.energy))%", action: nil, keyEquivalent: "")
-        energyItem.tag = 203
-        energyItem.isEnabled = false
-        menu.addItem(energyItem)
-
         let hygieneItem = NSMenuItem(title: "  🧼 Clean: \(Int(PetState.shared.hygiene))%", action: nil, keyEquivalent: "")
         hygieneItem.tag = 204
         hygieneItem.isEnabled = false
         menu.addItem(hygieneItem)
+
+        let energyItem = NSMenuItem(title: "  ⚡ Energy: \(Int(PetState.shared.energy))%", action: nil, keyEquivalent: "")
+        energyItem.tag = 203
+        energyItem.isEnabled = false
+        menu.addItem(energyItem)
 
         menu.addItem(NSMenuItem.separator())
 
