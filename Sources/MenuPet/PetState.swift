@@ -85,14 +85,14 @@ class PetState {
         load()
     }
 
-    func feed() {
-        hunger = min(100, hunger + 25)
+    func feed(personality: CharacterPersonality = .default) {
+        hunger = min(100, hunger + 25 * personality.feedGain)
         happiness = min(100, happiness + 5)
         save()
     }
 
-    func play() {
-        happiness = min(100, happiness + 30)
+    func play(personality: CharacterPersonality = .default) {
+        happiness = min(100, happiness + 30 * personality.playGain)
         energy = max(0, energy - 15)
         hunger = max(0, hunger - 10)
         save()
@@ -110,10 +110,10 @@ class PetState {
         save()
     }
 
-    func checkDisobedience() {
+    func checkDisobedience(personality: CharacterPersonality = .default) {
         guard !isDisobedient else { return }
         let chance = Int.random(in: 0...100)
-        let disobedienceThreshold = max(5, Int(100 - obedience))
+        let disobedienceThreshold = max(5, Int((100 - obedience) * personality.disobedienceChance))
         if chance < disobedienceThreshold {
             isDisobedient = true
             let messages = [
@@ -141,14 +141,14 @@ class PetState {
         return "Pet disciplined. Obedience increased."
     }
 
-    func decay() {
-        hunger = max(0, hunger - 0.5)
-        happiness = max(0, happiness - 0.3)
-        energy = max(0, energy - 0.2)
-        hygiene = max(0, hygiene - 0.4)
+    func decay(personality: CharacterPersonality = .default) {
+        hunger = max(0, hunger - 0.5 * personality.hungerRate)
+        happiness = max(0, happiness - 0.3 * personality.happinessRate)
+        energy = max(0, energy - 0.2 * personality.energyRate)
+        hygiene = max(0, hygiene - 0.4 * personality.hygieneRate)
 
-        if hunger < 20 { happiness = max(0, happiness - 0.5) }
-        if hygiene < 20 { happiness = max(0, happiness - 0.3) }
+        if hunger < 20 { happiness = max(0, happiness - 0.5 * personality.hungerRate) }
+        if hygiene < 20 { happiness = max(0, happiness - 0.3 * personality.hygieneRate) }
 
         let avg = (hunger + happiness + energy + hygiene) / 4.0
         if avg >= 70 {

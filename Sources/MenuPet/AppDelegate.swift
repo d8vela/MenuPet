@@ -247,8 +247,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         petDecayTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-            PetState.shared.decay()
-            PetState.shared.checkDisobedience()
+            let personality = self?.spriteAnimator.currentPokemon.personality ?? .default
+            PetState.shared.decay(personality: personality)
+            PetState.shared.checkDisobedience(personality: personality)
             self?.buildMenu()
         }
     }
@@ -1138,12 +1139,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func feedPet() {
-        PetState.shared.feed()
+        PetState.shared.feed(personality: spriteAnimator.currentPokemon.personality)
         buildMenu()
     }
 
     @objc func playWithPet() {
-        PetState.shared.play()
+        PetState.shared.play(personality: spriteAnimator.currentPokemon.personality)
         buildMenu()
     }
 
