@@ -1271,7 +1271,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert.informativeText = "Your API key is stored locally and never shared."
         alert.addButton(withTitle: "OK")
         alert.addButton(withTitle: "Cancel")
-        let textField = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
         textField.stringValue = LLMService.shared.apiKey
         alert.accessoryView = textField
         if alert.runModal() == .alertFirstButtonReturn {
