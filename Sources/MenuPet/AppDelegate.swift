@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
@@ -942,6 +943,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(versionItem)
 
         menu.addItem(NSMenuItem.separator())
+
+        let startupItem = NSMenuItem(title: "Run at Startup", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
+        startupItem.target = self
+        startupItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
+        menu.addItem(startupItem)
+
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
@@ -1132,6 +1139,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         progressWindow.makeKeyAndOrderFront(nil)
 
         UpdateChecker.shared.downloadAndInstallUpdate(from: url, progressWindow: progressWindow, progressIndicator: progress, statusLabel: statusLabel)
+    }
+
+    @objc func toggleLaunchAtLogin() {
+        do {
+            if SMAppService.mainApp.status == .enabled {
+                try SMAppService.mainApp.unregister()
+            } else {
+                try SMAppService.mainApp.register()
+            }
+        } catch {
+            print("Failed to toggle launch at login: \(error)")
+        }
+        buildMenu()
     }
 
     @objc func quitApp() {
