@@ -266,6 +266,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         currentPokemonItem.target = self
         menu.addItem(currentPokemonItem)
 
+        if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
+            let statusItem = NSMenuItem(title: "  💬 Loading status...", action: nil, keyEquivalent: "")
+            statusItem.tag = 310
+            statusItem.isEnabled = false
+            menu.addItem(statusItem)
+            let char = spriteAnimator.currentPokemon
+            let pet = PetState.shared
+            DispatchQueue.global(qos: .userInitiated).async {
+                LLMService.shared.generateStatus(for: char, petState: pet) { status in
+                    if let menu = self.statusItem.menu {
+                        for item in menu.items where item.tag == 310 {
+                            item.title = "  💬 \(status)"
+                        }
+                    }
+                }
+            }
+        }
+
         if case .transformers(_) = spriteAnimator.currentPokemon {
             let transformSub = NSMenu()
             let toggleItem = NSMenuItem(title: spriteAnimator.isCurrentlyInVehicleMode ? "🤖 Transform to Robot" : "🚗 Transform to Vehicle", action: #selector(toggleTransformMode), keyEquivalent: "")
@@ -975,6 +993,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         checkUpdateItem.target = self
         menu.addItem(checkUpdateItem)
 
+        let llmSub = NSMenu()
+        let llmEnableItem = NSMenuItem(title: "Enable Status", action: #selector(toggleLLMStatus), keyEquivalent: "")
+        llmEnableItem.target = self
+        llmEnableItem.state = LLMService.shared.statusEnabled ? .on : .off
+        llmSub.addItem(llmEnableItem)
+        llmSub.addItem(NSMenuItem.separator())
+        for provider in LLMProvider.allCases {
+            let item = NSMenuItem(title: provider.rawValue, action: #selector(setLLMProvider(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = provider
+            item.state = LLMService.shared.provider == provider ? .on : .off
+            llmSub.addItem(item)
+        }
+        llmSub.addItem(NSMenuItem.separator())
+        let apiKeyItem = NSMenuItem(title: "Set API Key...", action: #selector(setLLMApiKey), keyEquivalent: "")
+        apiKeyItem.target = self
+        llmSub.addItem(apiKeyItem)
+        let endpointItem = NSMenuItem(title: "Set Endpoint...", action: #selector(setLLMEndpoint), keyEquivalent: "")
+        endpointItem.target = self
+        llmSub.addItem(endpointItem)
+        let modelItem = NSMenuItem(title: "Set Model...", action: #selector(setLLMModel), keyEquivalent: "")
+        modelItem.target = self
+        llmSub.addItem(modelItem)
+        let llmMenuItem = NSMenuItem(title: "AI Status", action: nil, keyEquivalent: "")
+        llmMenuItem.submenu = llmSub
+        menu.addItem(llmMenuItem)
+
         let versionItem = NSMenuItem(title: "Version \(UpdateChecker.shared.currentVersion)", action: nil, keyEquivalent: "")
         versionItem.isEnabled = false
         menu.addItem(versionItem)
@@ -1203,6 +1248,65 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 spriteAnimator.setTransformInterval(value)
                 buildMenu()
             }
+        }
+    }
+
+    @objc func toggleLLMStatus() {
+        LLMService.shared.statusEnabled.toggle()
+        buildMenu()
+    }
+
+    @objc func setLLMProvider(_ sender: NSMenuItem) {
+        if let provider = sender.representedObject as? LLMProvider {
+            LLMService.shared.provider = provider
+            LLMService.shared.endpoint = ""
+            LLMService.shared.model = ""
+            buildMenu()
+        }
+    }
+
+    @objc func setLLMApiKey() {
+        let alert = NSAlert()
+        alert.messageText = "Enter API Key"
+        alert.informativeText = "Your API key is stored locally and never shared."
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
+        let textField = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        textField.stringValue = LLMService.shared.apiKey
+        alert.accessoryView = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            LLMService.shared.apiKey = textField.stringValue
+            buildMenu()
+        }
+    }
+
+    @objc func setLLMEndpoint() {
+        let alert = NSAlert()
+        alert.messageText = "Enter API Endpoint"
+        alert.informativeText = "Leave empty for default \(LLMService.shared.provider.defaultEndpoint)"
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 400, height: 24))
+        textField.stringValue = LLMService.shared.endpoint
+        alert.accessoryView = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            LLMService.shared.endpoint = textField.stringValue
+            buildMenu()
+        }
+    }
+
+    @objc func setLLMModel() {
+        let alert = NSAlert()
+        alert.messageText = "Enter Model Name"
+        alert.informativeText = "Leave empty for default \(LLMService.shared.provider.defaultModel)"
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 200, height: 24))
+        textField.stringValue = LLMService.shared.model
+        alert.accessoryView = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            LLMService.shared.model = textField.stringValue
+            buildMenu()
         }
     }
 
