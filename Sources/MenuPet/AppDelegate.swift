@@ -224,6 +224,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         spriteAnimator.onFrameAdvanced = { [weak self] in
             self?.statusItem.button?.image = self?.spriteAnimator.currentFrame
         }
+        spriteAnimator.onTransformStateChanged = { [weak self] in
+            DispatchQueue.main.async { self?.buildMenu() }
+        }
 
         if let button = statusItem.button {
             button.image = spriteAnimator.currentFrame
@@ -262,6 +265,40 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         currentPokemonItem.tag = 300
         currentPokemonItem.target = self
         menu.addItem(currentPokemonItem)
+
+        if case .transformers(_) = spriteAnimator.currentPokemon {
+            let transformSub = NSMenu()
+            let toggleItem = NSMenuItem(title: spriteAnimator.isCurrentlyInVehicleMode ? "🤖 Transform to Robot" : "🚗 Transform to Vehicle", action: #selector(toggleTransformMode), keyEquivalent: "")
+            toggleItem.target = self
+            transformSub.addItem(toggleItem)
+            transformSub.addItem(NSMenuItem.separator())
+            let intervalSub = NSMenu()
+            let presets: [(String, TimeInterval)] = [
+                ("10 sec (test)", 10),
+                ("30 sec", 30),
+                ("1 min", 60),
+                ("2 min", 120),
+                ("5 min", 300),
+                ("10 min", 600),
+            ]
+            for (label, interval) in presets {
+                let item = NSMenuItem(title: label, action: #selector(setTransformInterval(_:)), keyEquivalent: "")
+                item.target = self
+                item.tag = Int(interval)
+                item.state = spriteAnimator.transformInterval == interval ? .on : .off
+                intervalSub.addItem(item)
+            }
+            let customItem = NSMenuItem(title: "Custom...", action: #selector(setCustomTransformInterval), keyEquivalent: "")
+            customItem.target = self
+            intervalSub.addItem(customItem)
+            let intervalMenuItem = NSMenuItem(title: "Transform Interval", action: nil, keyEquivalent: "")
+            intervalMenuItem.submenu = intervalSub
+            transformSub.addItem(intervalMenuItem)
+            let transformMenuItem = NSMenuItem(title: "Transform Mode", action: nil, keyEquivalent: "")
+            transformMenuItem.submenu = transformSub
+            menu.addItem(transformMenuItem)
+        }
+
         menu.addItem(NSMenuItem.separator())
 
         let cpuItem = NSMenuItem(title: "CPU Usage: \(Int(cpuMonitor.currentCPU))%", action: nil, keyEquivalent: "")
@@ -1139,6 +1176,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         progressWindow.makeKeyAndOrderFront(nil)
 
         UpdateChecker.shared.downloadAndInstallUpdate(from: url, progressWindow: progressWindow, progressIndicator: progress, statusLabel: statusLabel)
+    }
+
+    @objc func toggleTransformMode() {
+        spriteAnimator.toggleTransform()
+        buildMenu()
+    }
+
+    @objc func setTransformInterval(_ sender: NSMenuItem) {
+        let interval = TimeInterval(sender.tag)
+        spriteAnimator.setTransformInterval(interval)
+        buildMenu()
+    }
+
+    @objc func setCustomTransformInterval() {
+        let alert = NSAlert()
+        alert.messageText = "Custom Transform Interval"
+        alert.informativeText = "Enter interval in seconds:"
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 100, height: 24))
+        textField.stringValue = String(Int(spriteAnimator.transformInterval))
+        alert.accessoryView = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            if let value = Double(textField.stringValue), value >= 10 {
+                spriteAnimator.setTransformInterval(value)
+                buildMenu()
+            }
+        }
     }
 
     @objc func toggleLaunchAtLogin() {
