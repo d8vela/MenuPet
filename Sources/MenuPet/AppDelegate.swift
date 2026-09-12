@@ -1003,38 +1003,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         llmSub.addItem(llmEnableItem)
         llmSub.addItem(NSMenuItem.separator())
         for provider in LLMProvider.allCases.filter({ $0 != .custom }).sorted(by: { $0.rawValue < $1.rawValue }) {
-            let item = NSMenuItem(title: provider.rawValue, action: #selector(setLLMProvider(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = provider
-            item.state = LLMService.shared.provider == provider ? .on : .off
-            llmSub.addItem(item)
+            let providerSub = NSMenu()
+            for modelName in provider.knownModels {
+                let item = NSMenuItem(title: modelName, action: #selector(selectProviderModel(_:)), keyEquivalent: "")
+                item.target = self
+                item.representedObject = ["provider": provider, "model": modelName]
+                item.state = (LLMService.shared.provider == provider && LLMService.shared.model == modelName) ? .on : .off
+                providerSub.addItem(item)
+            }
+            providerSub.addItem(NSMenuItem.separator())
+            let apiKeyItem = NSMenuItem(title: "Set API Key...", action: #selector(setLLMApiKeyForProvider(_:)), keyEquivalent: "")
+            apiKeyItem.target = self
+            apiKeyItem.representedObject = provider
+            providerSub.addItem(apiKeyItem)
+            let endpointItem = NSMenuItem(title: "Set Endpoint...", action: #selector(setLLMEndpointForProvider(_:)), keyEquivalent: "")
+            endpointItem.target = self
+            endpointItem.representedObject = provider
+            providerSub.addItem(endpointItem)
+            let providerMenuItem = NSMenuItem(title: provider.rawValue, action: nil, keyEquivalent: "")
+            providerMenuItem.submenu = providerSub
+            if LLMService.shared.provider == provider {
+                providerMenuItem.title = "✓ \(provider.rawValue)"
+            }
+            llmSub.addItem(providerMenuItem)
         }
-        llmSub.addItem(NSMenuItem.separator())
-        let apiKeySub = NSMenu()
-        for prov in LLMProvider.allCases where prov != .custom {
-            let hasKey = !LLMService.shared.getApiKey(for: prov).isEmpty
-            let item = NSMenuItem(title: hasKey ? "✓ \(prov.rawValue)" : prov.rawValue, action: #selector(setLLMApiKeyForProvider(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = prov
-            apiKeySub.addItem(item)
-        }
-        let apiKeyMenuItem = NSMenuItem(title: "API Keys", action: nil, keyEquivalent: "")
-        apiKeyMenuItem.submenu = apiKeySub
-        llmSub.addItem(apiKeyMenuItem)
-        let endpointItem = NSMenuItem(title: "Set Endpoint...", action: #selector(setLLMEndpoint), keyEquivalent: "")
-        endpointItem.target = self
-        llmSub.addItem(endpointItem)
-        let modelSub = NSMenu()
-        for modelName in LLMService.shared.provider.knownModels {
-            let item = NSMenuItem(title: modelName, action: #selector(setLLMModel(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = modelName
-            item.state = LLMService.shared.model == modelName ? .on : .off
-            modelSub.addItem(item)
-        }
-        let modelMenuItem = NSMenuItem(title: "Model", action: nil, keyEquivalent: "")
-        modelMenuItem.submenu = modelSub
-        llmSub.addItem(modelMenuItem)
         let llmMenuItem = NSMenuItem(title: "AI Status", action: nil, keyEquivalent: "")
         llmMenuItem.submenu = llmSub
         menu.addItem(llmMenuItem)
@@ -1298,6 +1290,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc func selectProviderModel(_ sender: NSMenuItem) {
+        if let info = sender.representedObject as? [String: Any],
+           let provider = info["provider"] as? LLMProvider,
+           let model = info["model"] as? String {
+            LLMService.shared.provider = provider
+            LLMService.shared.model = model
+            LLMService.shared.invalidateCache()
+            buildMenu()
+        }
+    }
+
     private var apiKeyTextField: NSTextField?
     private var editingProvider: LLMProvider?
 
@@ -1358,22 +1361,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private var endpointTextField: NSTextField?
+    private var editingEndpointProvider: LLMProvider?
 
-    @objc func setLLMEndpoint() {
-        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 450, height: 150), styleMask: [.titled, .closable], backing: .buffered, defer: false)
-        panel.title = "Enter API Endpoint"
+    @objc func setLLMEndpointForProvider(_ sender: NSMenuItem) {
+        guard let provider = sender.representedObject as? LLMProvider else { return }
+        editingEndpointProvider = provider
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 550, height: 150), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        panel.title = "Endpoint for \(provider.rawValue)"
         panel.center()
         panel.isReleasedWhenClosed = false
 
-        let label = NSTextField(labelWithString: "Leave empty for default: \(LLMService.shared.provider.defaultEndpoint)")
-        label.frame = NSRect(x: 20, y: 115, width: 410, height: 20)
+        let label = NSTextField(labelWithString: "Leave empty for default: \(provider.defaultEndpoint)")
+        label.frame = NSRect(x: 20, y: 115, width: 510, height: 20)
         label.font = NSFont.systemFont(ofSize: 11)
         label.textColor = .secondaryLabelColor
         panel.contentView?.addSubview(label)
 
-        let textField = NSTextField(frame: NSRect(x: 20, y: 80, width: 410, height: 24))
+        let textField = NSTextField(frame: NSRect(x: 20, y: 80, width: 510, height: 24))
         textField.stringValue = LLMService.shared.endpoint
-        textField.placeholderString = "https://api.example.com/v1/chat/completions"
+        textField.placeholderString = provider.defaultEndpoint
         panel.contentView?.addSubview(textField)
         endpointTextField = textField
 
@@ -1382,12 +1388,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.contentView?.addSubview(pasteButton)
 
         let okButton = NSButton(title: "Save", target: self, action: #selector(saveEndpointFromPanel))
-        okButton.frame = NSRect(x: 270, y: 10, width: 80, height: 30)
+        okButton.frame = NSRect(x: 370, y: 10, width: 80, height: 30)
         okButton.keyEquivalent = "\r"
         panel.contentView?.addSubview(okButton)
 
         let cancelButton = NSButton(title: "Cancel", target: panel, action: #selector(NSPanel.close))
-        cancelButton.frame = NSRect(x: 360, y: 10, width: 80, height: 30)
+        cancelButton.frame = NSRect(x: 460, y: 10, width: 80, height: 30)
         cancelButton.keyEquivalent = "\u{1b}"
         panel.contentView?.addSubview(cancelButton)
 
@@ -1409,6 +1415,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         endpointTextField?.window?.close()
         endpointTextField = nil
+        editingEndpointProvider = nil
         buildMenu()
     }
 
