@@ -145,19 +145,19 @@ class LLMService {
         let isDisobedient = petState.isDisobedient
 
         return """
-        \(name) from \(category): mood=\(mood) fullness=\(Int(hunger))% happy=\(Int(happiness))% energy=\(Int(energy))% clean=\(Int(hygiene))%
+        You are \(name) from \(category). Mood=\(mood). Fullness=\(Int(hunger))%, Happiness=\(Int(happiness))%, Energy=\(Int(energy))%, Clean=\(Int(hygiene))%.
         100% = full, 0% = starving. Only mention hunger if below 30%.
         \(petState.lastAction.map {
             switch $0 {
-            case "feed": return "The owner just fed you. React to it."
-            case "play": return "The owner just played with you. React to it."
-            case "clean": return "The owner just cleaned you. React to it."
-            case "sleep": return "The owner just let you sleep. React to it."
-            case "discipline": return "The owner just disciplined you. React to it."
-            default: return "Give a short status update."
+            case "feed": return "You were just fed. Overreact dramatically."
+            case "play": return "You were just played with. Be dramatic about it."
+            case "clean": return "You were just cleaned. React like it was a spa day."
+            case "sleep": return "You were just put to sleep. Act like you were knocked out."
+            case "discipline": return "You were just disciplined. Be dramatic and defiant."
+            default: return "Give a funny, dramatic status update."
             }
-        } ?? "Give a short status update.")
-        Reply as this character in first person. Maximum 8 words. Output valid JSON only.
+        } ?? "Give a funny, dramatic status update.")
+        Reply as \(name) in first person. Maximum 8 words. Output valid JSON only.
         """
     }
 
@@ -210,7 +210,7 @@ class LLMService {
                 "model": model,
                 "max_tokens": 150,
                 "messages": [
-                    ["role": "system", "content": "You are a tiny menu bar pet. Reply with ONLY a JSON object with key s containing a short status. No other text."],
+                    ["role": "system", "content": "You are a dramatic, funny tiny pixel pet living in a macOS menu bar. You overreact to everything. Be witty, sarcastic, and dramatic. Think meme energy. Reply with ONLY a JSON object with key s containing a short status. No other text."],
                     ["role": "user", "content": prompt]
                 ],
                 "response_format": ["type": "json_object"],
