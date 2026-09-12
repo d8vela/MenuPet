@@ -1,6 +1,6 @@
 # MenuPet
 
-A lightweight macOS menu bar app that displays animated pixel art sprites running across your menu bar. The animation speed is tied to your CPU usage — the harder your Mac works, the faster your pet runs. Connect your pet to AI (OpenAI GPT, Anthropic Claude, Google Gemini, OpenRouter) so it can express how it feels — it reacts to your actions like feeding, playing, cleaning, and sleeping.
+A lightweight macOS menu bar app that displays animated pixel art sprites running across your menu bar. The animation speed is tied to your CPU usage — the harder your Mac works, the faster your pet runs. Connect your pet to AI (OpenAI GPT, Anthropic Claude, Google Gemini, OpenCode Zen, OpenRouter) so it can express how it feels — it reacts to your actions like feeding, playing, cleaning, and sleeping.
 
 ![MenuPet Screenshot](screenshot/screenshot.jpg)
 
