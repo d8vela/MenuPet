@@ -13,6 +13,7 @@ class PetState {
     var totalDaysOwned: Int = 0
 
     var isDisobedient: Bool = false
+    var lastAction: String?
     var obedience: Double = 80
     var disobedienceMessage: String = ""
 
@@ -88,6 +89,7 @@ class PetState {
     func feed(personality: CharacterPersonality = .default) {
         hunger = min(100, hunger + 25 * personality.feedGain)
         happiness = min(100, happiness + 5)
+        lastAction = "feed"
         save()
     }
 
@@ -95,18 +97,21 @@ class PetState {
         happiness = min(100, happiness + 30 * personality.playGain)
         energy = max(0, energy - 15)
         hunger = max(0, hunger - 10)
+        lastAction = "play"
         save()
     }
 
     func clean() {
         hygiene = min(100, hygiene + 40)
         happiness = min(100, happiness + 10)
+        lastAction = "clean"
         save()
     }
 
     func sleep() {
         energy = min(100, energy + 40)
         hunger = max(0, hunger - 5)
+        lastAction = "sleep"
         save()
     }
 

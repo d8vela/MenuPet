@@ -14,7 +14,7 @@ enum LLMProvider: String, CaseIterable {
         case .anthropic: return "https://api.anthropic.com/v1/messages"
         case .gemini: return "https://generativelanguage.googleapis.com/v1beta/models"
         case .openrouter: return "https://openrouter.ai/api/v1/chat/completions"
-        case .openCodeZen: return "https://api.openai.com/v1/chat/completions"
+        case .openCodeZen: return "https://opencode.ai/zen/v1/chat/completions"
         case .custom: return ""
         }
     }
@@ -27,6 +27,17 @@ enum LLMProvider: String, CaseIterable {
         case .openrouter: return "openai/gpt-4o-mini"
         case .openCodeZen: return "gpt-4o-mini"
         case .custom: return ""
+        }
+    }
+
+    var knownModels: [String] {
+        switch self {
+        case .openai: return ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo", "o1-mini", "o1-preview"]
+        case .anthropic: return ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "claude-3-5-sonnet-20241022"]
+        case .gemini: return ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
+        case .openrouter: return ["openai/gpt-4o-mini", "openai/gpt-4o", "anthropic/claude-3-haiku", "anthropic/claude-3-sonnet", "xiaomi/mimo-v2.5", "google/gemini-2.0-flash"]
+        case .openCodeZen: return ["gpt-4o-mini", "gpt-4o"]
+        case .custom: return []
         }
     }
 }
@@ -74,23 +85,40 @@ class LLMService {
 
     func generateStatus(for character: SelectableCharacter, petState: PetState, completion: @escaping (String) -> Void) {
         guard !apiKey.isEmpty else {
-            completion(defaultStatus(for: character))
+            completion("⚠️ No API key set")
             return
         }
 
         let charId = character.identifier
-        if let cached = cachedStatuses[charId], Date().timeIntervalSince(lastStatusTime) < 300 {
+        if let cached = cachedStatuses[charId], Date().timeIntervalSince(lastStatusTime) < 900 {
             completion(cached)
             return
         }
 
         let prompt = buildPrompt(for: character, petState: petState)
-        callAPI(prompt: prompt) { [weak self] response in
-            let status = response ?? self?.defaultStatus(for: character) ?? ""
-            self?.cachedStatuses[charId] = status
-            self?.lastStatusTime = Date()
-            completion(status)
+        callAPI(prompt: prompt) { [weak self] result in
+            switch result {
+            case .success(let status):
+                self?.cachedStatuses[charId] = status
+                self?.lastStatusTime = Date()
+                completion(status)
+            case .failure(let error):
+                completion("⚠️ \(error.localizedDescription)")
+            }
         }
+    }
+
+    func getCachedStatus(for character: SelectableCharacter) -> String? {
+        let charId = character.identifier
+        if let cached = cachedStatuses[charId], Date().timeIntervalSince(lastStatusTime) < 900 {
+            return cached
+        }
+        return nil
+    }
+
+    func invalidateCache() {
+        cachedStatuses.removeAll()
+        lastStatusTime = .distantPast
     }
 
     private func buildPrompt(for character: SelectableCharacter, petState: PetState) -> String {
@@ -105,35 +133,26 @@ class LLMService {
         let isDisobedient = petState.isDisobedient
 
         return """
-        You are \(name) from \(category). You are a tiny pixel art pet living in a macOS menu bar.
-
-        Your current state:
-        - Mood: \(mood)
-        - Hunger: \(hunger)% (0=starving, 100=full)
-        - Happiness: \(happiness)% (0=miserable, 100=ecstatic)
-        - Energy: \(energy)% (0=exhausted, 100=hyper)
-        - Cleanliness: \(hygiene)% (0=filthy, 100=sparkling)
-        - Stage: \(stage)\(isDisobedient ? " - You are currently being DISOBEDIENT" : "")
-
-        Generate a SHORT status message (max 40 chars) that \(name) would say about how they're feeling right now. Stay in character. Be fun and expressive. Use emojis sparingly (max 1). No quotes around the message.
-
-        Examples of good responses:
-        - "Feeling mighty! Time for an adventure!"
-        - "So hungry... need snacks!"
-        - "*yawns* Need a nap..."
-        - "Ready to save the world!"
+        \(name) from \(category): mood=\(mood) fullness=\(Int(hunger))% happy=\(Int(happiness))% energy=\(Int(energy))% clean=\(Int(hygiene))%
+        100% = full, 0% = starving. Only mention hunger if below 30%.
+        \(petState.lastAction.map { "The owner just \($0)ed you. React to it." } ?? "Give a status update.")
+        Reply as this character in first person. Maximum 8 words. Output valid JSON only.
         """
     }
 
-    private func callAPI(prompt: String, completion: @escaping (String?) -> Void) {
+    private func callAPI(prompt: String, completion: @escaping (Result<String, Error>) -> Void) {
+        guard !endpoint.isEmpty else {
+            completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "No endpoint configured"])))
+            return
+        }
         guard let url = URL(string: endpoint) else {
-            completion(nil)
+            completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid endpoint URL"])))
             return
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.timeoutInterval = 10
+            request.timeoutInterval = 30
 
         switch provider {
         case .anthropic:
@@ -142,69 +161,181 @@ class LLMService {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             let body: [String: Any] = [
                 "model": model,
-                "max_tokens": 60,
+                "max_tokens": 500,
                 "messages": [["role": "user", "content": prompt]]
             ]
             request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
         case .gemini:
             let urlStr = "\(endpoint)/\(model):generateContent?key=\(apiKey)"
-            guard let geminiURL = URL(string: urlStr) else { completion(nil); return }
+            guard let geminiURL = URL(string: urlStr) else {
+                completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid Gemini URL"])))
+                return
+            }
             request = URLRequest(url: geminiURL)
             request.httpMethod = "POST"
+        request.timeoutInterval = 30
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             let body: [String: Any] = [
                 "contents": [["parts": [["text": prompt]]]],
-                "generationConfig": ["maxOutputTokens": 60]
+                "generationConfig": ["maxOutputTokens": 500]
             ]
             request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
         default:
             request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            let body: [String: Any] = [
+            var body: [String: Any] = [
                 "model": model,
-                "max_tokens": 60,
-                "messages": [["role": "user", "content": prompt]]
+                "max_tokens": 150,
+                "messages": [
+                    ["role": "system", "content": "You are a tiny menu bar pet. Reply with ONLY a JSON object with key s containing a short status. No other text."],
+                    ["role": "user", "content": prompt]
+                ],
+                "response_format": ["type": "json_object"],
+                "reasoning": ["effort": "none"] as [String: String]
             ]
             request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         }
 
-        URLSession.shared.dataTask(with: request) { data, _, _ in
-            guard let data = data else {
-                DispatchQueue.main.async { completion(nil) }
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            if let error = error {
+                DispatchQueue.main.async { completion(.failure(error)) }
                 return
             }
-
-            let text = self.parseResponse(data: data)
-            DispatchQueue.main.async { completion(text) }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "No response from server"]))) }
+                return
+            }
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let msg = data.flatMap { String(data: $0, encoding: .utf8) } ?? "HTTP \(httpResponse.statusCode)"
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "API error (\(httpResponse.statusCode)): \(msg)"]))) }
+                return
+            }
+            guard let data = data else {
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Empty response"]))) }
+                return
+            }
+            if let text = self?.parseResponse(data: data) {
+                DispatchQueue.main.async { completion(.success(text)) }
+            } else {
+                let raw = String(data: data, encoding: .utf8) ?? "unknown"
+                print("LLM RAW RESPONSE: \(raw)")
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Parse error: \(raw.prefix(500))"]))) }
+            }
         }.resume()
     }
 
     private func parseResponse(data: Data) -> String? {
-        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            print("LLM PARSE: Not valid JSON")
+            return nil
+        }
+        print("LLM PARSE: Keys = \(Array(json.keys))")
 
-        switch provider {
-        case .anthropic:
-            if let content = json["content"] as? [[String: Any]],
-               let text = content.first?["text"] as? String {
+        // Try OpenAI-compatible format (OpenRouter, OpenAI, OpenCode Zen, custom)
+        if let choices = json["choices"] as? [[String: Any]] {
+            print("LLM PARSE: choices count = \(choices.count)")
+            if let message = choices.first?["message"] as? [String: Any] {
+                print("LLM PARSE: message keys = \(Array(message.keys))")
+                if let content = message["content"] {
+                    print("LLM PARSE: content type = \(type(of: content)), value = \(String(describing: content).prefix(200))")
+                }
+                if let reasoning = message["reasoning"] {
+                    print("LLM PARSE: reasoning type = \(type(of: reasoning)), value = \(String(describing: reasoning).prefix(200))")
+                }
+                // If reasoning field exists, content is clean output
+                if let reasoning = message["reasoning"] as? String, !reasoning.isEmpty,
+                   let text = message["content"] as? String, !text.isEmpty {
+                    return self.extractMessage(from: text)
+                }
+                // Standard: message.content
+                if let text = message["content"] as? String, !text.isEmpty {
+                    return self.extractMessage(from: text)
+                }
+                // Reasoning models: message.reasoning_content
+                if let text = message["reasoning_content"] as? String, !text.isEmpty {
+                    return self.extractMessage(from: text)
+                }
+                // Some reasoning models: message.reasoning (fallback)
+                if let text = message["reasoning"] as? String, !text.isEmpty {
+                    return self.extractMessage(from: text)
+                }
+                // Some models: content is array of parts
+                if let contentArr = message["content"] as? [[String: Any]],
+                   let text = contentArr.first?["text"] as? String {
+                    return self.extractMessage(from: text)
+                }
+            }
+            // Non-chat format: choices[0].text
+            if let text = choices.first?["text"] as? String, !text.isEmpty {
                 return text.trimmingCharacters(in: .whitespacesAndNewlines)
             }
-        case .gemini:
-            if let candidates = json["candidates"] as? [[String: Any]],
-               let content = candidates.first?["content"] as? [String: Any],
-               let parts = content["parts"] as? [[String: Any]],
-               let text = parts.first?["text"] as? String {
-                return text.trimmingCharacters(in: .whitespacesAndNewlines)
-            }
-        default:
-            if let choices = json["choices"] as? [[String: Any]],
+        }
+
+        // Anthropic format
+        if let content = json["content"] as? [[String: Any]],
+           let text = content.first?["text"] as? String {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // Gemini format
+        if let candidates = json["candidates"] as? [[String: Any]],
+           let content = candidates.first?["content"] as? [String: Any],
+           let parts = content["parts"] as? [[String: Any]],
+           let text = parts.first?["text"] as? String {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // Direct content field
+        if let text = json["content"] as? String {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // Some APIs nest in data
+        if let dataObj = json["data"] as? [String: Any] {
+            if let choices = dataObj["choices"] as? [[String: Any]],
                let message = choices.first?["message"] as? [String: Any],
                let text = message["content"] as? String {
                 return text.trimmingCharacters(in: .whitespacesAndNewlines)
             }
         }
+
         return nil
+    }
+
+    private func extractMessage(from text: String) -> String {
+        // Try direct JSON parse first (clean response)
+        if let data = text.data(using: .utf8),
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            for key in ["s", "status", "message"] {
+                if let msg = json[key] as? String { return msg.trimmingCharacters(in: .whitespacesAndNewlines) }
+            }
+        }
+
+        var cleaned = text
+        let thinkEnd1 = cleaned.range(of: "<" + "/think>")
+        let thinkEnd2 = cleaned.range(of: "<" + "/reasoning>")
+        if let range = thinkEnd1 ?? thinkEnd2 {
+            cleaned = String(cleaned[range.upperBound...])
+        }
+        if let data = cleaned.data(using: .utf8),
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            for key in ["s", "status", "message"] {
+                if let msg = json[key] as? String { return msg.trimmingCharacters(in: .whitespacesAndNewlines) }
+            }
+        }
+        let pattern = #"\{[^}]*"(s|status|message)"\s*:\s*"((?:[^"\\]|\\.)*)""#
+        if let regex = try? NSRegularExpression(pattern: pattern, options: []),
+           let match = regex.firstMatch(in: cleaned, range: NSRange(cleaned.startIndex..., in: cleaned)),
+           let range = Range(match.range(at: 2), in: cleaned) {
+            var result = String(cleaned[range])
+            result = result.replacingOccurrences(of: "\\\"", with: "\"")
+            result = result.replacingOccurrences(of: "\\n", with: " ")
+            return result.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        let fallback = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+        return String(fallback.prefix(50))
     }
 
     private func defaultStatus(for character: SelectableCharacter) -> String {

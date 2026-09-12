@@ -267,17 +267,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(currentPokemonItem)
 
         if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
-            let statusItem = NSMenuItem(title: "  💬 Loading status...", action: nil, keyEquivalent: "")
+            let cached = LLMService.shared.getCachedStatus(for: spriteAnimator.currentPokemon)
+            let statusItem = NSMenuItem(title: "  💬 \(cached ?? "Loading status...")", action: #selector(copyStatusToClipboard), keyEquivalent: "")
             statusItem.tag = 310
-            statusItem.isEnabled = false
+            statusItem.target = self
             menu.addItem(statusItem)
-            let char = spriteAnimator.currentPokemon
-            let pet = PetState.shared
-            DispatchQueue.global(qos: .userInitiated).async {
-                LLMService.shared.generateStatus(for: char, petState: pet) { status in
-                    if let menu = self.statusItem.menu {
-                        for item in menu.items where item.tag == 310 {
-                            item.title = "  💬 \(status)"
+            if cached == nil {
+                let char = spriteAnimator.currentPokemon
+                let pet = PetState.shared
+                DispatchQueue.global(qos: .userInitiated).async {
+                    LLMService.shared.generateStatus(for: char, petState: pet) { status in
+                        if let menu = self.statusItem.menu {
+                            for item in menu.items where item.tag == 310 {
+                                item.title = "  💬 \(status)"
+                            }
                         }
                     }
                 }
@@ -999,7 +1002,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         llmEnableItem.state = LLMService.shared.statusEnabled ? .on : .off
         llmSub.addItem(llmEnableItem)
         llmSub.addItem(NSMenuItem.separator())
-        for provider in LLMProvider.allCases {
+        for provider in LLMProvider.allCases where provider != .custom {
             let item = NSMenuItem(title: provider.rawValue, action: #selector(setLLMProvider(_:)), keyEquivalent: "")
             item.target = self
             item.representedObject = provider
@@ -1013,9 +1016,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let endpointItem = NSMenuItem(title: "Set Endpoint...", action: #selector(setLLMEndpoint), keyEquivalent: "")
         endpointItem.target = self
         llmSub.addItem(endpointItem)
-        let modelItem = NSMenuItem(title: "Set Model...", action: #selector(setLLMModel), keyEquivalent: "")
-        modelItem.target = self
-        llmSub.addItem(modelItem)
+        let modelSub = NSMenu()
+        for modelName in LLMService.shared.provider.knownModels {
+            let item = NSMenuItem(title: modelName, action: #selector(setLLMModel(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = modelName
+            item.state = LLMService.shared.model == modelName ? .on : .off
+            modelSub.addItem(item)
+        }
+        let modelMenuItem = NSMenuItem(title: "Model", action: nil, keyEquivalent: "")
+        modelMenuItem.submenu = modelSub
+        llmSub.addItem(modelMenuItem)
         let llmMenuItem = NSMenuItem(title: "AI Status", action: nil, keyEquivalent: "")
         llmMenuItem.submenu = llmSub
         menu.addItem(llmMenuItem)
@@ -1251,6 +1262,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc func copyStatusToClipboard() {
+        guard let menu = statusItem.menu else { return }
+        for item in menu.items where item.tag == 310 {
+            let text = item.title.replacingOccurrences(of: "  💬 ", with: "")
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(text, forType: .string)
+            item.title = "  ✅ Copied to clipboard!"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                item.title = "  💬 \(text)"
+            }
+            break
+        }
+    }
+
     @objc func toggleLLMStatus() {
         LLMService.shared.statusEnabled.toggle()
         buildMenu()
@@ -1265,49 +1290,123 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    private var apiKeyTextField: NSTextField?
+
     @objc func setLLMApiKey() {
-        let alert = NSAlert()
-        alert.messageText = "Enter API Key"
-        alert.informativeText = "Your API key is stored locally and never shared."
-        alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Cancel")
-        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 600, height: 150), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        panel.title = "Enter API Key"
+        panel.center()
+        panel.isReleasedWhenClosed = false
+
+        let label = NSTextField(labelWithString: "Your API key is stored locally and never shared.")
+        label.frame = NSRect(x: 20, y: 115, width: 560, height: 20)
+        label.font = NSFont.systemFont(ofSize: 11)
+        label.textColor = .secondaryLabelColor
+        panel.contentView?.addSubview(label)
+
+        let textField = NSTextField(frame: NSRect(x: 20, y: 80, width: 560, height: 24))
         textField.stringValue = LLMService.shared.apiKey
-        alert.accessoryView = textField
-        if alert.runModal() == .alertFirstButtonReturn {
-            LLMService.shared.apiKey = textField.stringValue
-            buildMenu()
+        textField.placeholderString = "Enter or paste your API key"
+        panel.contentView?.addSubview(textField)
+        apiKeyTextField = textField
+
+        let pasteButton = NSButton(title: "📋 Paste from Clipboard", target: self, action: #selector(pasteApiKey))
+        pasteButton.frame = NSRect(x: 20, y: 50, width: 160, height: 24)
+        panel.contentView?.addSubview(pasteButton)
+
+        let okButton = NSButton(title: "Save", target: self, action: #selector(saveApiKeyFromPanel))
+        okButton.frame = NSRect(x: 420, y: 10, width: 80, height: 30)
+        okButton.keyEquivalent = "\r"
+        panel.contentView?.addSubview(okButton)
+
+        let cancelButton = NSButton(title: "Cancel", target: panel, action: #selector(NSPanel.close))
+        cancelButton.frame = NSRect(x: 510, y: 10, width: 80, height: 30)
+        cancelButton.keyEquivalent = "\u{1b}"
+        panel.contentView?.addSubview(cancelButton)
+
+        panel.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        textField.window?.makeKeyAndOrderFront(nil)
+        textField.becomeFirstResponder()
+    }
+
+    @objc func pasteApiKey() {
+        if let string = NSPasteboard.general.string(forType: .string) {
+            apiKeyTextField?.stringValue = string.trimmingCharacters(in: .whitespacesAndNewlines)
         }
     }
+
+    @objc func saveApiKeyFromPanel() {
+        if let textField = apiKeyTextField {
+            LLMService.shared.apiKey = textField.stringValue
+        }
+        apiKeyTextField?.window?.close()
+        apiKeyTextField = nil
+        buildMenu()
+    }
+
+    private var endpointTextField: NSTextField?
 
     @objc func setLLMEndpoint() {
-        let alert = NSAlert()
-        alert.messageText = "Enter API Endpoint"
-        alert.informativeText = "Leave empty for default \(LLMService.shared.provider.defaultEndpoint)"
-        alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Cancel")
-        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 400, height: 24))
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 450, height: 150), styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        panel.title = "Enter API Endpoint"
+        panel.center()
+        panel.isReleasedWhenClosed = false
+
+        let label = NSTextField(labelWithString: "Leave empty for default: \(LLMService.shared.provider.defaultEndpoint)")
+        label.frame = NSRect(x: 20, y: 115, width: 410, height: 20)
+        label.font = NSFont.systemFont(ofSize: 11)
+        label.textColor = .secondaryLabelColor
+        panel.contentView?.addSubview(label)
+
+        let textField = NSTextField(frame: NSRect(x: 20, y: 80, width: 410, height: 24))
         textField.stringValue = LLMService.shared.endpoint
-        alert.accessoryView = textField
-        if alert.runModal() == .alertFirstButtonReturn {
-            LLMService.shared.endpoint = textField.stringValue
-            buildMenu()
+        textField.placeholderString = "https://api.example.com/v1/chat/completions"
+        panel.contentView?.addSubview(textField)
+        endpointTextField = textField
+
+        let pasteButton = NSButton(title: "📋 Paste from Clipboard", target: self, action: #selector(pasteEndpoint))
+        pasteButton.frame = NSRect(x: 20, y: 50, width: 160, height: 24)
+        panel.contentView?.addSubview(pasteButton)
+
+        let okButton = NSButton(title: "Save", target: self, action: #selector(saveEndpointFromPanel))
+        okButton.frame = NSRect(x: 270, y: 10, width: 80, height: 30)
+        okButton.keyEquivalent = "\r"
+        panel.contentView?.addSubview(okButton)
+
+        let cancelButton = NSButton(title: "Cancel", target: panel, action: #selector(NSPanel.close))
+        cancelButton.frame = NSRect(x: 360, y: 10, width: 80, height: 30)
+        cancelButton.keyEquivalent = "\u{1b}"
+        panel.contentView?.addSubview(cancelButton)
+
+        panel.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        textField.window?.makeKeyAndOrderFront(nil)
+        textField.becomeFirstResponder()
+    }
+
+    @objc func pasteEndpoint() {
+        if let string = NSPasteboard.general.string(forType: .string) {
+            endpointTextField?.stringValue = string.trimmingCharacters(in: .whitespacesAndNewlines)
         }
     }
 
-    @objc func setLLMModel() {
-        let alert = NSAlert()
-        alert.messageText = "Enter Model Name"
-        alert.informativeText = "Leave empty for default \(LLMService.shared.provider.defaultModel)"
-        alert.addButton(withTitle: "OK")
-        alert.addButton(withTitle: "Cancel")
-        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 200, height: 24))
-        textField.stringValue = LLMService.shared.model
-        alert.accessoryView = textField
-        if alert.runModal() == .alertFirstButtonReturn {
-            LLMService.shared.model = textField.stringValue
-            buildMenu()
+    @objc func saveEndpointFromPanel() {
+        if let textField = endpointTextField {
+            LLMService.shared.endpoint = textField.stringValue
         }
+        endpointTextField?.window?.close()
+        endpointTextField = nil
+        buildMenu()
+    }
+
+    private var modelTextField: NSTextField?
+
+    @objc func setLLMModel(_ sender: NSMenuItem) {
+        if let modelName = sender.representedObject as? String {
+            LLMService.shared.model = modelName
+        }
+        buildMenu()
     }
 
     @objc func toggleLaunchAtLogin() {
@@ -1329,22 +1428,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func feedPet() {
         PetState.shared.feed(personality: spriteAnimator.currentPokemon.personality)
+        LLMService.shared.invalidateCache()
         buildMenu()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
     }
 
     @objc func playWithPet() {
         PetState.shared.play(personality: spriteAnimator.currentPokemon.personality)
+        LLMService.shared.invalidateCache()
         buildMenu()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
     }
 
     @objc func cleanPet() {
         PetState.shared.clean()
+        LLMService.shared.invalidateCache()
         buildMenu()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
     }
 
     @objc func letPetSleep() {
         PetState.shared.sleep()
+        LLMService.shared.invalidateCache()
         buildMenu()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
     }
 
     func updatePetMenu() {
