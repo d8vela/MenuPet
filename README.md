@@ -1,6 +1,6 @@
 # MenuPet
 
-A lightweight macOS menu bar app that displays animated pixel art sprites running across your menu bar. The animation speed is tied to your CPU usage — the harder your Mac works, the faster your pet runs.
+A lightweight macOS menu bar app that displays animated pixel art sprites running across your menu bar. The animation speed is tied to your CPU usage — the harder your Mac works, the faster your pet runs. Connect your pet to AI (OpenAI, Anthropic, Gemini, OpenRouter) so it can express how it feels — it reacts to your actions like feeding, playing, cleaning, and sleeping.
 
 ![MenuPet Screenshot](screenshot/screenshot.jpg)
 
@@ -18,6 +18,9 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 - **Google image search** — search for any character directly from the menu
 - **Character history** — quickly access recently viewed characters
 - **Auto-update** — checks for new releases on startup and daily
+- **AI-powered status** — connect to OpenAI, Anthropic, Gemini, or OpenRouter for dynamic pet expressions that react to your actions
+- **Transformers mode** — 14 Transformers characters with robot ↔ vehicle transformation
+- **Run at Startup** — option to launch automatically when you log in
 - **Lightweight** — pure Swift, no dependencies, minimal resource usage
 - **Menu bar only** — lives in your menu bar, no dock icon
 
@@ -74,6 +77,14 @@ Only the worst stat is shown — if both hunger and energy are low, whichever is
 - Use **Rotate Within Category Only** to limit rotation to the current category
 - Click a character name to open a Google image search for that character
 - Choose **Quit** to exit
+
+### AI Status
+
+- Enable AI status from the **AI Status** submenu
+- Choose a provider (OpenAI, Anthropic, Gemini, OpenRouter) and enter your API key
+- Your pet will display a dynamic status message that changes based on its mood and your actions
+- Click the status to copy it to your clipboard
+- Status refreshes every 15 minutes, or immediately when you feed/play/clean/sleep
 
 ## Character Categories
 
