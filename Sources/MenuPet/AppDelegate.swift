@@ -268,9 +268,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
             let cached = LLMService.shared.getCachedStatus(for: spriteAnimator.currentPokemon)
-            let statusItem = NSMenuItem(title: "  💬 \(cached ?? "Loading status...")", action: #selector(copyStatusToClipboard), keyEquivalent: "")
+            let statusItem = NSMenuItem(title: "  💬 \(cached ?? "Loading status...")", action: nil, keyEquivalent: "")
             statusItem.tag = 310
-            statusItem.target = self
+            statusItem.isEnabled = false
             menu.addItem(statusItem)
             if cached == nil {
                 let char = spriteAnimator.currentPokemon
@@ -1010,9 +1010,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             llmSub.addItem(item)
         }
         llmSub.addItem(NSMenuItem.separator())
-        let apiKeyItem = NSMenuItem(title: "Set API Key...", action: #selector(setLLMApiKey), keyEquivalent: "")
-        apiKeyItem.target = self
-        llmSub.addItem(apiKeyItem)
+        let apiKeySub = NSMenu()
+        for prov in LLMProvider.allCases where prov != .custom {
+            let hasKey = !LLMService.shared.getApiKey(for: prov).isEmpty
+            let item = NSMenuItem(title: hasKey ? "✓ \(prov.rawValue)" : prov.rawValue, action: #selector(setLLMApiKeyForProvider(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = prov
+            apiKeySub.addItem(item)
+        }
+        let apiKeyMenuItem = NSMenuItem(title: "API Keys", action: nil, keyEquivalent: "")
+        apiKeyMenuItem.submenu = apiKeySub
+        llmSub.addItem(apiKeyMenuItem)
         let endpointItem = NSMenuItem(title: "Set Endpoint...", action: #selector(setLLMEndpoint), keyEquivalent: "")
         endpointItem.target = self
         llmSub.addItem(endpointItem)
@@ -1291,10 +1299,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private var apiKeyTextField: NSTextField?
+    private var editingProvider: LLMProvider?
 
-    @objc func setLLMApiKey() {
+    @objc func setLLMApiKeyForProvider(_ sender: NSMenuItem) {
+        guard let provider = sender.representedObject as? LLMProvider else { return }
+        editingProvider = provider
         let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 600, height: 150), styleMask: [.titled, .closable], backing: .buffered, defer: false)
-        panel.title = "Enter API Key"
+        panel.title = "API Key for \(provider.rawValue)"
         panel.center()
         panel.isReleasedWhenClosed = false
 
@@ -1305,8 +1316,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.contentView?.addSubview(label)
 
         let textField = NSTextField(frame: NSRect(x: 20, y: 80, width: 560, height: 24))
-        textField.stringValue = LLMService.shared.apiKey
-        textField.placeholderString = "Enter or paste your API key"
+        textField.stringValue = LLMService.shared.getApiKey(for: provider)
+        textField.placeholderString = "Enter or paste your \(provider.rawValue) API key"
         panel.contentView?.addSubview(textField)
         apiKeyTextField = textField
 
@@ -1337,11 +1348,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func saveApiKeyFromPanel() {
-        if let textField = apiKeyTextField {
-            LLMService.shared.apiKey = textField.stringValue
+        if let textField = apiKeyTextField, let provider = editingProvider {
+            LLMService.shared.setApiKey(textField.stringValue, for: provider)
         }
         apiKeyTextField?.window?.close()
         apiKeyTextField = nil
+        editingProvider = nil
         buildMenu()
     }
 

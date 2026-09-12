@@ -53,8 +53,20 @@ class LLMService {
     }
 
     var apiKey: String {
-        get { UserDefaults.standard.string(forKey: "llmApiKey") ?? "" }
-        set { UserDefaults.standard.set(newValue, forKey: "llmApiKey") }
+        get {
+            let providerKey = UserDefaults.standard.string(forKey: "llmApiKey_\(provider.rawValue)") ?? ""
+            if !providerKey.isEmpty { return providerKey }
+            return UserDefaults.standard.string(forKey: "llmApiKey") ?? ""
+        }
+        set { UserDefaults.standard.set(newValue, forKey: "llmApiKey_\(provider.rawValue)") }
+    }
+
+    func setApiKey(_ key: String, for provider: LLMProvider) {
+        UserDefaults.standard.set(key, forKey: "llmApiKey_\(provider.rawValue)")
+    }
+
+    func getApiKey(for provider: LLMProvider) -> String {
+        return UserDefaults.standard.string(forKey: "llmApiKey_\(provider.rawValue)") ?? ""
     }
 
     var endpoint: String {
