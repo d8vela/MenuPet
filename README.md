@@ -83,8 +83,20 @@ Only the worst stat is shown — if both hunger and energy are low, whichever is
 - Enable AI status from the **AI Status** submenu
 - Choose a provider (OpenAI GPT, Anthropic Claude, Google Gemini, OpenRouter, OpenCode Zen) and enter your API key
 - Your pet will display a dynamic status message that changes based on its mood and your actions
-- Click the status to copy it to your clipboard
+- Chat with your pet using the **Chat with Pet** feature
+- Use **Custom Action** to send any action to your pet
 - Status refreshes every 15 minutes, or immediately when you feed/play/clean/sleep
+
+### Custom / Self-Hosted LLM Server
+
+You can use any OpenAI-compatible server instead of a cloud provider:
+
+1. Go to **AI Status** → pick a provider → **Set Endpoint...**
+2. Enter your server URL (e.g., `http://localhost:1234/v1/chat/completions`)
+3. Set the model name your server expects (e.g., `llama-3`, `mistral`, `gpt-3.5-turbo`)
+4. Enter any string for the API key if your server doesn't require auth
+
+**Works with:** LM Studio, Ollama (with OpenAI compat mode), vLLM, text-generation-webui, Together AI, Groq, Perplexity, or any self-hosted server that uses the OpenAI chat completions API format (`POST /v1/chat/completions`).
 
 ## Character Categories
 

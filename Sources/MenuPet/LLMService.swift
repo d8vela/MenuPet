@@ -147,14 +147,15 @@ class LLMService {
         return """
         You are \(name) from \(category). Mood=\(mood). Fullness=\(Int(hunger))%, Happiness=\(Int(happiness))%, Energy=\(Int(energy))%, Clean=\(Int(hygiene))%.
         100% = full, 0% = starving. Only mention hunger if below 30%.
-        \(petState.lastAction.map {
-            switch $0 {
+        \(petState.lastAction.map { action in
+            switch action {
             case "feed": return "You were just fed. Overreact dramatically."
             case "play": return "You were just played with. Be dramatic about it."
             case "clean": return "You were just cleaned. React like it was a spa day."
             case "sleep": return "You were just put to sleep. Act like you were knocked out."
             case "discipline": return "You were just disciplined. Be dramatic and defiant."
-            default: return "Give a funny, dramatic status update."
+            case "disobedience": return "You just disobeyed your owner. Be rebellious and proud of it. React based on your current mood and stats."
+            default: return "Your owner just did this to you: \(action). React to it dramatically."
             }
         } ?? "Give a funny, dramatic status update.")
         Reply as \(name) in first person. Maximum 8 words. Output valid JSON only.
@@ -357,6 +358,93 @@ class LLMService {
         }
         let fallback = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
         return String(fallback.prefix(50))
+    }
+
+    func chat(character: SelectableCharacter, messages: [[String: String]], completion: @escaping (Result<String, Error>) -> Void) {
+        guard !apiKey.isEmpty else {
+            completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "No API key set"])))
+            return
+        }
+        let name = character.displayName
+        let category = character.category
+        var fullMessages: [[String: String]] = [
+            ["role": "system", "content": "You are \(name) from \(category), a tiny pixel art pet living in a macOS menu bar. You are dramatic, funny, and overreact to everything. Think meme energy. Keep replies under 30 words. Be in character as \(name)."]
+        ]
+        fullMessages.append(contentsOf: messages)
+
+        guard let url = URL(string: endpoint) else {
+            completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid endpoint URL"])))
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 30
+
+        switch provider {
+        case .anthropic:
+            request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+            request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            let body: [String: Any] = [
+                "model": model,
+                "max_tokens": 500,
+                "messages": fullMessages.map { ["role": $0["role"] ?? "user", "content": $0["content"] ?? ""] }
+            ]
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        case .gemini:
+            let urlStr = "\(endpoint)/\(model):generateContent?key=\(apiKey)"
+            guard let geminiURL = URL(string: urlStr) else {
+                completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid Gemini URL"])))
+                return
+            }
+            request = URLRequest(url: geminiURL)
+            request.httpMethod = "POST"
+            request.timeoutInterval = 30
+            let contents = fullMessages.filter { $0["role"] != "system" }.map { ["parts": [["text": $0["content"] ?? ""]]] }
+            let body: [String: Any] = [
+                "contents": contents,
+                "generationConfig": ["maxOutputTokens": 500]
+            ]
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        default:
+            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            let body: [String: Any] = [
+                "model": model,
+                "max_tokens": 500,
+                "messages": fullMessages
+            ]
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        }
+
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            if let error = error {
+                DispatchQueue.main.async { completion(.failure(error)) }
+                return
+            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "No response"]))) }
+                return
+            }
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let msg = data.flatMap { String(data: $0, encoding: .utf8) } ?? "HTTP \(httpResponse.statusCode)"
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: msg]))) }
+                return
+            }
+            guard let data = data else {
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Empty response"]))) }
+                return
+            }
+            if let text = self?.parseResponse(data: data) {
+                DispatchQueue.main.async { completion(.success(text)) }
+            } else {
+                let raw = String(data: data, encoding: .utf8) ?? "unknown"
+                DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Parse error: \(raw.prefix(200))"]))) }
+            }
+        }.resume()
     }
 
     private func defaultStatus(for character: SelectableCharacter) -> String {
