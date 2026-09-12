@@ -4,17 +4,45 @@ import ServiceManagement
 class ChatTextView: NSTextView {
     override var acceptsFirstResponder: Bool { true }
     override func mouseDown(with event: NSEvent) {
-        window?.makeFirstResponder(self)
         super.mouseDown(with: event)
+        window?.makeFirstResponder(self)
     }
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if flags == .command, let chars = event.charactersIgnoringModifiers {
+            switch chars {
+            case "c": copy(nil); return true
+            case "v": paste(nil); return true
+            case "a": selectAll(nil); return true
+            case "x": cut(nil); return true
+            default: break
+            }
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+}
+
+class ChatInputField: NSTextField {
     override func keyDown(with event: NSEvent) {
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if flags == .command, let chars = event.charactersIgnoringModifiers {
             switch chars {
-            case "c": copy(nil); return
-            case "v": paste(nil); return
-            case "a": selectAll(nil); return
-            case "x": cut(nil); return
+            case "v":
+                if let string = NSPasteboard.general.string(forType: .string) {
+                    if let editor = currentEditor() as? NSTextView {
+                        editor.insertText(string, replacementRange: editor.selectedRange)
+                    }
+                    return
+                }
+            case "c":
+                super.keyDown(with: event)
+                return
+            case "a":
+                super.keyDown(with: event)
+                return
+            case "x":
+                super.keyDown(with: event)
+                return
             default: break
             }
         }
@@ -265,6 +293,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         buildMenu()
         cpuMonitor.start()
+        PetServer.shared.start()
 
         checkForUpdatesInBackground()
         updateCheckTimer = Timer.scheduledTimer(withTimeInterval: 86400, repeats: true) { [weak self] _ in
@@ -1611,7 +1640,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.contentView?.addSubview(scrollView)
         chatTextView = scrollView
 
-        let inputField = NSTextField(frame: NSRect(x: 10, y: 10, width: 350, height: 24))
+        let inputField = ChatInputField(frame: NSRect(x: 10, y: 10, width: 350, height: 24))
         inputField.placeholderString = "Say something to your pet..."
         inputField.isEditable = true
         inputField.isSelectable = true
@@ -1635,9 +1664,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let petName = spriteAnimator.currentPokemon.displayName
         appendToChat(system: "\(petName) has joined the chat. Say hello!")
 
+        panel.initialFirstResponder = textView
         panel.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-        inputField.becomeFirstResponder()
+        textView.window?.makeFirstResponder(textView)
     }
 
     @objc func sendChatMessage() {

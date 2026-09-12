@@ -438,13 +438,37 @@ class LLMService {
                 DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Empty response"]))) }
                 return
             }
-            if let text = self?.parseResponse(data: data) {
+            if let text = self?.parseChatResponse(data: data) {
                 DispatchQueue.main.async { completion(.success(text)) }
             } else {
                 let raw = String(data: data, encoding: .utf8) ?? "unknown"
                 DispatchQueue.main.async { completion(.failure(NSError(domain: "LLM", code: 0, userInfo: [NSLocalizedDescriptionKey: "Parse error: \(raw.prefix(200))"]))) }
             }
         }.resume()
+    }
+
+    private func parseChatResponse(data: Data) -> String? {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        if let choices = json["choices"] as? [[String: Any]],
+           let message = choices.first?["message"] as? [String: Any] {
+            if let text = message["content"] as? String, !text.isEmpty {
+                return text.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            if let text = message["reasoning"] as? String, !text.isEmpty {
+                return text.trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }
+        if let content = json["content"] as? [[String: Any]],
+           let text = content.first?["text"] as? String {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        if let candidates = json["candidates"] as? [[String: Any]],
+           let content = candidates.first?["content"] as? [String: Any],
+           let parts = content["parts"] as? [[String: Any]],
+           let text = parts.first?["text"] as? String {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return nil
     }
 
     private func defaultStatus(for character: SelectableCharacter) -> String {
