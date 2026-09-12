@@ -18,7 +18,7 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 - **Google image search** — search for any character directly from the menu
 - **Character history** — quickly access recently viewed characters
 - **Auto-update** — checks for new releases on startup and daily
-- **AI-powered status** — connect to OpenAI GPT, Anthropic Claude, Google Gemini, or OpenRouter for dynamic pet expressions that react to your actions
+- **AI-powered status** — connect to OpenAI GPT, Anthropic Claude, Google Gemini, OpenRouter, or OpenCode Zen for dynamic pet expressions that react to your actions
 - **Transformers mode** — 14 Transformers characters with robot ↔ vehicle transformation
 - **Run at Startup** — option to launch automatically when you log in
 - **Lightweight** — pure Swift, no dependencies, minimal resource usage
@@ -81,7 +81,7 @@ Only the worst stat is shown — if both hunger and energy are low, whichever is
 ### AI Status
 
 - Enable AI status from the **AI Status** submenu
-- Choose a provider (OpenAI GPT, Anthropic Claude, Google Gemini, OpenRouter) and enter your API key
+- Choose a provider (OpenAI GPT, Anthropic Claude, Google Gemini, OpenRouter, OpenCode Zen) and enter your API key
 - Your pet will display a dynamic status message that changes based on its mood and your actions
 - Click the status to copy it to your clipboard
 - Status refreshes every 15 minutes, or immediately when you feed/play/clean/sleep
