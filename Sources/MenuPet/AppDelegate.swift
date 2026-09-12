@@ -1002,7 +1002,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         llmEnableItem.state = LLMService.shared.statusEnabled ? .on : .off
         llmSub.addItem(llmEnableItem)
         llmSub.addItem(NSMenuItem.separator())
-        for provider in LLMProvider.allCases where provider != .custom {
+        for provider in LLMProvider.allCases.filter({ $0 != .custom }).sorted(by: { $0.rawValue < $1.rawValue }) {
             let item = NSMenuItem(title: provider.rawValue, action: #selector(setLLMProvider(_:)), keyEquivalent: "")
             item.target = self
             item.representedObject = provider
@@ -1500,6 +1500,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func disciplinePet() {
         _ = PetState.shared.discipline()
+        LLMService.shared.invalidateCache()
         buildMenu()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
     }
 }

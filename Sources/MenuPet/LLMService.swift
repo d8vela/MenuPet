@@ -1,9 +1,9 @@
 import Foundation
 
 enum LLMProvider: String, CaseIterable {
-    case openai = "OpenAI"
-    case anthropic = "Anthropic"
-    case gemini = "Gemini"
+    case openai = "OpenAI GPT"
+    case anthropic = "Anthropic Claude"
+    case gemini = "Google Gemini"
     case openrouter = "OpenRouter"
     case openCodeZen = "OpenCode Zen"
     case custom = "Custom"
@@ -47,7 +47,7 @@ class LLMService {
 
     var provider: LLMProvider {
         get {
-            LLMProvider(rawValue: UserDefaults.standard.string(forKey: "llmProvider") ?? "OpenAI") ?? .openai
+            LLMProvider(rawValue: UserDefaults.standard.string(forKey: "llmProvider") ?? "OpenAI GPT") ?? .openai
         }
         set { UserDefaults.standard.set(newValue.rawValue, forKey: "llmProvider") }
     }
@@ -135,7 +135,16 @@ class LLMService {
         return """
         \(name) from \(category): mood=\(mood) fullness=\(Int(hunger))% happy=\(Int(happiness))% energy=\(Int(energy))% clean=\(Int(hygiene))%
         100% = full, 0% = starving. Only mention hunger if below 30%.
-        \(petState.lastAction.map { "The owner just \($0)ed you. React to it." } ?? "Give a status update.")
+        \(petState.lastAction.map {
+            switch $0 {
+            case "feed": return "The owner just fed you. React to it."
+            case "play": return "The owner just played with you. React to it."
+            case "clean": return "The owner just cleaned you. React to it."
+            case "sleep": return "The owner just let you sleep. React to it."
+            case "discipline": return "The owner just disciplined you. React to it."
+            default: return "Give a short status update."
+            }
+        } ?? "Give a short status update.")
         Reply as this character in first person. Maximum 8 words. Output valid JSON only.
         """
     }
