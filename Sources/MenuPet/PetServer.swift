@@ -279,6 +279,42 @@ class PetServer {
                 return (500, ["error": "Timeout"], nil, nil)
             }
 
+        case ("POST", "/pet/swarm-chat"):
+            let topic = body["topic"] as? String ?? "greet each other"
+            let manager = MultiPetManager.shared
+            guard manager.selectedPets.count >= 2 else {
+                return (400, ["error": "Need at least 2 pets for swarm chat"], nil, nil)
+            }
+            let semaphore = DispatchSemaphore(value: 0)
+            var swarmResult: [String: Any] = ["messages": []]
+            SwarmChatManager.shared.startSwarmConversation(topic: topic) { messages in
+                let msgs: [[String: String]] = messages.map { m in
+                    ["speaker": m.speaker.displayName, "emoji": m.speaker.emoji, "text": m.text]
+                }
+                swarmResult = ["messages": msgs, "topic": topic]
+                semaphore.signal()
+            }
+            _ = semaphore.wait(timeout: .now() + 45)
+            return (200, swarmResult, nil, nil)
+
+        case ("POST", "/pet/swarm-reply"):
+            let text = body["message"] as? String ?? ""
+            let manager = MultiPetManager.shared
+            guard manager.selectedPets.count >= 2 else {
+                return (400, ["error": "Need at least 2 pets for swarm chat"], nil, nil)
+            }
+            let semaphore = DispatchSemaphore(value: 0)
+            var swarmResult: [String: Any] = ["messages": []]
+            SwarmChatManager.shared.sendUserMessage(text) { messages in
+                let msgs: [[String: String]] = messages.map { m in
+                    ["speaker": m.speaker.displayName, "emoji": m.speaker.emoji, "text": m.text]
+                }
+                swarmResult = ["messages": msgs]
+                semaphore.signal()
+            }
+            _ = semaphore.wait(timeout: .now() + 45)
+            return (200, swarmResult, nil, nil)
+
         case ("POST", "/pet/sync"):
             let remoteHunger = body["hunger"] as? Double
             let remoteHappiness = body["happiness"] as? Double
@@ -371,23 +407,12 @@ class PetServer {
                             "isPrimary": idx == 0
                         ]
                         var frames: [[String: Any]] = []
-                        if idx == 0, let animator = self.appDelegate?.spriteAnimator {
-                            let images = animator.renderAllFramesHighRes(targetHeight: CGFloat(targetH))
-                            for (i, image) in images.enumerated() {
-                                if let tiffData = image.tiffRepresentation,
-                                   let bitmap = NSBitmapImageRep(data: tiffData),
-                                   let pngData = bitmap.representation(using: .png, properties: [:]) {
-                                    frames.append(["index": i, "base64": pngData.base64EncodedString()])
-                                }
-                            }
-                        } else {
-                            let images = (0..<4).map { renderer.renderFrameHighRes(character: selChar, frame: $0, targetHeight: CGFloat(targetH)) }
-                            for (i, image) in images.enumerated() {
-                                if let tiffData = image.tiffRepresentation,
-                                   let bitmap = NSBitmapImageRep(data: tiffData),
-                                   let pngData = bitmap.representation(using: .png, properties: [:]) {
-                                    frames.append(["index": i, "base64": pngData.base64EncodedString()])
-                                }
+                        let images = (0..<4).map { renderer.renderFrameHighRes(character: selChar, frame: $0, targetHeight: CGFloat(targetH)) }
+                        for (i, image) in images.enumerated() {
+                            if let tiffData = image.tiffRepresentation,
+                               let bitmap = NSBitmapImageRep(data: tiffData),
+                               let pngData = bitmap.representation(using: .png, properties: [:]) {
+                                frames.append(["index": i, "base64": pngData.base64EncodedString()])
                             }
                         }
                         petData["frames"] = frames
