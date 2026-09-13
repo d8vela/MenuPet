@@ -83,7 +83,7 @@ class PetState {
     var showSparkles: Bool { stage >= 3 }
     var showShadow: Bool { stage <= 1 }
 
-    private init() {
+    init() {
         load()
     }
 

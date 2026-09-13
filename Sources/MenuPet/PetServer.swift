@@ -117,7 +117,20 @@ class PetServer {
         }
 
         let method = String(parts[0])
-        let path = String(parts[1])
+        let rawPath = String(parts[1])
+
+        var path = rawPath
+        var queryParams: [String: String] = [:]
+        if let qIdx = rawPath.firstIndex(of: "?") {
+            path = String(rawPath[..<qIdx])
+            let queryString = String(rawPath[rawPath.index(after: qIdx)...])
+            for pair in queryString.components(separatedBy: "&") {
+                let kv = pair.components(separatedBy: "=")
+                if kv.count == 2 {
+                    queryParams[kv[0]] = kv[1].removingPercentEncoding ?? kv[1]
+                }
+            }
+        }
 
         if method == "OPTIONS" {
             sendRawResponse(fd: fd, status: 200, json: ["ok": true])
@@ -134,7 +147,7 @@ class PetServer {
             }
         }
 
-        let result = routeSync(method: method, path: path, body: requestBody)
+        let result = routeSync(method: method, path: path, body: requestBody, queryParams: queryParams)
 
         if let jsonData = result.data {
             sendRawData(fd: fd, status: result.status, contentType: result.contentType ?? "application/json", data: jsonData)
@@ -144,7 +157,7 @@ class PetServer {
         close(fd)
     }
 
-    private func routeSync(method: String, path: String, body: [String: Any]) -> (status: Int, body: [String: Any]?, data: Data?, contentType: String?) {
+    private func routeSync(method: String, path: String, body: [String: Any], queryParams: [String: String] = [:]) -> (status: Int, body: [String: Any]?, data: Data?, contentType: String?) {
         let pet = PetState.shared
         var character: SelectableCharacter = .pokemon(.pikachu)
         DispatchQueue.main.sync {
@@ -203,7 +216,7 @@ class PetServer {
             }
 
         case ("GET", "/pet/frames"):
-            let targetH = Double(body["height"] as? Int ?? 160)
+            let targetH = Double(queryParams["height"] ?? "160") ?? 160
             var frames: [[String: Any]] = []
             DispatchQueue.main.sync {
                 if let app = self.appDelegate {

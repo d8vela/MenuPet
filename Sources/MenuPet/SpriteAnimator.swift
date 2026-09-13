@@ -38,6 +38,10 @@ class SpriteAnimator {
     var speedLabel: String = "Idle"
 
     var currentFrame: NSImage {
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            return renderMultiPetFrame()
+        }
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
             return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: currentFrameIndex)
         }
@@ -45,6 +49,37 @@ class SpriteAnimator {
             return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex)
         }
         return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex)
+    }
+
+    private func renderMultiPetFrame() -> NSImage {
+        let pets = MultiPetManager.shared.selectedPets
+        guard !pets.isEmpty else { return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex) }
+
+        var images: [NSImage] = []
+        for pet in pets {
+            if isTransformerCharacter(pet) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
+                images.append(spriteRenderer.renderFrame(character: pet, frame: transformFrameIndex, sparkleFrame: currentFrameIndex))
+            } else if isTransformerCharacter(pet) {
+                images.append(spriteRenderer.renderFrame(character: pet, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex))
+            } else {
+                images.append(spriteRenderer.renderFrame(character: pet, frame: currentFrameIndex))
+            }
+        }
+
+        let barHeight: CGFloat = 22
+        let spacing: CGFloat = 4
+        let totalWidth = images.reduce(CGFloat(0)) { $0 + $1.size.width } + spacing * CGFloat(max(0, images.count - 1))
+        let composite = NSImage(size: NSSize(width: totalWidth, height: barHeight))
+        composite.lockFocus()
+        var xOffset: CGFloat = 0
+        for img in images {
+            img.draw(in: NSRect(x: xOffset, y: 0, width: img.size.width, height: barHeight),
+                     from: .zero, operation: .sourceOver, fraction: 1.0)
+            xOffset += img.size.width + spacing
+        }
+        composite.unlockFocus()
+        composite.isTemplate = false
+        return composite
     }
 
     private func isTransformerCharacter(_ character: SelectableCharacter) -> Bool {
@@ -401,6 +436,10 @@ class SpriteAnimator {
     var onTransformStateChanged: (() -> Void)?
 
     func renderAllFrames() -> [NSImage] {
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            return (0..<4).map { _ in renderMultiPetFrame() }
+        }
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
             return (0..<5).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: currentFrameIndex) }
         }
@@ -411,6 +450,10 @@ class SpriteAnimator {
     }
 
     func renderAllFramesHighRes(targetHeight: CGFloat = 160) -> [NSImage] {
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            return (0..<4).map { _ in renderMultiPetFrame() }
+        }
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
             return (0..<5).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: currentFrameIndex) }
         }

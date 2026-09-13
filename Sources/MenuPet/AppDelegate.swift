@@ -56,6 +56,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var spriteAnimator: SpriteAnimator!
     var updateCheckTimer: Timer?
     var petDecayTimer: Timer?
+    var swarmChatWindow: NSPanel?
+    var swarmChatTextView: NSScrollView?
+    var swarmChatInputField: NSTextField?
 
     let pokemonList: [PokemonCharacter] = [
         .jigglypuff, .pikachu, .psyduck, .snorlax, .charmander, .bulbasaur, .squirtle,
@@ -277,6 +280,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.async { self?.buildMenu() }
         }
 
+        MultiPetManager.shared.onSelectionChanged = { [weak self] in
+            DispatchQueue.main.async { self?.buildMenu() }
+        }
+
         if let button = statusItem.button {
             button.image = spriteAnimator.currentFrame
             button.imagePosition = .imageOnly
@@ -301,13 +308,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         petDecayTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-            let personality = self?.spriteAnimator.currentPokemon.personality ?? .default
-            PetState.shared.decay(personality: personality)
-            let wasNotDisobedient = !PetState.shared.isDisobedient
-            PetState.shared.checkDisobedience(personality: personality)
-            if wasNotDisobedient && PetState.shared.isDisobedient && LLMService.shared.statusEnabled {
-                PetState.shared.lastAction = "disobedience"
-                LLMService.shared.invalidateCache()
+            let manager = MultiPetManager.shared
+            if manager.isMultiPetMode {
+                manager.decayAll()
+            } else {
+                let personality = self?.spriteAnimator.currentPokemon.personality ?? .default
+                PetState.shared.decay(personality: personality)
+                let wasNotDisobedient = !PetState.shared.isDisobedient
+                PetState.shared.checkDisobedience(personality: personality)
+                if wasNotDisobedient && PetState.shared.isDisobedient && LLMService.shared.statusEnabled {
+                    PetState.shared.lastAction = "disobedience"
+                    LLMService.shared.invalidateCache()
+                }
             }
             self?.buildMenu()
         }
@@ -315,27 +327,127 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func buildMenu() {
         let menu = NSMenu()
+        let manager = MultiPetManager.shared
+
         menu.addItem(NSMenuItem(title: "MenuPet", action: nil, keyEquivalent: ""))
-        let currentPokemonItem = NSMenuItem(title: "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)", action: #selector(searchCharacter(_:)), keyEquivalent: "")
-        currentPokemonItem.tag = 300
-        currentPokemonItem.target = self
-        menu.addItem(currentPokemonItem)
+
+        if manager.isMultiPetMode {
+            let headerItem = NSMenuItem(title: "🐾 Multi-Pet Mode (\(manager.petCount) pets)", action: nil, keyEquivalent: "")
+            headerItem.isEnabled = false
+            menu.addItem(headerItem)
+        } else {
+            let currentPokemonItem = NSMenuItem(title: "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)", action: #selector(searchCharacter(_:)), keyEquivalent: "")
+            currentPokemonItem.tag = 300
+            currentPokemonItem.target = self
+            menu.addItem(currentPokemonItem)
+        }
+
+        let petSelectionSub = NSMenu()
+        let selectAllItem = NSMenuItem(title: "Select All Pets", action: #selector(selectAllPets), keyEquivalent: "")
+        selectAllItem.target = self
+        petSelectionSub.addItem(selectAllItem)
+        let clearAllItem = NSMenuItem(title: "Clear All Pets", action: #selector(clearAllPets), keyEquivalent: "")
+        clearAllItem.target = self
+        petSelectionSub.addItem(clearAllItem)
+        petSelectionSub.addItem(NSMenuItem.separator())
+
+        func addCharToSelectMenu(_ character: SelectableCharacter) {
+            let item = NSMenuItem(title: "\(character.emoji) \(character.displayName)", action: #selector(togglePetSelection(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = character
+            item.state = manager.isSelected(character) ? .on : .off
+            if manager.isSelected(character) && manager.primaryPet == character {
+                item.title = "\(character.emoji) \(character.displayName) ★"
+            }
+            petSelectionSub.addItem(item)
+        }
+
+        for char in PokemonCharacter.allCases.map({ SelectableCharacter.pokemon($0) }) { addCharToSelectMenu(char) }
+        for char in MarioItem.allCases.map({ SelectableCharacter.marioItem($0) }) { addCharToSelectMenu(char) }
+        for char in KirbyCharacter.allCases.map({ SelectableCharacter.kirby($0) }) { addCharToSelectMenu(char) }
+        for char in ZeldaCharacter.allCases.map({ SelectableCharacter.zelda($0) }) { addCharToSelectMenu(char) }
+        for char in MegaManCharacter.allCases.map({ SelectableCharacter.megaMan($0) }) { addCharToSelectMenu(char) }
+        for char in DragonBallCharacter.allCases.map({ SelectableCharacter.dragonBall($0) }) { addCharToSelectMenu(char) }
+        for char in NarutoCharacter.allCases.map({ SelectableCharacter.naruto($0) }) { addCharToSelectMenu(char) }
+        for char in MarvelCharacter.allCases.map({ SelectableCharacter.marvel($0) }) { addCharToSelectMenu(char) }
+        for char in DCCharacter.allCases.map({ SelectableCharacter.dc($0) }) { addCharToSelectMenu(char) }
+        for char in StarWarsCharacter.allCases.map({ SelectableCharacter.starWars($0) }) { addCharToSelectMenu(char) }
+        for char in SimpsonsCharacter.allCases.map({ SelectableCharacter.simpsons($0) }) { addCharToSelectMenu(char) }
+        for char in FamilyGuyCharacter.allCases.map({ SelectableCharacter.familyGuy($0) }) { addCharToSelectMenu(char) }
+        for char in FuturamaCharacter.allCases.map({ SelectableCharacter.futurama($0) }) { addCharToSelectMenu(char) }
+        for char in MinionsCharacter.allCases.map({ SelectableCharacter.minions($0) }) { addCharToSelectMenu(char) }
+        for char in TransformersCharacter.allCases.map({ SelectableCharacter.transformers($0) }) { addCharToSelectMenu(char) }
+        for char in LabubuCharacter.allCases.map({ SelectableCharacter.labubu($0) }) { addCharToSelectMenu(char) }
+        for char in TMNTCharacter.allCases.map({ SelectableCharacter.tmnt($0) }) { addCharToSelectMenu(char) }
+        for char in StreetFighterCharacter.allCases.map({ SelectableCharacter.streetFighter($0) }) { addCharToSelectMenu(char) }
+        for char in MetalSlugCharacter.allCases.map({ SelectableCharacter.metalSlug($0) }) { addCharToSelectMenu(char) }
+        for char in OverwatchCharacter.allCases.map({ SelectableCharacter.overwatch($0) }) { addCharToSelectMenu(char) }
+        for char in ContraCharacter.allCases.map({ SelectableCharacter.contra($0) }) { addCharToSelectMenu(char) }
+        for char in MarioKartCharacter.allCases.map({ SelectableCharacter.marioKart($0) }) { addCharToSelectMenu(char) }
+        for char in MortalKombatCharacter.allCases.map({ SelectableCharacter.mortalKombat($0) }) { addCharToSelectMenu(char) }
+        for char in GhibliCharacter.allCases.map({ SelectableCharacter.ghibli($0) }) { addCharToSelectMenu(char) }
+        for char in GundamCharacter.allCases.map({ SelectableCharacter.gundam($0) }) { addCharToSelectMenu(char) }
+        for char in KingOfTheHillCharacter.allCases.map({ SelectableCharacter.kingOfTheHill($0) }) { addCharToSelectMenu(char) }
+        for char in BatmanCharacter.allCases.map({ SelectableCharacter.batman($0) }) { addCharToSelectMenu(char) }
+
+        let petSelectionMenuItem = NSMenuItem(title: "🐾 Pet Selection", action: nil, keyEquivalent: "")
+        petSelectionMenuItem.submenu = petSelectionSub
+        menu.addItem(petSelectionMenuItem)
+
+        if manager.isMultiPetMode {
+            let swarmItem = NSMenuItem(title: "🐝 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
+            swarmItem.target = self
+            swarmItem.isEnabled = LLMService.shared.statusEnabled && LLMService.shared.apiKey.count > 0
+            menu.addItem(swarmItem)
+
+            let swarmRandomItem = NSMenuItem(title: "🎲 Random Pet Interaction", action: #selector(triggerRandomInteraction), keyEquivalent: "")
+            swarmRandomItem.target = self
+            swarmRandomItem.isEnabled = LLMService.shared.statusEnabled && LLMService.shared.apiKey.count > 0
+            menu.addItem(swarmRandomItem)
+        }
+
+        menu.addItem(NSMenuItem.separator())
 
         if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
-            let cached = LLMService.shared.getCachedStatus(for: spriteAnimator.currentPokemon)
-            let statusItem = NSMenuItem(title: "  💬 \(cached ?? "Loading status...")", action: nil, keyEquivalent: "")
-            statusItem.tag = 310
-            statusItem.isEnabled = false
-            menu.addItem(statusItem)
-            if cached == nil {
-                let char = spriteAnimator.currentPokemon
-                let pet = PetState.shared
-                DispatchQueue.global(qos: .userInitiated).async {
-                    LLMService.shared.generateStatus(for: char, petState: pet) { status in
-                        self.spriteAnimator.llmStatus = status
-                        if let menu = self.statusItem.menu {
-                            for item in menu.items where item.tag == 310 {
-                                item.title = "  💬 \(status)"
+            if manager.isMultiPetMode {
+                for pet in manager.selectedPets {
+                    let cached = LLMService.shared.getCachedStatus(for: pet)
+                    let statusItem = NSMenuItem(title: "  \(pet.emoji) \(cached ?? "Loading...")", action: nil, keyEquivalent: "")
+                    statusItem.tag = 310
+                    statusItem.isEnabled = false
+                    menu.addItem(statusItem)
+                    if cached == nil {
+                        let char = pet
+                        let petState = manager.state(for: char)
+                        DispatchQueue.global(qos: .userInitiated).async {
+                            LLMService.shared.generateStatus(for: char, petState: petState) { status in
+                                if let menu = self.statusItem.menu {
+                                    for item in menu.items where item.tag == 310 {
+                                        if item.title.contains(pet.displayName) {
+                                            item.title = "  \(pet.emoji) \(status)"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                let cached = LLMService.shared.getCachedStatus(for: spriteAnimator.currentPokemon)
+                let statusItem = NSMenuItem(title: "  💬 \(cached ?? "Loading status...")", action: nil, keyEquivalent: "")
+                statusItem.tag = 310
+                statusItem.isEnabled = false
+                menu.addItem(statusItem)
+                if cached == nil {
+                    let char = spriteAnimator.currentPokemon
+                    let pet = PetState.shared
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        LLMService.shared.generateStatus(for: char, petState: pet) { status in
+                            self.spriteAnimator.llmStatus = status
+                            if let menu = self.statusItem.menu {
+                                for item in menu.items where item.tag == 310 {
+                                    item.title = "  💬 \(status)"
+                                }
                             }
                         }
                     }
@@ -382,50 +494,77 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         cpuItem.tag = 100
         menu.addItem(cpuItem)
 
-        let petStatus = NSMenuItem(title: "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood) \(PetState.shared.stageEmoji)", action: nil, keyEquivalent: "")
-        petStatus.tag = 200
-        menu.addItem(petStatus)
+        if manager.isMultiPetMode {
+            for pet in manager.selectedPets {
+                let petState = manager.state(for: pet)
+                let divider = NSMenuItem(title: "─── \(pet.emoji) \(pet.displayName) ───", action: nil, keyEquivalent: "")
+                divider.isEnabled = false
+                menu.addItem(divider)
 
-        let stageItem = NSMenuItem(title: "  \(PetState.shared.stageEmoji) Stage: \(PetState.shared.stageName) (\(Int(PetState.shared.careScore))%)", action: nil, keyEquivalent: "")
-        stageItem.tag = 205
-        stageItem.isEnabled = false
-        menu.addItem(stageItem)
+                let petStatus = NSMenuItem(title: "  \(petState.moodEmoji) \(petState.mood) \(petState.stageEmoji) — \(petState.stageName) (\(Int(petState.careScore))%)", action: nil, keyEquivalent: "")
+                petStatus.isEnabled = false
+                menu.addItem(petStatus)
 
-        let hungerItem = NSMenuItem(title: "  🍕 Hunger: \(Int(PetState.shared.hunger))%", action: nil, keyEquivalent: "")
-        hungerItem.tag = 201
-        hungerItem.isEnabled = false
-        menu.addItem(hungerItem)
+                let hungerItem = NSMenuItem(title: "    🍕 Hunger: \(Int(petState.hunger))%  😊 Happy: \(Int(petState.happiness))%", action: nil, keyEquivalent: "")
+                hungerItem.isEnabled = false
+                menu.addItem(hungerItem)
 
-        let happyItem = NSMenuItem(title: "  😊 Happy: \(Int(PetState.shared.happiness))%", action: nil, keyEquivalent: "")
-        happyItem.tag = 202
-        happyItem.isEnabled = false
-        menu.addItem(happyItem)
+                let energyHygieneItem = NSMenuItem(title: "    ⚡ Energy: \(Int(petState.energy))%  🧼 Clean: \(Int(petState.hygiene))%", action: nil, keyEquivalent: "")
+                energyHygieneItem.isEnabled = false
+                menu.addItem(energyHygieneItem)
 
-        let hygieneItem = NSMenuItem(title: "  🧼 Clean: \(Int(PetState.shared.hygiene))%", action: nil, keyEquivalent: "")
-        hygieneItem.tag = 204
-        hygieneItem.isEnabled = false
-        menu.addItem(hygieneItem)
+                if petState.isDisobedient {
+                    let disobeyItem = NSMenuItem(title: "    😡 \(petState.disobedienceMessage)", action: nil, keyEquivalent: "")
+                    disobeyItem.isEnabled = false
+                    menu.addItem(disobeyItem)
+                }
+            }
+        } else {
+            let petStatus = NSMenuItem(title: "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood) \(PetState.shared.stageEmoji)", action: nil, keyEquivalent: "")
+            petStatus.tag = 200
+            menu.addItem(petStatus)
 
-        let energyItem = NSMenuItem(title: "  ⚡ Energy: \(Int(PetState.shared.energy))%", action: nil, keyEquivalent: "")
-        energyItem.tag = 203
-        energyItem.isEnabled = false
-        menu.addItem(energyItem)
+            let stageItem = NSMenuItem(title: "  \(PetState.shared.stageEmoji) Stage: \(PetState.shared.stageName) (\(Int(PetState.shared.careScore))%)", action: nil, keyEquivalent: "")
+            stageItem.tag = 205
+            stageItem.isEnabled = false
+            menu.addItem(stageItem)
+
+            let hungerItem = NSMenuItem(title: "  🍕 Hunger: \(Int(PetState.shared.hunger))%", action: nil, keyEquivalent: "")
+            hungerItem.tag = 201
+            hungerItem.isEnabled = false
+            menu.addItem(hungerItem)
+
+            let happyItem = NSMenuItem(title: "  😊 Happy: \(Int(PetState.shared.happiness))%", action: nil, keyEquivalent: "")
+            happyItem.tag = 202
+            happyItem.isEnabled = false
+            menu.addItem(happyItem)
+
+            let hygieneItem = NSMenuItem(title: "  🧼 Clean: \(Int(PetState.shared.hygiene))%", action: nil, keyEquivalent: "")
+            hygieneItem.tag = 204
+            hygieneItem.isEnabled = false
+            menu.addItem(hygieneItem)
+
+            let energyItem = NSMenuItem(title: "  ⚡ Energy: \(Int(PetState.shared.energy))%", action: nil, keyEquivalent: "")
+            energyItem.tag = 203
+            energyItem.isEnabled = false
+            menu.addItem(energyItem)
+        }
 
         menu.addItem(NSMenuItem.separator())
 
-        let feedItem = NSMenuItem(title: "🍕 Feed", action: #selector(feedPet), keyEquivalent: "")
+        let feedItem = NSMenuItem(title: "🍕 Feed All", action: #selector(feedPet), keyEquivalent: "")
         feedItem.target = self
         menu.addItem(feedItem)
 
-        let playItem = NSMenuItem(title: "🎾 Play", action: #selector(playWithPet), keyEquivalent: "")
+        let playItem = NSMenuItem(title: "🎾 Play All", action: #selector(playWithPet), keyEquivalent: "")
         playItem.target = self
         menu.addItem(playItem)
 
-        let cleanItem = NSMenuItem(title: "🧼 Clean", action: #selector(cleanPet), keyEquivalent: "")
+        let cleanItem = NSMenuItem(title: "🧼 Clean All", action: #selector(cleanPet), keyEquivalent: "")
         cleanItem.target = self
         menu.addItem(cleanItem)
 
-        let sleepItem = NSMenuItem(title: "😴 Sleep", action: #selector(letPetSleep), keyEquivalent: "")
+        let sleepItem = NSMenuItem(title: "😴 Sleep All", action: #selector(letPetSleep), keyEquivalent: "")
         sleepItem.target = self
         menu.addItem(sleepItem)
 
@@ -438,19 +577,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         chatItem.isEnabled = LLMService.shared.statusEnabled
         menu.addItem(chatItem)
 
-        if PetState.shared.isDisobedient {
-            let disobeyItem = NSMenuItem(title: "😡 \(PetState.shared.disobedienceMessage)", action: nil, keyEquivalent: "")
-            disobeyItem.isEnabled = false
-            menu.addItem(disobeyItem)
+        if manager.isMultiPetMode {
+            var anyDisobedient = false
+            for pet in manager.selectedPets {
+                let s = manager.state(for: pet)
+                if s.isDisobedient {
+                    anyDisobedient = true
+                    let disobeyItem = NSMenuItem(title: "😡 \(pet.displayName): \(s.disobedienceMessage)", action: nil, keyEquivalent: "")
+                    disobeyItem.isEnabled = false
+                    menu.addItem(disobeyItem)
+                }
+            }
+            if anyDisobedient {
+                let disciplineItem = NSMenuItem(title: "👋 🫏 Discipline All", action: #selector(disciplinePet), keyEquivalent: "")
+                disciplineItem.target = self
+                menu.addItem(disciplineItem)
+            }
+        } else {
+            if PetState.shared.isDisobedient {
+                let disobeyItem = NSMenuItem(title: "😡 \(PetState.shared.disobedienceMessage)", action: nil, keyEquivalent: "")
+                disobeyItem.isEnabled = false
+                menu.addItem(disobeyItem)
 
-            let disciplineItem = NSMenuItem(title: "👋 🫏 Discipline", action: #selector(disciplinePet), keyEquivalent: "")
-            disciplineItem.target = self
-            menu.addItem(disciplineItem)
+                let disciplineItem = NSMenuItem(title: "👋 🫏 Discipline", action: #selector(disciplinePet), keyEquivalent: "")
+                disciplineItem.target = self
+                menu.addItem(disciplineItem)
+            }
+
+            let obedienceItem = NSMenuItem(title: "  🎓 Obedience: \(Int(PetState.shared.obedience))%", action: nil, keyEquivalent: "")
+            obedienceItem.isEnabled = false
+            menu.addItem(obedienceItem)
         }
-
-        let obedienceItem = NSMenuItem(title: "  🎓 Obedience: \(Int(PetState.shared.obedience))%", action: nil, keyEquivalent: "")
-        obedienceItem.isEnabled = false
-        menu.addItem(obedienceItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -471,18 +628,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         let item = NSMenuItem(title: "  \(cases(char).displayName)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
                         item.target = self
                         item.representedObject = cases(char)
-                        if cases(char) == spriteAnimator.currentPokemon { item.state = .on }
+                        item.state = isSelected(cases(char)) ? .on : .off
                         sub.addItem(item)
                     }
                 } else if let char = chars.first {
                     let item = NSMenuItem(title: cases(char).displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
                     item.target = self
                     item.representedObject = cases(char)
-                    if cases(char) == spriteAnimator.currentPokemon { item.state = .on }
+                    item.state = isSelected(cases(char)) ? .on : .off
                     sub.addItem(item)
                 }
             }
             return sub
+        }
+
+        func isSelected(_ character: SelectableCharacter) -> Bool {
+            if manager.isMultiPetMode {
+                return manager.isSelected(character)
+            }
+            return character == spriteAnimator.currentPokemon
         }
 
         // ===== Video Games =====
@@ -513,14 +677,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for c in marioCharacters {
             let i = NSMenuItem(title: c.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
             i.target = self; i.representedObject = SelectableCharacter.marioItem(c)
-            if case .marioItem(let x) = spriteAnimator.currentPokemon, x == c { i.state = .on }
+            i.state = isSelected(SelectableCharacter.marioItem(c)) ? .on : .off
             marioSub.addItem(i)
         }
         marioSub.addItem(NSMenuItem.separator())
         for c in marioItems {
             let i = NSMenuItem(title: c.displayName, action: #selector(selectCharacter(_:)), keyEquivalent: "")
             i.target = self; i.representedObject = SelectableCharacter.marioItem(c)
-            if case .marioItem(let x) = spriteAnimator.currentPokemon, x == c { i.state = .on }
+            i.state = isSelected(SelectableCharacter.marioItem(c)) ? .on : .off
             marioSub.addItem(i)
         }
         let marioMI = NSMenuItem(title: "Super Mario Bros", action: nil, keyEquivalent: "")
@@ -1140,20 +1304,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         quitItem.target = self
         menu.addItem(quitItem)
 
+        updateCheckmarks(in: menu)
         statusItem.menu = menu
     }
 
     func updateMenu() {
         guard let menu = statusItem.menu else { return }
+        let manager = MultiPetManager.shared
         for item in menu.items {
             if item.tag == 100 {
                 item.title = "CPU Usage: \(Int(cpuMonitor.currentCPU))%"
             } else if item.tag == 150 {
                 item.title = "Speed: \(spriteAnimator.speedLabel)"
             } else if item.tag == 300 {
-                item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)"
+                if manager.isMultiPetMode {
+                    item.title = "🐾 Multi-Pet Mode (\(manager.petCount) pets)"
+                } else {
+                    item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)"
+                }
             }
-            // Update checkmarks for category menus
             if let submenu = item.submenu {
                 updateCheckmarks(in: submenu)
             }
@@ -1161,20 +1330,198 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func updateCheckmarks(in menu: NSMenu) {
+        let manager = MultiPetManager.shared
         for item in menu.items {
             if let submenu = item.submenu {
                 updateCheckmarks(in: submenu)
             } else if let character = item.representedObject as? SelectableCharacter {
-                item.state = (character == spriteAnimator.currentPokemon) ? .on : .off
+                if manager.isMultiPetMode {
+                    item.state = manager.isSelected(character) ? .on : .off
+                } else {
+                    item.state = (character == spriteAnimator.currentPokemon) ? .on : .off
+                }
             }
         }
     }
 
     @objc func selectCharacter(_ sender: NSMenuItem) {
         guard let character = sender.representedObject as? SelectableCharacter else { return }
-        spriteAnimator.setPokemon(character)
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            manager.togglePet(character)
+            if manager.isSelected(character) {
+                spriteAnimator.setPokemon(character)
+            } else if let primary = manager.primaryPet {
+                spriteAnimator.setPokemon(primary)
+            }
+        } else {
+            spriteAnimator.setPokemon(character)
+        }
         spriteAnimator.resetRotationTimer()
         buildMenu()
+    }
+
+    @objc func togglePetSelection(_ sender: NSMenuItem) {
+        guard let character = sender.representedObject as? SelectableCharacter else { return }
+        let manager = MultiPetManager.shared
+        manager.togglePet(character)
+        if manager.isSelected(character) {
+            spriteAnimator.setPokemon(character)
+        } else if let primary = manager.primaryPet {
+            spriteAnimator.setPokemon(primary)
+        }
+        buildMenu()
+    }
+
+    @objc func selectAllPets() {
+        let manager = MultiPetManager.shared
+        let chars: [SelectableCharacter] =
+            PokemonCharacter.allCases.prefix(5).map { .pokemon($0) } +
+            MarvelCharacter.allCases.prefix(4).map { .marvel($0) } +
+            DragonBallCharacter.allCases.prefix(3).map { .dragonBall($0) }
+        for char in chars { manager.addPet(char) }
+        if let first = chars.first { spriteAnimator.setPokemon(first) }
+        buildMenu()
+    }
+
+    @objc func clearAllPets() {
+        MultiPetManager.shared.clearAll()
+        spriteAnimator.setPokemon(.pokemon(.jigglypuff))
+        buildMenu()
+    }
+
+    @objc func openSwarmChat() {
+        let manager = MultiPetManager.shared
+        guard manager.isMultiPetMode, LLMService.shared.statusEnabled else { return }
+
+        if let existing = swarmChatWindow {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 500, height: 600), styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
+        panel.title = "🐝 Swarm Chat — \(manager.petCount) Pets"
+        panel.center()
+        panel.isReleasedWhenClosed = false
+        panel.minSize = NSSize(width: 400, height: 300)
+        swarmChatWindow = panel
+
+        let scrollView = NSScrollView(frame: NSRect(x: 0, y: 50, width: 500, height: 510))
+        scrollView.hasVerticalScroller = true
+        scrollView.autoresizingMask = [.width, .height]
+        scrollView.borderType = .noBorder
+        scrollView.drawsBackground = false
+
+        let contentSize = scrollView.contentSize
+        let textView = ChatTextView(frame: NSRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height))
+        textView.minSize = NSSize(width: 0, height: 0)
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.textContainer?.containerSize = NSSize(width: contentSize.width, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.widthTracksTextView = true
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.font = NSFont.systemFont(ofSize: 13)
+        textView.textContainerInset = NSSize(width: 10, height: 10)
+        textView.textContainer?.lineFragmentPadding = 0
+        scrollView.documentView = textView
+        panel.contentView?.addSubview(scrollView)
+        swarmChatTextView = scrollView
+
+        let inputField = ChatInputField(frame: NSRect(x: 10, y: 10, width: 410, height: 24))
+        inputField.placeholderString = "Say something to the group..."
+        inputField.isEditable = true
+        inputField.isSelectable = true
+        inputField.allowsEditingTextAttributes = true
+        inputField.autoresizingMask = [.width]
+        panel.contentView?.addSubview(inputField)
+        swarmChatInputField = inputField
+
+        let sendButton = NSButton(title: "Send", target: self, action: #selector(sendSwarmMessage))
+        sendButton.frame = NSRect(x: 430, y: 9, width: 60, height: 26)
+        sendButton.keyEquivalent = "\r"
+        sendButton.autoresizingMask = [.minXMargin]
+        panel.contentView?.addSubview(sendButton)
+
+        let petNames = manager.selectedPets.map { "\($0.emoji) \($0.displayName)" }.joined(separator: ", ")
+        appendToSwarmChat(system: "Swarm chat started! Pets: \(petNames)")
+
+        panel.initialFirstResponder = textView
+        panel.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        SwarmChatManager.shared.startSwarmConversation(topic: "greet each other and chat") { [weak self] messages in
+            for msg in messages {
+                self?.appendToSwarmChat(pet: msg.speaker, text: msg.text)
+            }
+        }
+    }
+
+    @objc func sendSwarmMessage() {
+        guard let inputField = swarmChatInputField, !inputField.stringValue.isEmpty else { return }
+        let userMessage = inputField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !userMessage.isEmpty else { return }
+        inputField.stringValue = ""
+
+        appendToSwarmChat(user: userMessage)
+
+        SwarmChatManager.shared.sendUserMessage(userMessage) { [weak self] messages in
+            for msg in messages {
+                self?.appendToSwarmChat(pet: msg.speaker, text: msg.text)
+            }
+        }
+    }
+
+    @objc func triggerRandomInteraction() {
+        let manager = MultiPetManager.shared
+        guard manager.isMultiPetMode, LLMService.shared.statusEnabled else { return }
+
+        if let existing = swarmChatWindow {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+        } else {
+            openSwarmChat()
+        }
+
+        appendToSwarmChat(system: "Random interaction starting...")
+
+        SwarmChatManager.shared.triggerRandomInteraction { [weak self] messages in
+            for msg in messages {
+                self?.appendToSwarmChat(pet: msg.speaker, text: msg.text)
+            }
+        }
+    }
+
+    private func appendToSwarmChat(user: String) {
+        guard let scrollView = swarmChatTextView, let textView = scrollView.documentView as? NSTextView else { return }
+        let text = "You: \(user)\n\n"
+        textView.textStorage?.append(NSAttributedString(string: text, attributes: [
+            .font: NSFont.systemFont(ofSize: 13),
+            .foregroundColor: NSColor.labelColor
+        ]))
+        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
+    }
+
+    private func appendToSwarmChat(pet: SelectableCharacter, text: String) {
+        guard let scrollView = swarmChatTextView, let textView = scrollView.documentView as? NSTextView else { return }
+        let msgText = "\(pet.emoji) \(pet.displayName): \(text)\n\n"
+        textView.textStorage?.append(NSAttributedString(string: msgText, attributes: [
+            .font: NSFont.systemFont(ofSize: 13),
+            .foregroundColor: NSColor.systemBlue
+        ]))
+        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
+    }
+
+    private func appendToSwarmChat(system: String) {
+        guard let scrollView = swarmChatTextView, let textView = scrollView.documentView as? NSTextView else { return }
+        let text = "[\(system)]\n\n"
+        textView.textStorage?.append(NSAttributedString(string: text, attributes: [
+            .font: NSFont.systemFont(ofSize: 11),
+            .foregroundColor: NSColor.secondaryLabelColor
+        ]))
+        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
     }
 
     @objc func toggleRotation() {
@@ -1583,31 +1930,51 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func feedPet() {
-        PetState.shared.feed(personality: spriteAnimator.currentPokemon.personality)
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            manager.feedAll()
+        } else {
+            PetState.shared.feed(personality: spriteAnimator.currentPokemon.personality)
+        }
         LLMService.shared.invalidateCache()
         buildMenu()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
     }
 
     @objc func playWithPet() {
-        PetState.shared.play(personality: spriteAnimator.currentPokemon.personality)
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            manager.playAll()
+        } else {
+            PetState.shared.play(personality: spriteAnimator.currentPokemon.personality)
+        }
         LLMService.shared.invalidateCache()
         buildMenu()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
     }
 
     @objc func cleanPet() {
-        PetState.shared.clean()
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            manager.cleanAll()
+        } else {
+            PetState.shared.clean()
+        }
         LLMService.shared.invalidateCache()
         buildMenu()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
     }
 
     @objc func letPetSleep() {
-        PetState.shared.sleep()
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            manager.sleepAll()
+        } else {
+            PetState.shared.sleep()
+        }
         LLMService.shared.invalidateCache()
         buildMenu()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
     }
 
     private var customActionTextField: NSTextField?
@@ -1833,34 +2200,45 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func updateStatusBarTitle() {
-        let pet = PetState.shared
-        var worstStat = 100.0
-        var icon = ""
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            let icons = manager.worstNeedIcons()
+            statusItem.button?.title = icons.joined(separator: " ")
+        } else {
+            let pet = PetState.shared
+            var worstStat = 100.0
+            var icon = ""
 
-        if pet.hunger < worstStat && pet.hunger < 30 {
-            worstStat = pet.hunger
-            icon = "🍕"
-        }
-        if pet.happiness < worstStat && pet.happiness < 30 {
-            worstStat = pet.happiness
-            icon = "😢"
-        }
-        if pet.energy < worstStat && pet.energy < 30 {
-            worstStat = pet.energy
-            icon = "😴"
-        }
-        if pet.hygiene < worstStat && pet.hygiene < 30 {
-            worstStat = pet.hygiene
-            icon = "🧼"
-        }
+            if pet.hunger < worstStat && pet.hunger < 30 {
+                worstStat = pet.hunger
+                icon = "🍕"
+            }
+            if pet.happiness < worstStat && pet.happiness < 30 {
+                worstStat = pet.happiness
+                icon = "😢"
+            }
+            if pet.energy < worstStat && pet.energy < 30 {
+                worstStat = pet.energy
+                icon = "😴"
+            }
+            if pet.hygiene < worstStat && pet.hygiene < 30 {
+                worstStat = pet.hygiene
+                icon = "🧼"
+            }
 
-        statusItem.button?.title = icon
+            statusItem.button?.title = icon
+        }
     }
 
     @objc func disciplinePet() {
-        _ = PetState.shared.discipline()
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            _ = manager.disciplineAll()
+        } else {
+            _ = PetState.shared.discipline()
+        }
         LLMService.shared.invalidateCache()
         buildMenu()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { PetState.shared.lastAction = nil }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
     }
 }
