@@ -362,69 +362,234 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             sub.addItem(item)
         }
 
+        func addCharToSelectSubmenu(_ character: SelectableCharacter, to sub: NSMenu) {
+            let item = NSMenuItem(title: "\(character.emoji) \(character.displayName)", action: #selector(togglePetSelection(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = character
+            item.state = manager.isSelected(character) ? .on : .off
+            if manager.isSelected(character) && manager.primaryPet == character {
+                item.title = "\(character.emoji) \(character.displayName) ★"
+            }
+            sub.addItem(item)
+        }
+
         let mpGamesMenu = NSMenu()
         let mpAnimeMenu = NSMenu()
         let mpMoviesTVMenu = NSMenu()
 
-        for c in PokemonCharacter.allCases.map({ SelectableCharacter.pokemon($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in MarioItem.allCases.map({ SelectableCharacter.marioItem($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in MarioKartCharacter.allCases.map({ SelectableCharacter.marioKart($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in KirbyCharacter.allCases.map({ SelectableCharacter.kirby($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in ZeldaCharacter.allCases.map({ SelectableCharacter.zelda($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in MegaManCharacter.allCases.map({ SelectableCharacter.megaMan($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in ContraCharacter.allCases.map({ SelectableCharacter.contra($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in MetalSlugCharacter.allCases.map({ SelectableCharacter.metalSlug($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in StreetFighterCharacter.allCases.map({ SelectableCharacter.streetFighter($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in MortalKombatCharacter.allCases.map({ SelectableCharacter.mortalKombat($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in TMNTCharacter.allCases.map({ SelectableCharacter.tmnt($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
-        mpGamesMenu.addItem(NSMenuItem.separator())
-        for c in OverwatchCharacter.allCases.map({ SelectableCharacter.overwatch($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        // Pokémon
+        let mpPokemonSub = NSMenu()
+        for c in PokemonCharacter.allCases.map({ SelectableCharacter.pokemon($0) }) { addCharToSelectSubmenu(c, to: mpPokemonSub) }
+        let mpPokemonMI = NSMenuItem(title: "Pokémon", action: nil, keyEquivalent: "")
+        mpPokemonMI.submenu = mpPokemonSub
+        mpGamesMenu.addItem(mpPokemonMI)
+
+        // Super Mario Bros
+        let mpMarioSub = NSMenu()
+        for c in marioCharacters.map({ SelectableCharacter.marioItem($0) }) { addCharToSelectSubmenu(c, to: mpMarioSub) }
+        mpMarioSub.addItem(NSMenuItem.separator())
+        for c in marioItems.map({ SelectableCharacter.marioItem($0) }) { addCharToSelectSubmenu(c, to: mpMarioSub) }
+        let mpMarioMI = NSMenuItem(title: "Super Mario Bros", action: nil, keyEquivalent: "")
+        mpMarioMI.submenu = mpMarioSub
+        mpGamesMenu.addItem(mpMarioMI)
+
+        // Mario Kart
+        let mpKartSub = NSMenu()
+        for c in marioKartList.map({ SelectableCharacter.marioKart($0) }) { addCharToSelectSubmenu(c, to: mpKartSub) }
+        mpKartSub.addItem(NSMenuItem.separator())
+        for c in marioKartItems.map({ SelectableCharacter.marioKart($0) }) { addCharToSelectSubmenu(c, to: mpKartSub) }
+        let mpKartMI = NSMenuItem(title: "Mario Kart", action: nil, keyEquivalent: "")
+        mpKartMI.submenu = mpKartSub
+        mpGamesMenu.addItem(mpKartMI)
+
+        // Kirby
+        let mpKirbySub = NSMenu()
+        for c in kirbyCharacters.map({ SelectableCharacter.kirby($0) }) { addCharToSelectSubmenu(c, to: mpKirbySub) }
+        mpKirbySub.addItem(NSMenuItem.separator())
+        for c in kirbyEnemies.map({ SelectableCharacter.kirby($0) }) { addCharToSelectSubmenu(c, to: mpKirbySub) }
+        let mpKirbyMI = NSMenuItem(title: "Kirby", action: nil, keyEquivalent: "")
+        mpKirbyMI.submenu = mpKirbySub
+        mpGamesMenu.addItem(mpKirbyMI)
+
+        // Legend of Zelda
+        let mpZeldaSub = NSMenu()
+        for c in zeldaHeroes.map({ SelectableCharacter.zelda($0) }) { addCharToSelectSubmenu(c, to: mpZeldaSub) }
+        mpZeldaSub.addItem(NSMenuItem.separator())
+        for c in zeldaEnemies.map({ SelectableCharacter.zelda($0) }) { addCharToSelectSubmenu(c, to: mpZeldaSub) }
+        let mpZeldaMI = NSMenuItem(title: "Legend of Zelda", action: nil, keyEquivalent: "")
+        mpZeldaMI.submenu = mpZeldaSub
+        mpGamesMenu.addItem(mpZeldaMI)
+
+        // Mega Man
+        let mpMMSub = NSMenu()
+        for c in megaManCharacters.map({ SelectableCharacter.megaMan($0) }) { addCharToSelectSubmenu(c, to: mpMMSub) }
+        mpMMSub.addItem(NSMenuItem.separator())
+        for c in megaManBosses.map({ SelectableCharacter.megaMan($0) }) { addCharToSelectSubmenu(c, to: mpMMSub) }
+        let mpMMMI = NSMenuItem(title: "Mega Man", action: nil, keyEquivalent: "")
+        mpMMMI.submenu = mpMMSub
+        mpGamesMenu.addItem(mpMMMI)
+
+        // Contra
+        let mpContraSub = NSMenu()
+        for c in contraCharacters.map({ SelectableCharacter.contra($0) }) { addCharToSelectSubmenu(c, to: mpContraSub) }
+        mpContraSub.addItem(NSMenuItem.separator())
+        for c in (contraItems + contraEnemies).map({ SelectableCharacter.contra($0) }) { addCharToSelectSubmenu(c, to: mpContraSub) }
+        let mpContraMI = NSMenuItem(title: "Contra", action: nil, keyEquivalent: "")
+        mpContraMI.submenu = mpContraSub
+        mpGamesMenu.addItem(mpContraMI)
+
+        // Metal Slug
+        let mpMSSub = NSMenu()
+        for c in metalSlugCharacters.map({ SelectableCharacter.metalSlug($0) }) { addCharToSelectSubmenu(c, to: mpMSSub) }
+        mpMSSub.addItem(NSMenuItem.separator())
+        for c in (metalSlugVehicles + metalSlugEnemies).map({ SelectableCharacter.metalSlug($0) }) { addCharToSelectSubmenu(c, to: mpMSSub) }
+        let mpMSMI = NSMenuItem(title: "Metal Slug", action: nil, keyEquivalent: "")
+        mpMSMI.submenu = mpMSSub
+        mpGamesMenu.addItem(mpMSMI)
+
+        // Street Fighter
+        let mpSFSub = NSMenu()
+        for c in streetFighterCharacters.map({ SelectableCharacter.streetFighter($0) }) { addCharToSelectSubmenu(c, to: mpSFSub) }
+        mpSFSub.addItem(NSMenuItem.separator())
+        for c in streetFighterBosses.map({ SelectableCharacter.streetFighter($0) }) { addCharToSelectSubmenu(c, to: mpSFSub) }
+        let mpSFMI = NSMenuItem(title: "Street Fighter", action: nil, keyEquivalent: "")
+        mpSFMI.submenu = mpSFSub
+        mpGamesMenu.addItem(mpSFMI)
+
+        // Mortal Kombat
+        let mpMKSub = NSMenu()
+        for c in MortalKombatCharacter.allCases.map({ SelectableCharacter.mortalKombat($0) }) { addCharToSelectSubmenu(c, to: mpMKSub) }
+        let mpMKMI = NSMenuItem(title: "Mortal Kombat", action: nil, keyEquivalent: "")
+        mpMKMI.submenu = mpMKSub
+        mpGamesMenu.addItem(mpMKMI)
+
+        // TMNT
+        let mpTMNTSub = NSMenu()
+        for c in TMNTCharacter.allCases.map({ SelectableCharacter.tmnt($0) }) { addCharToSelectSubmenu(c, to: mpTMNTSub) }
+        let mpTMNTMI = NSMenuItem(title: "TMNT", action: nil, keyEquivalent: "")
+        mpTMNTMI.submenu = mpTMNTSub
+        mpGamesMenu.addItem(mpTMNTMI)
+
+        // Overwatch
+        let mpOWSub = NSMenu()
+        for c in OverwatchCharacter.allCases.map({ SelectableCharacter.overwatch($0) }) { addCharToSelectSubmenu(c, to: mpOWSub) }
+        let mpOWMI = NSMenuItem(title: "Overwatch", action: nil, keyEquivalent: "")
+        mpOWMI.submenu = mpOWSub
+        mpGamesMenu.addItem(mpOWMI)
+
         let mpGamesMI = NSMenuItem(title: "🎮 Video Games", action: nil, keyEquivalent: "")
         mpGamesMI.submenu = mpGamesMenu
         petSelectionSub.addItem(mpGamesMI)
 
-        for c in DragonBallCharacter.allCases.map({ SelectableCharacter.dragonBall($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
-        mpAnimeMenu.addItem(NSMenuItem.separator())
-        for c in NarutoCharacter.allCases.map({ SelectableCharacter.naruto($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
-        mpAnimeMenu.addItem(NSMenuItem.separator())
-        for c in GundamCharacter.allCases.map({ SelectableCharacter.gundam($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
-        mpAnimeMenu.addItem(NSMenuItem.separator())
-        for c in GhibliCharacter.allCases.map({ SelectableCharacter.ghibli($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
-        mpAnimeMenu.addItem(NSMenuItem.separator())
-        for c in LabubuCharacter.allCases.map({ SelectableCharacter.labubu($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
+        // Dragon Ball
+        let mpDBSub = NSMenu()
+        for c in dragonBallCharacters.map({ SelectableCharacter.dragonBall($0) }) { addCharToSelectSubmenu(c, to: mpDBSub) }
+        let mpDBMI = NSMenuItem(title: "Dragon Ball", action: nil, keyEquivalent: "")
+        mpDBMI.submenu = mpDBSub
+        mpAnimeMenu.addItem(mpDBMI)
+
+        // Naruto
+        let mpNarutoSub = NSMenu()
+        for c in NarutoCharacter.allCases.map({ SelectableCharacter.naruto($0) }) { addCharToSelectSubmenu(c, to: mpNarutoSub) }
+        let mpNarutoMI = NSMenuItem(title: "Naruto", action: nil, keyEquivalent: "")
+        mpNarutoMI.submenu = mpNarutoSub
+        mpAnimeMenu.addItem(mpNarutoMI)
+
+        // Gundam
+        let mpGDSub = NSMenu()
+        for c in GundamCharacter.allCases.map({ SelectableCharacter.gundam($0) }) { addCharToSelectSubmenu(c, to: mpGDSub) }
+        let mpGDMI = NSMenuItem(title: "Gundam", action: nil, keyEquivalent: "")
+        mpGDMI.submenu = mpGDSub
+        mpAnimeMenu.addItem(mpGDMI)
+
+        // Ghibli
+        let mpGHSub = NSMenu()
+        for c in GhibliCharacter.allCases.map({ SelectableCharacter.ghibli($0) }) { addCharToSelectSubmenu(c, to: mpGHSub) }
+        let mpGHMI = NSMenuItem(title: "Studio Ghibli", action: nil, keyEquivalent: "")
+        mpGHMI.submenu = mpGHSub
+        mpAnimeMenu.addItem(mpGHMI)
+
+        // Labubu
+        let mpLabSub = NSMenu()
+        for c in LabubuCharacter.allCases.map({ SelectableCharacter.labubu($0) }) { addCharToSelectSubmenu(c, to: mpLabSub) }
+        let mpLabMI = NSMenuItem(title: "Labubu", action: nil, keyEquivalent: "")
+        mpLabMI.submenu = mpLabSub
+        mpAnimeMenu.addItem(mpLabMI)
+
         let mpAnimeMI = NSMenuItem(title: "⛩️ Anime & Manga", action: nil, keyEquivalent: "")
         mpAnimeMI.submenu = mpAnimeMenu
         petSelectionSub.addItem(mpAnimeMI)
 
-        for c in MarvelCharacter.allCases.map({ SelectableCharacter.marvel($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in DCCharacter.allCases.map({ SelectableCharacter.dc($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in StarWarsCharacter.allCases.map({ SelectableCharacter.starWars($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in SimpsonsCharacter.allCases.map({ SelectableCharacter.simpsons($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in KingOfTheHillCharacter.allCases.map({ SelectableCharacter.kingOfTheHill($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in FamilyGuyCharacter.allCases.map({ SelectableCharacter.familyGuy($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in MinionsCharacter.allCases.map({ SelectableCharacter.minions($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in FuturamaCharacter.allCases.map({ SelectableCharacter.futurama($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in BatmanCharacter.allCases.map({ SelectableCharacter.batman($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
-        mpMoviesTVMenu.addItem(NSMenuItem.separator())
-        for c in TransformersCharacter.allCases.map({ SelectableCharacter.transformers($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        // Marvel
+        let mpMarvelSub = NSMenu()
+        for c in MarvelCharacter.allCases.map({ SelectableCharacter.marvel($0) }) { addCharToSelectSubmenu(c, to: mpMarvelSub) }
+        let mpMarvelMI = NSMenuItem(title: "Marvel", action: nil, keyEquivalent: "")
+        mpMarvelMI.submenu = mpMarvelSub
+        mpMoviesTVMenu.addItem(mpMarvelMI)
+
+        // DC
+        let mpDCSub = NSMenu()
+        for c in DCCharacter.allCases.map({ SelectableCharacter.dc($0) }) { addCharToSelectSubmenu(c, to: mpDCSub) }
+        let mpDCMI = NSMenuItem(title: "DC", action: nil, keyEquivalent: "")
+        mpDCMI.submenu = mpDCSub
+        mpMoviesTVMenu.addItem(mpDCMI)
+
+        // Star Wars
+        let mpSWSub = NSMenu()
+        for c in StarWarsCharacter.allCases.map({ SelectableCharacter.starWars($0) }) { addCharToSelectSubmenu(c, to: mpSWSub) }
+        let mpSWMI = NSMenuItem(title: "Star Wars", action: nil, keyEquivalent: "")
+        mpSWMI.submenu = mpSWSub
+        mpMoviesTVMenu.addItem(mpSWMI)
+
+        // Simpsons
+        let mpSimpSub = NSMenu()
+        for c in SimpsonsCharacter.allCases.map({ SelectableCharacter.simpsons($0) }) { addCharToSelectSubmenu(c, to: mpSimpSub) }
+        let mpSimpMI = NSMenuItem(title: "The Simpsons", action: nil, keyEquivalent: "")
+        mpSimpMI.submenu = mpSimpSub
+        mpMoviesTVMenu.addItem(mpSimpMI)
+
+        // King of the Hill
+        let mpKOTHSub = NSMenu()
+        for c in KingOfTheHillCharacter.allCases.map({ SelectableCharacter.kingOfTheHill($0) }) { addCharToSelectSubmenu(c, to: mpKOTHSub) }
+        let mpKOTHMI = NSMenuItem(title: "King of the Hill", action: nil, keyEquivalent: "")
+        mpKOTHMI.submenu = mpKOTHSub
+        mpMoviesTVMenu.addItem(mpKOTHMI)
+
+        // Family Guy
+        let mpFGSub = NSMenu()
+        for c in FamilyGuyCharacter.allCases.map({ SelectableCharacter.familyGuy($0) }) { addCharToSelectSubmenu(c, to: mpFGSub) }
+        let mpFGMI = NSMenuItem(title: "Family Guy", action: nil, keyEquivalent: "")
+        mpFGMI.submenu = mpFGSub
+        mpMoviesTVMenu.addItem(mpFGMI)
+
+        // Minions
+        let mpMinSub = NSMenu()
+        for c in MinionsCharacter.allCases.map({ SelectableCharacter.minions($0) }) { addCharToSelectSubmenu(c, to: mpMinSub) }
+        let mpMinMI = NSMenuItem(title: "Minions", action: nil, keyEquivalent: "")
+        mpMinMI.submenu = mpMinSub
+        mpMoviesTVMenu.addItem(mpMinMI)
+
+        // Futurama
+        let mpFutSub = NSMenu()
+        for c in FuturamaCharacter.allCases.map({ SelectableCharacter.futurama($0) }) { addCharToSelectSubmenu(c, to: mpFutSub) }
+        let mpFutMI = NSMenuItem(title: "Futurama", action: nil, keyEquivalent: "")
+        mpFutMI.submenu = mpFutSub
+        mpMoviesTVMenu.addItem(mpFutMI)
+
+        // Batman
+        let mpBatSub = NSMenu()
+        for c in BatmanCharacter.allCases.map({ SelectableCharacter.batman($0) }) { addCharToSelectSubmenu(c, to: mpBatSub) }
+        let mpBatMI = NSMenuItem(title: "Batman", action: nil, keyEquivalent: "")
+        mpBatMI.submenu = mpBatSub
+        mpMoviesTVMenu.addItem(mpBatMI)
+
+        // Transformers
+        let mpTFSub = NSMenu()
+        for c in TransformersCharacter.allCases.map({ SelectableCharacter.transformers($0) }) { addCharToSelectSubmenu(c, to: mpTFSub) }
+        let mpTFMI = NSMenuItem(title: "Transformers", action: nil, keyEquivalent: "")
+        mpTFMI.submenu = mpTFSub
+        mpMoviesTVMenu.addItem(mpTFMI)
+
         let mpMoviesTVMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
         mpMoviesTVMI.submenu = mpMoviesTVMenu
         petSelectionSub.addItem(mpMoviesTVMI)
