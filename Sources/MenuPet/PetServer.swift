@@ -237,26 +237,67 @@ class PetServer {
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "hunger": Int(pet.hunger)], nil, nil)
 
+        case ("POST", "/pet/feed-all"):
+            DispatchQueue.main.sync {
+                MultiPetManager.shared.feedAll()
+            }
+            LLMService.shared.invalidateCache()
+            let count = MultiPetManager.shared.petCount
+            return (200, ["ok": true, "petCount": count], nil, nil)
+
         case ("POST", "/pet/play"):
             DispatchQueue.main.sync { pet.play(personality: character.personality) }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "happiness": Int(pet.happiness)], nil, nil)
+
+        case ("POST", "/pet/play-all"):
+            DispatchQueue.main.sync {
+                MultiPetManager.shared.playAll()
+            }
+            LLMService.shared.invalidateCache()
+            let count = MultiPetManager.shared.petCount
+            return (200, ["ok": true, "petCount": count], nil, nil)
 
         case ("POST", "/pet/clean"):
             DispatchQueue.main.sync { pet.clean() }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "hygiene": Int(pet.hygiene)], nil, nil)
 
+        case ("POST", "/pet/clean-all"):
+            DispatchQueue.main.sync {
+                MultiPetManager.shared.cleanAll()
+            }
+            LLMService.shared.invalidateCache()
+            let count = MultiPetManager.shared.petCount
+            return (200, ["ok": true, "petCount": count], nil, nil)
+
         case ("POST", "/pet/sleep"):
             DispatchQueue.main.sync { pet.sleep() }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "energy": Int(pet.energy)], nil, nil)
+
+        case ("POST", "/pet/sleep-all"):
+            DispatchQueue.main.sync {
+                MultiPetManager.shared.sleepAll()
+            }
+            LLMService.shared.invalidateCache()
+            let count = MultiPetManager.shared.petCount
+            return (200, ["ok": true, "petCount": count], nil, nil)
 
         case ("POST", "/pet/discipline"):
             var message = ""
             DispatchQueue.main.sync { message = pet.discipline() }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "message": message, "isDisobedient": pet.isDisobedient, "obedience": Int(pet.obedience)], nil, nil)
+
+        case ("POST", "/pet/discipline-all"):
+            var message = ""
+            DispatchQueue.main.sync {
+                message = MultiPetManager.shared.disciplineAll()
+            }
+            LLMService.shared.invalidateCache()
+            let count = MultiPetManager.shared.petCount
+            return (200, ["ok": true, "message": message, "petCount": count], nil, nil)
 
         case ("POST", "/pet/chat"):
             guard let message = body["message"] as? String else {
