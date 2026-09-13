@@ -351,7 +351,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         petSelectionSub.addItem(clearAllItem)
         petSelectionSub.addItem(NSMenuItem.separator())
 
-        func addCharToSelectMenu(_ character: SelectableCharacter) {
+        func addCharToSelectMenu(_ character: SelectableCharacter, to sub: NSMenu) {
             let item = NSMenuItem(title: "\(character.emoji) \(character.displayName)", action: #selector(togglePetSelection(_:)), keyEquivalent: "")
             item.target = self
             item.representedObject = character
@@ -359,104 +359,78 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if manager.isSelected(character) && manager.primaryPet == character {
                 item.title = "\(character.emoji) \(character.displayName) ★"
             }
-            currentCatSub?.addItem(item)
+            sub.addItem(item)
         }
 
-        var currentCatSub: NSMenu?
+        let mpGamesMenu = NSMenu()
+        let mpAnimeMenu = NSMenu()
+        let mpMoviesTVMenu = NSMenu()
 
-        func addCategoryHeader(_ title: String) {
-            let catMenu = NSMenu()
-            let catItem = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-            catItem.submenu = catMenu
-            petSelectionSub.addItem(catItem)
-            currentCatSub = catMenu
-        }
+        for c in PokemonCharacter.allCases.map({ SelectableCharacter.pokemon($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in MarioItem.allCases.map({ SelectableCharacter.marioItem($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in MarioKartCharacter.allCases.map({ SelectableCharacter.marioKart($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in KirbyCharacter.allCases.map({ SelectableCharacter.kirby($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in ZeldaCharacter.allCases.map({ SelectableCharacter.zelda($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in MegaManCharacter.allCases.map({ SelectableCharacter.megaMan($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in ContraCharacter.allCases.map({ SelectableCharacter.contra($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in MetalSlugCharacter.allCases.map({ SelectableCharacter.metalSlug($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in StreetFighterCharacter.allCases.map({ SelectableCharacter.streetFighter($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in MortalKombatCharacter.allCases.map({ SelectableCharacter.mortalKombat($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in TMNTCharacter.allCases.map({ SelectableCharacter.tmnt($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        mpGamesMenu.addItem(NSMenuItem.separator())
+        for c in OverwatchCharacter.allCases.map({ SelectableCharacter.overwatch($0) }) { addCharToSelectMenu(c, to: mpGamesMenu) }
+        let mpGamesMI = NSMenuItem(title: "🎮 Video Games", action: nil, keyEquivalent: "")
+        mpGamesMI.submenu = mpGamesMenu
+        petSelectionSub.addItem(mpGamesMI)
 
-        func addCategoryHeaderWithSeparator(_ title: String) {
-            addCategoryHeader(title)
-            petSelectionSub.addItem(NSMenuItem.separator())
-        }
+        for c in DragonBallCharacter.allCases.map({ SelectableCharacter.dragonBall($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
+        mpAnimeMenu.addItem(NSMenuItem.separator())
+        for c in NarutoCharacter.allCases.map({ SelectableCharacter.naruto($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
+        mpAnimeMenu.addItem(NSMenuItem.separator())
+        for c in GundamCharacter.allCases.map({ SelectableCharacter.gundam($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
+        mpAnimeMenu.addItem(NSMenuItem.separator())
+        for c in GhibliCharacter.allCases.map({ SelectableCharacter.ghibli($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
+        mpAnimeMenu.addItem(NSMenuItem.separator())
+        for c in LabubuCharacter.allCases.map({ SelectableCharacter.labubu($0) }) { addCharToSelectMenu(c, to: mpAnimeMenu) }
+        let mpAnimeMI = NSMenuItem(title: "⛩️ Anime & Manga", action: nil, keyEquivalent: "")
+        mpAnimeMI.submenu = mpAnimeMenu
+        petSelectionSub.addItem(mpAnimeMI)
 
-        addCategoryHeader("Pokémon")
-        for char in PokemonCharacter.allCases.map({ SelectableCharacter.pokemon($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Super Mario Bros")
-        for char in MarioItem.allCases.map({ SelectableCharacter.marioItem($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Kirby")
-        for char in KirbyCharacter.allCases.map({ SelectableCharacter.kirby($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Legend of Zelda")
-        for char in ZeldaCharacter.allCases.map({ SelectableCharacter.zelda($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Mega Man")
-        for char in MegaManCharacter.allCases.map({ SelectableCharacter.megaMan($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Dragon Ball")
-        for char in DragonBallCharacter.allCases.map({ SelectableCharacter.dragonBall($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Naruto")
-        for char in NarutoCharacter.allCases.map({ SelectableCharacter.naruto($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Marvel")
-        for char in MarvelCharacter.allCases.map({ SelectableCharacter.marvel($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("DC")
-        for char in DCCharacter.allCases.map({ SelectableCharacter.dc($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Star Wars")
-        for char in StarWarsCharacter.allCases.map({ SelectableCharacter.starWars($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("The Simpsons")
-        for char in SimpsonsCharacter.allCases.map({ SelectableCharacter.simpsons($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Family Guy")
-        for char in FamilyGuyCharacter.allCases.map({ SelectableCharacter.familyGuy($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Futurama")
-        for char in FuturamaCharacter.allCases.map({ SelectableCharacter.futurama($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Minions")
-        for char in MinionsCharacter.allCases.map({ SelectableCharacter.minions($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Transformers")
-        for char in TransformersCharacter.allCases.map({ SelectableCharacter.transformers($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Labubu")
-        for char in LabubuCharacter.allCases.map({ SelectableCharacter.labubu($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("TMNT")
-        for char in TMNTCharacter.allCases.map({ SelectableCharacter.tmnt($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Street Fighter")
-        for char in StreetFighterCharacter.allCases.map({ SelectableCharacter.streetFighter($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Metal Slug")
-        for char in MetalSlugCharacter.allCases.map({ SelectableCharacter.metalSlug($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Overwatch")
-        for char in OverwatchCharacter.allCases.map({ SelectableCharacter.overwatch($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Contra")
-        for char in ContraCharacter.allCases.map({ SelectableCharacter.contra($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Mario Kart")
-        for char in MarioKartCharacter.allCases.map({ SelectableCharacter.marioKart($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Mortal Kombat")
-        for char in MortalKombatCharacter.allCases.map({ SelectableCharacter.mortalKombat($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeaderWithSeparator("Studio Ghibli")
-        for char in GhibliCharacter.allCases.map({ SelectableCharacter.ghibli($0) }) { addCharToSelectMenu(char) }
-
-        addCategoryHeader("Gundam")
-        for char in GundamCharacter.allCases.map({ SelectableCharacter.gundam($0) }) { addCharToSelectMenu(char) }
-        for char in KingOfTheHillCharacter.allCases.map({ SelectableCharacter.kingOfTheHill($0) }) { addCharToSelectMenu(char) }
-        for char in BatmanCharacter.allCases.map({ SelectableCharacter.batman($0) }) { addCharToSelectMenu(char) }
+        for c in MarvelCharacter.allCases.map({ SelectableCharacter.marvel($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in DCCharacter.allCases.map({ SelectableCharacter.dc($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in StarWarsCharacter.allCases.map({ SelectableCharacter.starWars($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in SimpsonsCharacter.allCases.map({ SelectableCharacter.simpsons($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in KingOfTheHillCharacter.allCases.map({ SelectableCharacter.kingOfTheHill($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in FamilyGuyCharacter.allCases.map({ SelectableCharacter.familyGuy($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in MinionsCharacter.allCases.map({ SelectableCharacter.minions($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in FuturamaCharacter.allCases.map({ SelectableCharacter.futurama($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in BatmanCharacter.allCases.map({ SelectableCharacter.batman($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        mpMoviesTVMenu.addItem(NSMenuItem.separator())
+        for c in TransformersCharacter.allCases.map({ SelectableCharacter.transformers($0) }) { addCharToSelectMenu(c, to: mpMoviesTVMenu) }
+        let mpMoviesTVMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
+        mpMoviesTVMI.submenu = mpMoviesTVMenu
+        petSelectionSub.addItem(mpMoviesTVMI)
 
         let petSelectionMenuItem = NSMenuItem(title: "🐾 Multi-Pet Selection", action: nil, keyEquivalent: "")
         petSelectionMenuItem.submenu = petSelectionSub
-        menu.addItem(petSelectionMenuItem)
 
         if manager.isMultiPetMode {
             let swarmItem = NSMenuItem(title: "🐝 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
@@ -1208,6 +1182,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let mainPetSelectionMI = NSMenuItem(title: "🐾 Main Pet Selection", action: nil, keyEquivalent: "")
         mainPetSelectionMI.submenu = mainPetSelectionSub
         menu.addItem(mainPetSelectionMI)
+        menu.addItem(petSelectionMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
