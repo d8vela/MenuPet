@@ -309,6 +309,94 @@ class PetServer {
             let status = LLMService.shared.getCachedStatus(for: character) ?? ""
             return (200, ["status": status], nil, nil)
 
+        case ("GET", "/pet/all"):
+            let targetH = Double(queryParams["height"] ?? "160") ?? 160
+            let renderer = SpriteRenderer()
+            var pets: [[String: Any]] = []
+            DispatchQueue.main.sync {
+                let manager = MultiPetManager.shared
+                if manager.selectedPets.isEmpty {
+                    var singlePet: [String: Any] = [
+                        "character": character.identifier,
+                        "displayName": character.displayName,
+                        "category": character.category,
+                        "emoji": character.emoji,
+                        "hunger": Int(pet.hunger),
+                        "happiness": Int(pet.happiness),
+                        "energy": Int(pet.energy),
+                        "hygiene": Int(pet.hygiene),
+                        "careScore": Int(pet.careScore),
+                        "stage": pet.stage,
+                        "stageName": pet.stageName,
+                        "mood": pet.mood,
+                        "moodEmoji": pet.moodEmoji,
+                        "isDisobedient": pet.isDisobedient,
+                        "disobedienceMessage": pet.disobedienceMessage ?? "",
+                        "obedience": Int(pet.obedience),
+                        "isPrimary": true
+                    ]
+                    let images = (self.appDelegate?.spriteAnimator ?? nil) != nil
+                        ? self.appDelegate!.spriteAnimator.renderAllFramesHighRes(targetHeight: CGFloat(targetH))
+                        : (0..<4).map { renderer.renderFrameHighRes(character: character, frame: $0, targetHeight: CGFloat(targetH)) }
+                    var frames: [[String: Any]] = []
+                    for (i, image) in images.enumerated() {
+                        if let tiffData = image.tiffRepresentation,
+                           let bitmap = NSBitmapImageRep(data: tiffData),
+                           let pngData = bitmap.representation(using: .png, properties: [:]) {
+                            frames.append(["index": i, "base64": pngData.base64EncodedString()])
+                        }
+                    }
+                    singlePet["frames"] = frames
+                    pets.append(singlePet)
+                } else {
+                    for (idx, selChar) in manager.selectedPets.enumerated() {
+                        let s = manager.state(for: selChar)
+                        var petData: [String: Any] = [
+                            "character": selChar.identifier,
+                            "displayName": selChar.displayName,
+                            "category": selChar.category,
+                            "emoji": selChar.emoji,
+                            "hunger": Int(s.hunger),
+                            "happiness": Int(s.happiness),
+                            "energy": Int(s.energy),
+                            "hygiene": Int(s.hygiene),
+                            "careScore": Int(s.careScore),
+                            "stage": s.stage,
+                            "stageName": s.stageName,
+                            "mood": s.mood,
+                            "moodEmoji": s.moodEmoji,
+                            "isDisobedient": s.isDisobedient,
+                            "disobedienceMessage": s.disobedienceMessage ?? "",
+                            "obedience": Int(s.obedience),
+                            "isPrimary": idx == 0
+                        ]
+                        var frames: [[String: Any]] = []
+                        if idx == 0, let animator = self.appDelegate?.spriteAnimator {
+                            let images = animator.renderAllFramesHighRes(targetHeight: CGFloat(targetH))
+                            for (i, image) in images.enumerated() {
+                                if let tiffData = image.tiffRepresentation,
+                                   let bitmap = NSBitmapImageRep(data: tiffData),
+                                   let pngData = bitmap.representation(using: .png, properties: [:]) {
+                                    frames.append(["index": i, "base64": pngData.base64EncodedString()])
+                                }
+                            }
+                        } else {
+                            let images = (0..<4).map { renderer.renderFrameHighRes(character: selChar, frame: $0, targetHeight: CGFloat(targetH)) }
+                            for (i, image) in images.enumerated() {
+                                if let tiffData = image.tiffRepresentation,
+                                   let bitmap = NSBitmapImageRep(data: tiffData),
+                                   let pngData = bitmap.representation(using: .png, properties: [:]) {
+                                    frames.append(["index": i, "base64": pngData.base64EncodedString()])
+                                }
+                            }
+                        }
+                        petData["frames"] = frames
+                        pets.append(petData)
+                    }
+                }
+            }
+            return (200, ["pets": pets, "count": pets.count], nil, nil)
+
         case ("GET", "/pet/ping"):
             return (200, ["pong": true, "version": "1.1.0"], nil, nil)
 
