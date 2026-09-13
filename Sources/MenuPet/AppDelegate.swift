@@ -1573,11 +1573,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func togglePetSelection(_ sender: NSMenuItem) {
         guard let character = sender.representedObject as? SelectableCharacter else { return }
         let manager = MultiPetManager.shared
+        let wasPrimary = manager.primaryPet
         manager.togglePet(character)
-        if manager.isSelected(character) {
-            spriteAnimator.setPokemon(character)
-        } else if let primary = manager.primaryPet {
-            spriteAnimator.setPokemon(primary)
+        if !manager.isSelected(character) && wasPrimary == character {
+            if let primary = manager.primaryPet {
+                spriteAnimator.setPokemon(primary)
+            }
         }
         buildMenu()
     }
