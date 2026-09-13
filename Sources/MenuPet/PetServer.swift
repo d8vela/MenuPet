@@ -119,6 +119,12 @@ class PetServer {
         let method = String(parts[0])
         let path = String(parts[1])
 
+        if method == "OPTIONS" {
+            sendRawResponse(fd: fd, status: 200, json: ["ok": true])
+            close(fd)
+            return
+        }
+
         var requestBody: [String: Any] = [:]
         if let bodyRange = request.range(of: "\r\n\r\n") {
             let bodyString = String(request[bodyRange.upperBound...])
@@ -164,9 +170,20 @@ class PetServer {
                 "mood": pet.mood,
                 "moodEmoji": pet.moodEmoji,
                 "isDisobedient": pet.isDisobedient,
-                "obedience": Int(pet.obedience)
+                "disobedienceMessage": pet.disobedienceMessage ?? "",
+                "obedience": Int(pet.obedience),
+                "timestamp": Date().timeIntervalSince1970
             ]
             return (200, state, nil, nil)
+
+        case ("GET", "/pet/status"):
+            var statusMsg = ""
+            DispatchQueue.main.sync {
+                if let app = self.appDelegate {
+                    statusMsg = app.spriteAnimator.llmStatus ?? ""
+                }
+            }
+            return (200, ["status": statusMsg], nil, nil)
 
         case ("GET", "/pet/sprite"):
             var pngData: Data?
@@ -184,6 +201,23 @@ class PetServer {
             } else {
                 return (500, ["error": "Failed to render sprite"], nil, nil)
             }
+
+        case ("GET", "/pet/frames"):
+            let targetH = Double(body["height"] as? Int ?? 160)
+            var frames: [[String: Any]] = []
+            DispatchQueue.main.sync {
+                if let app = self.appDelegate {
+                    let images = app.spriteAnimator.renderAllFramesHighRes(targetHeight: CGFloat(targetH))
+                    for (i, image) in images.enumerated() {
+                        if let tiffData = image.tiffRepresentation,
+                           let bitmap = NSBitmapImageRep(data: tiffData),
+                           let pngData = bitmap.representation(using: .png, properties: [:]) {
+                            frames.append(["index": i, "base64": pngData.base64EncodedString()])
+                        }
+                    }
+                }
+            }
+            return (200, ["frames": frames, "fps": 2, "count": frames.count], nil, nil)
 
         case ("POST", "/pet/feed"):
             DispatchQueue.main.sync { pet.feed(personality: character.personality) }
@@ -205,34 +239,65 @@ class PetServer {
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "energy": Int(pet.energy)], nil, nil)
 
+        case ("POST", "/pet/discipline"):
+            var message = ""
+            DispatchQueue.main.sync { message = pet.discipline() }
+            LLMService.shared.invalidateCache()
+            return (200, ["ok": true, "message": message, "isDisobedient": pet.isDisobedient, "obedience": Int(pet.obedience)], nil, nil)
+
         case ("POST", "/pet/chat"):
             guard let message = body["message"] as? String else {
                 return (400, ["error": "Missing message"], nil, nil)
             }
             let chatMessages = (body["history"] as? [[String: String]] ?? []) + [["role": "user", "content": message]]
-            let group = DispatchGroup()
+            let semaphore = DispatchSemaphore(value: 0)
             var chatResult: Result<String, Error>?
-            group.enter()
             LLMService.shared.chat(character: character, messages: chatMessages) { result in
                 chatResult = result
-                group.leave()
+                semaphore.signal()
             }
-            group.wait()
+            _ = semaphore.wait(timeout: .now() + 35)
             switch chatResult {
             case .success(let response):
                 return (200, ["response": response], nil, nil)
             case .failure(let error):
                 return (500, ["error": error.localizedDescription], nil, nil)
             case .none:
-                return (500, ["error": "No response"], nil, nil)
+                return (500, ["error": "Timeout"], nil, nil)
             }
+
+        case ("POST", "/pet/sync"):
+            let remoteHunger = body["hunger"] as? Double
+            let remoteHappiness = body["happiness"] as? Double
+            let remoteEnergy = body["energy"] as? Double
+            let remoteHygiene = body["hygiene"] as? Double
+            let remoteTimestamp = body["timestamp"] as? TimeInterval ?? 0
+            let localTimestamp = pet.lastModified
+
+            if remoteTimestamp > localTimestamp {
+                if let h = remoteHunger { pet.hunger = min(100, max(0, h)) }
+                if let hp = remoteHappiness { pet.happiness = min(100, max(0, hp)) }
+                if let e = remoteEnergy { pet.energy = min(100, max(0, e)) }
+                if let hy = remoteHygiene { pet.hygiene = min(100, max(0, hy)) }
+            }
+
+            LLMService.shared.invalidateCache()
+            let state: [String: Any] = [
+                "hunger": Int(pet.hunger),
+                "happiness": Int(pet.happiness),
+                "energy": Int(pet.energy),
+                "hygiene": Int(pet.hygiene),
+                "timestamp": Date().timeIntervalSince1970,
+                "character": character.identifier
+            ]
+            return (200, state, nil, nil)
 
         case ("GET", "/pet/llm-status"):
             let status = LLMService.shared.getCachedStatus(for: character) ?? ""
             return (200, ["status": status], nil, nil)
 
         case ("GET", "/pet/ping"):
-            return (200, ["pong": true, "version": "1.0.0"], nil, nil)
+            return (200, ["pong": true, "version": "1.1.0"], nil, nil)
 
         default:
             return (404, ["error": "Not found"], nil, nil)
@@ -244,7 +309,15 @@ class PetServer {
               let jsonString = String(data: jsonData, encoding: .utf8) else {
             return
         }
-        let header = "HTTP/1.1 \(status) OK\r\nContent-Type: application/json\r\nContent-Length: \(jsonString.utf8.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\n\r\n"
+        let statusText: String
+        switch status {
+        case 200: statusText = "OK"
+        case 400: statusText = "Bad Request"
+        case 404: statusText = "Not Found"
+        case 500: statusText = "Internal Server Error"
+        default: statusText = "OK"
+        }
+        let header = "HTTP/1.1 \(status) \(statusText)\r\nContent-Type: application/json\r\nContent-Length: \(jsonString.utf8.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type\r\n\r\n"
         if let headerData = header.data(using: .utf8) {
             var fullData = headerData
             fullData.append(jsonData)
@@ -255,7 +328,7 @@ class PetServer {
     }
 
     private func sendRawData(fd: Int32, status: Int, contentType: String, data: Data) {
-        let header = "HTTP/1.1 \(status) OK\r\nContent-Type: \(contentType)\r\nContent-Length: \(data.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\n\r\n"
+        let header = "HTTP/1.1 \(status) OK\r\nContent-Type: \(contentType)\r\nContent-Length: \(data.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type\r\n\r\n"
         if let headerData = header.data(using: .utf8) {
             var fullData = headerData
             fullData.append(data)

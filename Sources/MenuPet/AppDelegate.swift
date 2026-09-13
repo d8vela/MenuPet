@@ -332,6 +332,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let pet = PetState.shared
                 DispatchQueue.global(qos: .userInitiated).async {
                     LLMService.shared.generateStatus(for: char, petState: pet) { status in
+                        self.spriteAnimator.llmStatus = status
                         if let menu = self.statusItem.menu {
                             for item in menu.items where item.tag == 310 {
                                 item.title = "  💬 \(status)"
@@ -1056,6 +1057,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(NSMenuItem.separator())
 
+        let companionSub = NSMenu()
+        let serverStatusItem = NSMenuItem(title: "Server: Running on port 18920", action: nil, keyEquivalent: "")
+        serverStatusItem.isEnabled = false
+        companionSub.addItem(serverStatusItem)
+
+        var localIP = "Unknown"
+        if let ip = getLocalIPAddress() { localIP = ip }
+        let ipItem = NSMenuItem(title: "IP: \(localIP):18920", action: nil, keyEquivalent: "")
+        ipItem.isEnabled = false
+        companionSub.addItem(ipItem)
+
+        companionSub.addItem(NSMenuItem.separator())
+
+        let copyIPItem = NSMenuItem(title: "Copy IP Address", action: #selector(copyIPAddress), keyEquivalent: "")
+        copyIPItem.target = self
+        companionSub.addItem(copyIPItem)
+
+        let copyURLItem = NSMenuItem(title: "Copy Connection URL", action: #selector(copyConnectionURL), keyEquivalent: "")
+        copyURLItem.target = self
+        companionSub.addItem(copyURLItem)
+
+        let openCompanionItem = NSMenuItem(title: "Open in Browser", action: #selector(openInBrowser), keyEquivalent: "")
+        openCompanionItem.target = self
+        companionSub.addItem(openCompanionItem)
+
+        let companionMenuItem = NSMenuItem(title: "📱 Companion App", action: nil, keyEquivalent: "")
+        companionMenuItem.submenu = companionSub
+        menu.addItem(companionMenuItem)
+
         let checkUpdateItem = NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "")
         checkUpdateItem.target = self
         menu.addItem(checkUpdateItem)
@@ -1503,6 +1533,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("Failed to toggle launch at login: \(error)")
         }
         buildMenu()
+    }
+
+    private func getLocalIPAddress() -> String? {
+        var address: String?
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0, let firstAddr = ifaddr else { return nil }
+        defer { freeifaddrs(ifaddr) }
+        for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+            let interface = ptr.pointee
+            let addrFamily = interface.ifa_addr.pointee.sa_family
+            if addrFamily == UInt8(AF_INET) {
+                let name = String(cString: interface.ifa_name)
+                if name == "en0" || name == "en1" {
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
+                                &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST)
+                    address = String(cString: hostname)
+                }
+            }
+        }
+        return address
+    }
+
+    @objc func copyIPAddress() {
+        if let ip = getLocalIPAddress() {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.setString(ip, forType: .string)
+        }
+    }
+
+    @objc func copyConnectionURL() {
+        if let ip = getLocalIPAddress() {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.setString("http://\(ip):18920", forType: .string)
+        }
+    }
+
+    @objc func openInBrowser() {
+        if let ip = getLocalIPAddress(), let url = URL(string: "http://\(ip):18920/pet/ping") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     @objc func quitApp() {

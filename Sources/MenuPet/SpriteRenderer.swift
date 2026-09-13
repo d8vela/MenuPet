@@ -100,6 +100,79 @@ class SpriteRenderer {
         return img
     }
 
+    func renderFrameHighRes(character: SelectableCharacter, frame: Int, targetHeight: CGFloat = 160, sparkleFrame: Int? = nil) -> NSImage {
+        let overlayFrame = sparkleFrame ?? frame
+        let pixels = getPixels(character: character, frame: frame, sparkleFrame: overlayFrame)
+
+        let isBoo: Bool
+        if case .marioItem(.boo) = character { isBoo = true } else { isBoo = false }
+
+        var minY = frameHeight, maxY = 0, minX = frameWidth, maxX = 0
+        if isBoo {
+            minX = 2; maxX = 23
+            minY = 2; maxY = 19
+        } else {
+            for y in 0..<frameHeight {
+                for x in 0..<frameWidth {
+                    if pixels[y][x] != NSColor.clear {
+                        minY = min(minY, y)
+                        maxY = max(maxY, y)
+                        minX = min(minX, x)
+                        maxX = max(maxX, x)
+                    }
+                }
+            }
+        }
+
+        let contentRows = CGFloat(maxY - minY + 1)
+        let contentCols = CGFloat(maxX - minX + 1)
+        let ps: CGFloat = 2
+        let scale = targetHeight / (contentRows * ps)
+        let targetW = contentCols * ps * scale
+
+        let img = NSImage(size: NSSize(width: targetW, height: targetHeight))
+        img.lockFocus()
+
+        guard let context = NSGraphicsContext.current else {
+            img.unlockFocus()
+            return img
+        }
+        let ctx = context.cgContext
+        ctx.saveGState()
+
+        let offsetX = -(CGFloat(minX) * ps * scale)
+        let offsetY = -(CGFloat(frameHeight - 1 - maxY)) * ps
+        ctx.concatenate(CGAffineTransform(scaleX: scale, y: scale))
+        ctx.concatenate(CGAffineTransform(translationX: offsetX / scale, y: offsetY))
+
+        let pet = PetState.shared
+        let brightness = pet.brightnessModifier
+        let saturation = pet.saturationModifier
+
+        for y in 0..<frameHeight {
+            for x in 0..<frameWidth {
+                var color = pixels[y][x]
+                if color != NSColor.clear && (brightness != 1.0 || saturation != 1.0) {
+                    if let rgb = color.usingColorSpace(.genericRGB) {
+                        var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+                        rgb.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+                        s = min(1.0, s * CGFloat(saturation))
+                        b = min(1.0, b * CGFloat(brightness))
+                        color = NSColor(hue: h, saturation: s, brightness: b, alpha: a)
+                    }
+                }
+                color.setFill()
+                NSRect(x: CGFloat(x) * ps, y: CGFloat(frameHeight - 1 - y) * ps,
+                       width: ps, height: ps).fill()
+            }
+        }
+
+        ctx.restoreGState()
+        img.unlockFocus()
+        img.isTemplate = false
+        return img
+    }
+
     private func drawDisobedientIcon(on image: NSImage) {
         image.lockFocus()
         let red = NSColor(red: 0.9, green: 0.15, blue: 0.15, alpha: 0.9)

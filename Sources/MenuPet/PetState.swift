@@ -16,6 +16,7 @@ class PetState {
     var lastAction: String?
     var obedience: Double = 80
     var disobedienceMessage: String = ""
+    var lastModified: TimeInterval = Date().timeIntervalSince1970
 
     var mood: String {
         let avg = (hunger + happiness + energy + hygiene) / 4.0

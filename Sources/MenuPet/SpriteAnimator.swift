@@ -34,6 +34,7 @@ class SpriteAnimator {
         }
         return .pokemon(.jigglypuff)
     }()
+    var llmStatus: String?
     var speedLabel: String = "Idle"
 
     var currentFrame: NSImage {
@@ -398,6 +399,26 @@ class SpriteAnimator {
 
     var onFrameAdvanced: (() -> Void)?
     var onTransformStateChanged: (() -> Void)?
+
+    func renderAllFrames() -> [NSImage] {
+        if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
+            return (0..<5).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: currentFrameIndex) }
+        }
+        if isTransformerCharacter(currentPokemon) {
+            return (0..<2).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: currentFrameIndex) }
+        }
+        return (0..<4).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: $0) }
+    }
+
+    func renderAllFramesHighRes(targetHeight: CGFloat = 160) -> [NSImage] {
+        if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
+            return (0..<5).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: currentFrameIndex) }
+        }
+        if isTransformerCharacter(currentPokemon) {
+            return (0..<2).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: currentFrameIndex) }
+        }
+        return (0..<4).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: $0) }
+    }
 
     private func advanceFrame() {
         currentFrameIndex = (currentFrameIndex + 1) % 4
