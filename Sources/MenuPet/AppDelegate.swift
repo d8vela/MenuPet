@@ -1453,7 +1453,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         companionSub.addItem(NSMenuItem.separator())
 
-        let copyIPItem = NSMenuItem(title: "Copy IP Address", action: #selector(copyIPAddress), keyEquivalent: "")
+        let copyIPItem = NSMenuItem(title: "Copy IP:Port", action: #selector(copyIPAddress), keyEquivalent: "")
         copyIPItem.target = self
         companionSub.addItem(copyIPItem)
 
@@ -2228,7 +2228,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let ip = getLocalIPAddress() {
             let pasteboard = NSPasteboard.general
             pasteboard.clearContents()
-            pasteboard.setString(ip, forType: .string)
+            pasteboard.setString("\(ip):18920", forType: .string)
         }
     }
 
