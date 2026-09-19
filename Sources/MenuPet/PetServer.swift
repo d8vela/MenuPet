@@ -7,9 +7,29 @@ class PetServer {
     private var serverFD: Int32 = -1
     private var running = false
     private var serverQueue = DispatchQueue(label: "com.menupet.server", qos: .userInitiated)
+    private var netService: NetService?
+    private var requestCounts: [Int32: [Date]] = [:]
+    private let rateLimitWindow: TimeInterval = 10
+    private let rateLimitMax = 30
+    private var authToken: String {
+        UserDefaults.standard.string(forKey: "petServerAuthToken") ?? ""
+    }
+
+    var isEnabled: Bool {
+        get { UserDefaults.standard.object(forKey: "petServerEnabled") as? Bool ?? true }
+        set { UserDefaults.standard.set(newValue, forKey: "petServerEnabled") }
+    }
 
     private var appDelegate: AppDelegate? {
         NSApp.delegate as? AppDelegate
+    }
+
+    private func onMainThreadSync<T>(_ block: () -> T) -> T {
+        if Thread.isMainThread {
+            return block()
+        } else {
+            return DispatchQueue.main.sync { block() }
+        }
     }
 
     func start() {
@@ -66,6 +86,9 @@ class PetServer {
             close(serverFD)
             serverFD = -1
         }
+        netService?.stop()
+        netService = nil
+        requestCounts.removeAll()
     }
 
     private func acceptLoop() {
@@ -133,9 +156,29 @@ class PetServer {
         }
 
         if method == "OPTIONS" {
-            sendRawResponse(fd: fd, status: 200, json: ["ok": true])
+            let header = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: http://localhost:18920\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Authorization\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+            let data = header.data(using: .utf8)!
+            _ = data.withUnsafeBytes { ptr in write(fd, ptr.baseAddress!, ptr.count) }
             close(fd)
             return
+        }
+
+        let now = Date()
+        requestCounts[fd, default: []].append(now)
+        requestCounts[fd] = requestCounts[fd]?.filter { now.timeIntervalSince($0) < rateLimitWindow } ?? []
+        if (requestCounts[fd]?.count ?? 0) > rateLimitMax {
+            sendRawResponse(fd: fd, status: 429, json: ["error": "Rate limit exceeded"])
+            close(fd)
+            return
+        }
+
+        if !authToken.isEmpty {
+            let providedToken = queryParams["token"] ?? ""
+            if providedToken != authToken {
+                sendRawResponse(fd: fd, status: 401, json: ["error": "Unauthorized"])
+                close(fd)
+                return
+            }
         }
 
         var requestBody: [String: Any] = [:]
@@ -293,7 +336,8 @@ class PetServer {
         case ("POST", "/pet/discipline-all"):
             var message = ""
             DispatchQueue.main.sync {
-                message = MultiPetManager.shared.disciplineAll()
+                let (_, result) = MultiPetManager.shared.disciplineAll()
+                message = result
             }
             LLMService.shared.invalidateCache()
             let count = MultiPetManager.shared.petCount

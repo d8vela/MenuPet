@@ -133,6 +133,10 @@ class LLMService {
         lastStatusTime = .distantPast
     }
 
+    func invalidateCache(for character: SelectableCharacter) {
+        cachedStatuses.removeValue(forKey: character.identifier)
+    }
+
     private func buildPrompt(for character: SelectableCharacter, petState: PetState) -> String {
         let name = character.displayName
         let category = character.category

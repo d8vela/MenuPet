@@ -5,7 +5,7 @@ class SpriteRenderer {
     let frameWidth = 48
     let frameHeight = 48
 
-    func renderFrame(character: SelectableCharacter, frame: Int, sparkleFrame: Int? = nil) -> NSImage {
+    func renderFrame(character: SelectableCharacter, frame: Int, sparkleFrame: Int? = nil, petState: PetState? = nil) -> NSImage {
         let overlayFrame = sparkleFrame ?? frame
         let pixels = getPixels(character: character, frame: frame, sparkleFrame: overlayFrame)
 
@@ -52,7 +52,7 @@ class SpriteRenderer {
         ctx.concatenate(CGAffineTransform(scaleX: scale, y: scale))
         ctx.concatenate(CGAffineTransform(translationX: offsetX / scale, y: offsetY))
 
-        let pet = PetState.shared
+        let pet = petState ?? PetState.shared
         let brightness = pet.brightnessModifier
         let saturation = pet.saturationModifier
 
@@ -91,7 +91,7 @@ class SpriteRenderer {
             drawSparkles(on: img, frame: overlayFrame)
         }
 
-        drawNeedOverlay(on: img, frame: overlayFrame)
+        drawNeedOverlay(on: img, frame: overlayFrame, petState: pet)
 
         if pet.isDisobedient && overlayFrame % 6 < 3 {
             drawDisobedientIcon(on: img)
@@ -100,7 +100,7 @@ class SpriteRenderer {
         return img
     }
 
-    func renderFrameHighRes(character: SelectableCharacter, frame: Int, targetHeight: CGFloat = 160, sparkleFrame: Int? = nil) -> NSImage {
+    func renderFrameHighRes(character: SelectableCharacter, frame: Int, targetHeight: CGFloat = 160, sparkleFrame: Int? = nil, petState: PetState? = nil) -> NSImage {
         let overlayFrame = sparkleFrame ?? frame
         let pixels = getPixels(character: character, frame: frame, sparkleFrame: overlayFrame)
 
@@ -145,7 +145,7 @@ class SpriteRenderer {
         ctx.concatenate(CGAffineTransform(scaleX: scale, y: scale))
         ctx.concatenate(CGAffineTransform(translationX: offsetX / scale, y: offsetY))
 
-        let pet = PetState.shared
+        let pet = petState ?? PetState.shared
         let brightness = pet.brightnessModifier
         let saturation = pet.saturationModifier
 
@@ -209,8 +209,8 @@ class SpriteRenderer {
         image.unlockFocus()
     }
 
-    private func drawNeedOverlay(on image: NSImage, frame: Int) {
-        let pet = PetState.shared
+    private func drawNeedOverlay(on image: NSImage, frame: Int, petState: PetState? = nil) {
+        let pet = petState ?? PetState.shared
         let blink = frame % 4 < 2
         guard blink else { return }
 

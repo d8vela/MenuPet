@@ -78,28 +78,36 @@ class MultiPetManager {
         onSelectionChanged?()
     }
 
-    func feedAll() {
-        for pet in selectedPets {
+    func feedAll() -> [SelectableCharacter] {
+        let affected = selectedPets.filter { state(for: $0).hunger < 40 }
+        for pet in affected {
             state(for: pet).feed(personality: pet.personality)
         }
+        return affected
     }
-
-    func playAll() {
-        for pet in selectedPets {
+ 
+    func playAll() -> [SelectableCharacter] {
+        let affected = selectedPets.filter { state(for: $0).happiness < 40 }
+        for pet in affected {
             state(for: pet).play(personality: pet.personality)
         }
+        return affected
     }
-
-    func cleanAll() {
-        for pet in selectedPets {
+ 
+    func cleanAll() -> [SelectableCharacter] {
+        let affected = selectedPets.filter { state(for: $0).hygiene < 40 }
+        for pet in affected {
             state(for: pet).clean()
         }
+        return affected
     }
-
-    func sleepAll() {
-        for pet in selectedPets {
+ 
+    func sleepAll() -> [SelectableCharacter] {
+        let affected = selectedPets.filter { state(for: $0).energy < 40 }
+        for pet in affected {
             state(for: pet).sleep()
         }
+        return affected
     }
 
     func decayAll() {
@@ -110,18 +118,23 @@ class MultiPetManager {
             s.checkDisobedience(personality: pet.personality)
             if wasNotDisobedient && s.isDisobedient && LLMService.shared.statusEnabled {
                 s.lastAction = "disobedience"
-                LLMService.shared.invalidateCache()
+                LLMService.shared.invalidateCache(for: pet)
             }
         }
     }
 
-    func disciplineAll() -> String {
+    func disciplineAll() -> ([SelectableCharacter], String) {
         var results: [String] = []
+        var affected: [SelectableCharacter] = []
         for pet in selectedPets {
-            let result = state(for: pet).discipline()
-            results.append("\(pet.displayName): \(result)")
+            let s = state(for: pet)
+            if s.isDisobedient {
+                let result = s.discipline()
+                results.append("\(pet.displayName): \(result)")
+                affected.append(pet)
+            }
         }
-        return results.joined(separator: "\n")
+        return (affected, results.joined(separator: "\n"))
     }
 
     func worstNeedIcons() -> [String] {

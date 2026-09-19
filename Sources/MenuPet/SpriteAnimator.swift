@@ -42,13 +42,14 @@ class SpriteAnimator {
         if manager.isMultiPetMode {
             return renderMultiPetFrame()
         }
+        let ps = PetState.shared
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
-            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: currentFrameIndex)
+            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: currentFrameIndex, petState: ps)
         }
         if isTransformerCharacter(currentPokemon) {
-            return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex)
+            return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex, petState: ps)
         }
-        return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex)
+        return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex, petState: ps)
     }
 
     private func renderMultiPetFrame() -> NSImage {
@@ -57,12 +58,13 @@ class SpriteAnimator {
 
         var images: [NSImage] = []
         for pet in pets {
+            let ps = MultiPetManager.shared.state(for: pet)
             if isTransformerCharacter(pet) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
-                images.append(spriteRenderer.renderFrame(character: pet, frame: transformFrameIndex, sparkleFrame: currentFrameIndex))
+                images.append(spriteRenderer.renderFrame(character: pet, frame: transformFrameIndex, sparkleFrame: currentFrameIndex, petState: ps))
             } else if isTransformerCharacter(pet) {
-                images.append(spriteRenderer.renderFrame(character: pet, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex))
+                images.append(spriteRenderer.renderFrame(character: pet, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex, petState: ps))
             } else {
-                images.append(spriteRenderer.renderFrame(character: pet, frame: currentFrameIndex))
+                images.append(spriteRenderer.renderFrame(character: pet, frame: currentFrameIndex, petState: ps))
             }
         }
 
@@ -441,12 +443,12 @@ class SpriteAnimator {
             return (0..<4).map { _ in renderMultiPetFrame() }
         }
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
-            return (0..<5).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: currentFrameIndex) }
+            return (0..<5).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: currentFrameIndex, petState: PetState.shared) }
         }
         if isTransformerCharacter(currentPokemon) {
-            return (0..<2).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: currentFrameIndex) }
+            return (0..<2).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: currentFrameIndex, petState: PetState.shared) }
         }
-        return (0..<4).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: $0) }
+        return (0..<4).map { spriteRenderer.renderFrame(character: currentPokemon, frame: $0, sparkleFrame: $0, petState: PetState.shared) }
     }
 
     func renderAllFramesHighRes(targetHeight: CGFloat = 160) -> [NSImage] {
@@ -455,12 +457,12 @@ class SpriteAnimator {
             return (0..<4).map { _ in renderMultiPetFrame() }
         }
         if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
-            return (0..<5).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: currentFrameIndex) }
+            return (0..<5).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: currentFrameIndex, petState: PetState.shared) }
         }
         if isTransformerCharacter(currentPokemon) {
-            return (0..<2).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: currentFrameIndex) }
+            return (0..<2).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: currentFrameIndex, petState: PetState.shared) }
         }
-        return (0..<4).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: $0) }
+        return (0..<4).map { spriteRenderer.renderFrameHighRes(character: currentPokemon, frame: $0, targetHeight: targetHeight, sparkleFrame: $0, petState: PetState.shared) }
     }
 
     private func advanceFrame() {

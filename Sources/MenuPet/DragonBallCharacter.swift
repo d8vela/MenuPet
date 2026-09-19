@@ -33,18 +33,18 @@ enum DragonBallCharacter: String, CaseIterable {
 
     var emoji: String {
         switch self {
-        case .goku: return "Orange"
-        case .vegeta: return "Blue"
-        case .gohan: return "Purple"
-        case .piccolo: return "Green"
-        case .frieza: return "White"
-        case .cell: return "Bug"
-        case .majinBuu: return "Pink"
-        case .krillin: return "Bald"
-        case .trunks: return "Sword"
-        case .goten: return "Kid"
-        case .beerus: return "Cat"
-        case .whis: return "Angel"
+        case .goku: return "🐉"
+        case .vegeta: return "💪"
+        case .gohan: return "📚"
+        case .piccolo: return "🟢"
+        case .frieza: return "👑"
+        case .cell: return "🦗"
+        case .majinBuu: return "🧁"
+        case .krillin: return "☀️"
+        case .trunks: return "⚔️"
+        case .goten: return "🧒"
+        case .beerus: return "🐱"
+        case .whis: return "😇"
         }
     }
 }
