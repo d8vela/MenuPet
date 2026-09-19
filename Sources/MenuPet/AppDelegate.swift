@@ -1827,23 +1827,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func displaySwarmMessages(_ messages: [SwarmMessage], delay: TimeInterval = 1.8) {
         guard !messages.isEmpty else { return }
-
-        var markers: [String: String] = [:]
+        var currentDelay: TimeInterval = 0.5
         for msg in messages {
-            let marker = showTypingIndicator(pet: msg.speaker)
-            markers[msg.speaker.identifier] = marker
-        }
-
-        for (index, msg) in messages.enumerated() {
             let pet = msg.speaker
             let typingDuration = Double.random(in: 1.2...2.5)
-            DispatchQueue.main.asyncAfter(deadline: .now() + typingDuration) { [weak self] in
+            let pauseBetween = Double.random(in: 0.8...1.5)
+            DispatchQueue.main.asyncAfter(deadline: .now() + currentDelay) { [weak self] in
                 guard let self = self else { return }
-                if let marker = markers.removeValue(forKey: pet.identifier) {
+                let marker = self.showTypingIndicator(pet: pet)
+                DispatchQueue.main.asyncAfter(deadline: .now() + typingDuration) { [weak self] in
+                    guard let self = self else { return }
                     self.removeTypingIndicator(marker: marker)
+                    self.appendToSwarmChat(pet: pet, text: msg.text)
                 }
-                self.appendToSwarmChat(pet: pet, text: msg.text)
             }
+            currentDelay += typingDuration + pauseBetween
         }
     }
 
