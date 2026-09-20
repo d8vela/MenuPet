@@ -550,18 +550,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             menu.addItem(sleepItem)
         }
 
-        let chatItem: NSMenuItem
-        if manager.isMultiPetMode {
-            chatItem = NSMenuItem(title: "💬 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
-            chatItem.target = self
-            chatItem.isEnabled = LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty
-        } else {
-            chatItem = NSMenuItem(title: "💬 Chat with Pet", action: #selector(openChat), keyEquivalent: "")
-            chatItem.target = self
-            chatItem.isEnabled = LLMService.shared.statusEnabled
-        }
-        menu.addItem(chatItem)
-
         if !manager.isMultiPetMode {
             if PetState.shared.isDisobedient {
                 let disobeyItem = NSMenuItem(title: "😡 \(PetState.shared.disobedienceMessage)", action: nil, keyEquivalent: "")
@@ -918,6 +906,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let clearItem = NSMenuItem(title: "Clear All Pets", action: #selector(clearAllPets), keyEquivalent: "")
             clearItem.target = self
             petSelectionSub.addItem(clearItem)
+
+            if manager.isMultiPetMode && LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
+                petSelectionSub.addItem(NSMenuItem.separator())
+                let swarmItem = NSMenuItem(title: "💬 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
+                swarmItem.target = self
+                petSelectionSub.addItem(swarmItem)
+            }
         }
 
         let petSelectionMI = NSMenuItem(title: "🐾 Pet Selection", action: nil, keyEquivalent: "")
