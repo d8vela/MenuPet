@@ -813,17 +813,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let orderItem = NSMenuItem(title: "↕️ Reorder...", action: #selector(changePetOrder(_:)), keyEquivalent: "")
                 orderItem.target = self
                 orderItem.representedObject = pet
+                orderItem.state = .off
                 petMenu.addItem(orderItem)
 
                 let swapSub = buildFranchiseMenu(action: #selector(swapPetCharacter(_:)))
                 wrapSwapMenu(swapSub, for: pet)
                 let swapItem = NSMenuItem(title: "🔄 Swap Character ▸", action: nil, keyEquivalent: "")
                 swapItem.submenu = swapSub
+                swapItem.state = .off
                 petMenu.addItem(swapItem)
 
                 let removeItem = NSMenuItem(title: "❌ Remove", action: #selector(removeSelectedPet(_:)), keyEquivalent: "")
                 removeItem.target = self
                 removeItem.representedObject = pet
+                removeItem.state = .off
                 petMenu.addItem(removeItem)
 
                 let rotSettings = manager.rotationSettings(for: pet)
