@@ -806,7 +806,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             for pet in selectedPets {
                 let item = NSMenuItem(title: "\(pet.emoji) \(pet.displayName)\(manager.primaryPet == pet ? " ★" : "")", action: nil, keyEquivalent: "")
                 item.representedObject = pet
-                item.state = .on
 
                 let petMenu = NSMenu()
 
