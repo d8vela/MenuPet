@@ -823,12 +823,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 swapItem.state = .off
                 petMenu.addItem(swapItem)
 
-                let removeItem = NSMenuItem(title: "❌ Remove", action: #selector(removeSelectedPet(_:)), keyEquivalent: "")
-                removeItem.target = self
-                removeItem.representedObject = pet
-                removeItem.state = .off
-                petMenu.addItem(removeItem)
-
                 let rotSettings = manager.rotationSettings(for: pet)
                 let rotSub = NSMenu()
 
@@ -891,6 +885,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let histItem = NSMenuItem(title: "📜 History", action: nil, keyEquivalent: "")
                 histItem.submenu = petHistSub
                 petMenu.addItem(histItem)
+
+                let removeItem = NSMenuItem(title: "❌ Remove", action: #selector(removeSelectedPet(_:)), keyEquivalent: "")
+                removeItem.target = self
+                removeItem.representedObject = pet
+                removeItem.state = .off
+                petMenu.addItem(removeItem)
 
                 item.submenu = petMenu
                 petSelectionSub.addItem(item)
