@@ -131,6 +131,7 @@ class MultiPetManager {
             if orderA != orderB { return orderA < orderB }
             return false
         }
+        recordSelection()
         save()
         onSelectionChanged?()
     }

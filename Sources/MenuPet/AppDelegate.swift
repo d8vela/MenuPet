@@ -1193,17 +1193,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let currentOrder = manager.petOrders[pet.identifier]
         let alert = NSAlert()
         alert.messageText = "Reorder \(pet.emoji) \(pet.displayName)"
-        alert.informativeText = "Enter order number (lower = appears first):"
+        alert.informativeText = "Enter order number (1 = first, lower appears first):"
         alert.addButton(withTitle: "OK")
         alert.addButton(withTitle: "Cancel")
         let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 100, height: 24))
-        textField.stringValue = currentOrder != nil ? "\(currentOrder!)" : ""
+        textField.stringValue = currentOrder != nil ? "\(currentOrder! + 1)" : ""
         textField.placeholderString = "auto"
         alert.accessoryView = textField
         alert.window.initialFirstResponder = textField
         if alert.runModal() == .alertFirstButtonReturn {
-            if let text = Int(textField.stringValue) {
-                manager.setOrder(text, for: pet)
+            if let text = Int(textField.stringValue), text >= 1 {
+                manager.setOrder(text - 1, for: pet)
             }
         }
         buildMenu()
