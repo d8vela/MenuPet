@@ -498,11 +498,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             singleCustomItem.target = self
             menu.addItem(singleCustomItem)
 
-            if LLMService.shared.statusEnabled {
-                let singleChatItem = NSMenuItem(title: "  💬 Chat with Pet", action: #selector(openChat), keyEquivalent: "")
-                singleChatItem.target = self
-                menu.addItem(singleChatItem)
-            }
+            let singleChatItem = NSMenuItem(title: "  💬 Chat with Pet", action: #selector(openChat), keyEquivalent: "")
+            singleChatItem.target = self
+            singleChatItem.isEnabled = LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty
+            menu.addItem(singleChatItem)
         }
 
         menu.addItem(NSMenuItem.separator())
@@ -2332,12 +2331,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         customItem.representedObject = pet
         sub.addItem(customItem)
 
-        if LLMService.shared.statusEnabled {
-            let chatItem = NSMenuItem(title: "  💬 Chat with \(pet.displayName)", action: #selector(chatWithSinglePet(_:)), keyEquivalent: "")
-            chatItem.target = self
-            chatItem.representedObject = pet
-            sub.addItem(chatItem)
-        }
+        let chatItem = NSMenuItem(title: "  💬 Chat with \(pet.displayName)", action: #selector(chatWithSinglePet(_:)), keyEquivalent: "")
+        chatItem.target = self
+        chatItem.representedObject = pet
+        chatItem.isEnabled = LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty
+        sub.addItem(chatItem)
 
         return sub
     }
