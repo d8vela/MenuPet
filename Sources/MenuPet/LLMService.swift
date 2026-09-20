@@ -92,8 +92,10 @@ class LLMService {
         set { UserDefaults.standard.set(newValue, forKey: "llmStatusEnabled") }
     }
 
-    private var lastStatusTime: Date = .distantPast
     private var cachedStatuses: [String: String] = [:]
+    private var statusTimestamps: [String: Date] = [:]
+    private var inFlightRequests: Set<String> = []
+    private let cacheLock = NSLock()
 
     func generateStatus(for character: SelectableCharacter, petState: PetState, completion: @escaping (String) -> Void) {
         guard !apiKey.isEmpty else {
@@ -102,19 +104,38 @@ class LLMService {
         }
 
         let charId = character.identifier
-        if let cached = cachedStatuses[charId], Date().timeIntervalSince(lastStatusTime) < 900 {
+
+        cacheLock.lock()
+        if let cached = cachedStatuses[charId], let ts = statusTimestamps[charId], Date().timeIntervalSince(ts) < 900 {
+            cacheLock.unlock()
             completion(cached)
             return
         }
+        if inFlightRequests.contains(charId) {
+            cacheLock.unlock()
+            return
+        }
+        inFlightRequests.insert(charId)
+        cacheLock.unlock()
 
         let prompt = buildPrompt(for: character, petState: petState)
         callAPI(prompt: prompt) { [weak self] result in
+            guard let self = self else { return }
+            self.cacheLock.lock()
+            self.inFlightRequests.remove(charId)
+            self.cacheLock.unlock()
             switch result {
             case .success(let status):
-                self?.cachedStatuses[charId] = status
-                self?.lastStatusTime = Date()
+                self.cacheLock.lock()
+                self.cachedStatuses[charId] = status
+                self.statusTimestamps[charId] = Date()
+                self.cacheLock.unlock()
                 completion(status)
             case .failure(let error):
+                self.cacheLock.lock()
+                self.cachedStatuses[charId] = "⚠️ \(error.localizedDescription)"
+                self.statusTimestamps[charId] = Date()
+                self.cacheLock.unlock()
                 completion("⚠️ \(error.localizedDescription)")
             }
         }
@@ -122,19 +143,26 @@ class LLMService {
 
     func getCachedStatus(for character: SelectableCharacter) -> String? {
         let charId = character.identifier
-        if let cached = cachedStatuses[charId], Date().timeIntervalSince(lastStatusTime) < 900 {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
+        if let cached = cachedStatuses[charId], let ts = statusTimestamps[charId], Date().timeIntervalSince(ts) < 900 {
             return cached
         }
         return nil
     }
 
     func invalidateCache() {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
         cachedStatuses.removeAll()
-        lastStatusTime = .distantPast
+        statusTimestamps.removeAll()
     }
 
     func invalidateCache(for character: SelectableCharacter) {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
         cachedStatuses.removeValue(forKey: character.identifier)
+        statusTimestamps.removeValue(forKey: character.identifier)
     }
 
     private func buildPrompt(for character: SelectableCharacter, petState: PetState) -> String {
