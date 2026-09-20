@@ -50,6 +50,12 @@ class ChatInputField: NSTextField {
     }
 }
 
+class PetSwapInfo {
+    let from: SelectableCharacter
+    let to: SelectableCharacter
+    init(_ from: SelectableCharacter, _ to: SelectableCharacter) { self.from = from; self.to = to }
+}
+
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var cpuMonitor: CPUMonitor!
@@ -567,15 +573,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // ===== Unified Pet Selection =====
         let petSelectionSub = NSMenu()
 
-        func addUnifiedChar(_ character: SelectableCharacter, to sub: NSMenu, action: Selector) {
+        func addUnifiedChar(_ character: SelectableCharacter, to sub: NSMenu, action: Selector, swapFrom: SelectableCharacter? = nil) {
             let item = NSMenuItem(title: "\(character.emoji) \(character.displayName)", action: action, keyEquivalent: "")
             item.target = self
-            item.representedObject = character
+            if let from = swapFrom {
+                item.representedObject = PetSwapInfo(from, character)
+            } else {
+                item.representedObject = character
+            }
             if manager.isSelected(character) && manager.primaryPet == character {
                 item.title = "\(character.emoji) \(character.displayName) ★"
             }
             item.state = manager.isSelected(character) ? .on : .off
             sub.addItem(item)
+        }
+
+        func wrapSwapMenu(_ menu: NSMenu, for fromPet: SelectableCharacter) {
+            for item in menu.items {
+                if let sub = item.submenu {
+                    wrapSwapMenu(sub, for: fromPet)
+                } else if let char = item.representedObject as? SelectableCharacter {
+                    item.representedObject = PetSwapInfo(fromPet, char)
+                }
+            }
         }
 
         func buildFranchiseMenu(action: Selector) -> NSMenu {
@@ -784,10 +804,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         } else {
             for pet in selectedPets {
-                let item = NSMenuItem(title: "\(pet.emoji) \(pet.displayName)\(manager.primaryPet == pet ? " ★" : "")", action: #selector(selectCharacter(_:)), keyEquivalent: "")
-                item.target = self
+                let item = NSMenuItem(title: "\(pet.emoji) \(pet.displayName)\(manager.primaryPet == pet ? " ★" : "")", action: nil, keyEquivalent: "")
                 item.representedObject = pet
                 item.state = .on
+
+                let petMenu = NSMenu()
+
+                let orderItem = NSMenuItem(title: "↕️ Reorder...", action: #selector(changePetOrder(_:)), keyEquivalent: "")
+                orderItem.target = self
+                orderItem.representedObject = pet
+                petMenu.addItem(orderItem)
+
+                petMenu.addItem(NSMenuItem.separator())
+
+                let swapSub = buildFranchiseMenu(action: #selector(swapPetCharacter(_:)))
+                wrapSwapMenu(swapSub, for: pet)
+                let swapItem = NSMenuItem(title: "🔄 Swap Character ▸", action: nil, keyEquivalent: "")
+                swapItem.submenu = swapSub
+                petMenu.addItem(swapItem)
+
+                petMenu.addItem(NSMenuItem.separator())
+
+                let removeItem = NSMenuItem(title: "❌ Remove", action: #selector(removeSelectedPet(_:)), keyEquivalent: "")
+                removeItem.target = self
+                removeItem.representedObject = pet
+                petMenu.addItem(removeItem)
+
+                item.submenu = petMenu
                 petSelectionSub.addItem(item)
             }
             petSelectionSub.addItem(NSMenuItem.separator())
@@ -1104,6 +1147,48 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func clearAllPets() {
         MultiPetManager.shared.clearAll()
         spriteAnimator.setPokemon(.pokemon(.jigglypuff))
+        buildMenu()
+    }
+
+    @objc func swapPetCharacter(_ sender: NSMenuItem) {
+        guard let info = sender.representedObject as? PetSwapInfo else { return }
+        let manager = MultiPetManager.shared
+        manager.swapCharacter(from: info.from, to: info.to)
+        spriteAnimator.setPokemon(info.to)
+        buildMenu()
+    }
+
+    @objc func changePetOrder(_ sender: NSMenuItem) {
+        guard let pet = sender.representedObject as? SelectableCharacter else { return }
+        let manager = MultiPetManager.shared
+        let currentOrder = manager.petOrders[pet.identifier]
+        let alert = NSAlert()
+        alert.messageText = "Reorder \(pet.emoji) \(pet.displayName)"
+        alert.informativeText = "Enter order number (lower = appears first):"
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 100, height: 24))
+        textField.stringValue = currentOrder != nil ? "\(currentOrder!)" : ""
+        textField.placeholderString = "auto"
+        alert.accessoryView = textField
+        alert.window.initialFirstResponder = textField
+        if alert.runModal() == .alertFirstButtonReturn {
+            if let text = Int(textField.stringValue) {
+                manager.setOrder(text, for: pet)
+            }
+        }
+        buildMenu()
+    }
+
+    @objc func removeSelectedPet(_ sender: NSMenuItem) {
+        guard let pet = sender.representedObject as? SelectableCharacter else { return }
+        let manager = MultiPetManager.shared
+        manager.removePet(pet)
+        if manager.selectedPets.isEmpty {
+            spriteAnimator.setPokemon(.pokemon(.jigglypuff))
+        } else if let primary = manager.primaryPet {
+            spriteAnimator.setPokemon(primary)
+        }
         buildMenu()
     }
 

@@ -59,6 +59,38 @@ class MultiPetManager {
     func removePet(_ character: SelectableCharacter) {
         selectedPets.removeAll { $0 == character }
         petStates.removeValue(forKey: character.identifier)
+        petOrders.removeValue(forKey: character.identifier)
+        save()
+        onSelectionChanged?()
+    }
+
+    func swapCharacter(from old: SelectableCharacter, to new: SelectableCharacter) {
+        guard !selectedPets.contains(new) else { return }
+        if let index = selectedPets.firstIndex(of: old) {
+            let oldState = petStates[old.identifier]
+            selectedPets[index] = new
+            petStates.removeValue(forKey: old.identifier)
+            if let state = oldState {
+                petStates[new.identifier] = state
+            }
+            if let order = petOrders.removeValue(forKey: old.identifier) {
+                petOrders[new.identifier] = order
+            }
+            save()
+            onSelectionChanged?()
+        }
+    }
+
+    var petOrders: [String: Int] = [:]
+
+    func setOrder(_ order: Int, for character: SelectableCharacter) {
+        petOrders[character.identifier] = order
+        selectedPets.sort { a, b in
+            let orderA = petOrders[a.identifier] ?? Int.max
+            let orderB = petOrders[b.identifier] ?? Int.max
+            if orderA != orderB { return orderA < orderB }
+            return false
+        }
         save()
         onSelectionChanged?()
     }
@@ -155,10 +187,14 @@ class MultiPetManager {
     private func save() {
         let ids = selectedPets.map { $0.identifier }
         UserDefaults.standard.set(ids, forKey: "multiPetSelectedPets")
+        UserDefaults.standard.set(petOrders, forKey: "multiPetOrders")
     }
 
     private func load() {
         guard let ids = UserDefaults.standard.stringArray(forKey: "multiPetSelectedPets") else { return }
         selectedPets = ids.compactMap { SelectableCharacter.from(identifier: $0) }
+        if let orders = UserDefaults.standard.dictionary(forKey: "multiPetOrders") as? [String: Int] {
+            petOrders = orders
+        }
     }
 }
