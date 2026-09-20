@@ -31,8 +31,8 @@ class PetState {
         }
 
         static var current: NeedyLevel {
-            get { NeedyLevel(rawValue: UserDefaults.standard.integer(forKey: "petNeedyLevel")) ?? .normal }
-            set { UserDefaults.standard.set(newValue.rawValue, forKey: "petNeedyLevel") }
+            get { NeedyLevel(rawValue: UserDefaults.standard.integer(forKey: "petCareLevel")) ?? .normal }
+            set { UserDefaults.standard.set(newValue.rawValue, forKey: "petCareLevel") }
         }
     }
 

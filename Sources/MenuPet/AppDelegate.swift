@@ -867,7 +867,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             item.state = level == currentLevel ? .on : .off
             needySub.addItem(item)
         }
-        let needyMI = NSMenuItem(title: "🐾 Needy Level", action: nil, keyEquivalent: "")
+        let needyMI = NSMenuItem(title: "🐾 Pet Care Level", action: nil, keyEquivalent: "")
         needyMI.submenu = needySub
         menu.addItem(needyMI)
 
