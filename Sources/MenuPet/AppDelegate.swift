@@ -966,6 +966,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         companionSub.addItem(NSMenuItem.separator())
 
+        let endpointTitle = NSMenuItem(title: "Endpoint Info", action: nil, keyEquivalent: "")
+        endpointTitle.isEnabled = false
+        companionSub.addItem(endpointTitle)
+
         let copyIPItem = NSMenuItem(title: "Copy IP:Port", action: #selector(copyIPAddress), keyEquivalent: "")
         copyIPItem.target = self
         companionSub.addItem(copyIPItem)
