@@ -815,22 +815,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 orderItem.representedObject = pet
                 petMenu.addItem(orderItem)
 
-                petMenu.addItem(NSMenuItem.separator())
-
                 let swapSub = buildFranchiseMenu(action: #selector(swapPetCharacter(_:)))
                 wrapSwapMenu(swapSub, for: pet)
                 let swapItem = NSMenuItem(title: "🔄 Swap Character ▸", action: nil, keyEquivalent: "")
                 swapItem.submenu = swapSub
                 petMenu.addItem(swapItem)
 
-                petMenu.addItem(NSMenuItem.separator())
-
                 let removeItem = NSMenuItem(title: "❌ Remove", action: #selector(removeSelectedPet(_:)), keyEquivalent: "")
                 removeItem.target = self
                 removeItem.representedObject = pet
                 petMenu.addItem(removeItem)
-
-                petMenu.addItem(NSMenuItem.separator())
 
                 let rotSettings = manager.rotationSettings(for: pet)
                 let rotSub = NSMenu()
@@ -854,8 +848,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 catOnly.isEnabled = rotSettings.enabled
                 rotSub.addItem(catOnly)
 
-                rotSub.addItem(NSMenuItem.separator())
-
                 let petIntervalSub = NSMenu()
                 let intervals: [(String, TimeInterval)] = [
                     ("15 seconds", 15), ("30 seconds", 30), ("1 minute", 60),
@@ -877,8 +869,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let rotMI = NSMenuItem(title: "🔄 Rotation", action: nil, keyEquivalent: "")
                 rotMI.submenu = rotSub
                 petMenu.addItem(rotMI)
-
-                petMenu.addItem(NSMenuItem.separator())
 
                 let petHistSub = NSMenu()
                 let history = manager.history(for: pet)
