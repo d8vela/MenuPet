@@ -848,6 +848,67 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             petSelectionSub.addItem(clearItem)
         }
 
+        petSelectionSub.addItem(NSMenuItem.separator())
+
+        let rotationItem = NSMenuItem(title: "🔄 Random Rotation", action: #selector(toggleRotation), keyEquivalent: "")
+        rotationItem.target = self
+        rotationItem.state = spriteAnimator.rotationEnabled ? .on : .off
+        petSelectionSub.addItem(rotationItem)
+
+        let smartRotationItem = NSMenuItem(title: "🧠 Smart Rotation (prefer favorites)", action: #selector(toggleSmartRotation), keyEquivalent: "")
+        smartRotationItem.target = self
+        smartRotationItem.state = spriteAnimator.smartRotationEnabled ? .on : .off
+        smartRotationItem.isEnabled = spriteAnimator.rotationEnabled
+        petSelectionSub.addItem(smartRotationItem)
+
+        let categoryOnlyItem = NSMenuItem(title: "📂 Rotate Within Category Only", action: #selector(toggleCategoryOnly), keyEquivalent: "")
+        categoryOnlyItem.target = self
+        categoryOnlyItem.state = spriteAnimator.categoryOnlyEnabled ? .on : .off
+        categoryOnlyItem.isEnabled = spriteAnimator.rotationEnabled
+        petSelectionSub.addItem(categoryOnlyItem)
+
+        let intervalSub = NSMenu()
+        let intervals: [(String, TimeInterval)] = [
+            ("15 seconds", 15), ("30 seconds", 30), ("1 minute", 60),
+            ("5 minutes", 300), ("10 minutes", 600), ("30 minutes", 1800), ("1 hour", 3600),
+        ]
+        for (label, interval) in intervals {
+            let item = NSMenuItem(title: label, action: #selector(setRotationInterval(_:)), keyEquivalent: "")
+            item.target = self
+            item.tag = Int(interval)
+            if spriteAnimator.rotationInterval == interval { item.state = .on }
+            item.isEnabled = spriteAnimator.rotationEnabled
+            intervalSub.addItem(item)
+        }
+        intervalSub.addItem(NSMenuItem.separator())
+        let customItem = NSMenuItem(title: "Custom...", action: #selector(setCustomRotationInterval), keyEquivalent: "")
+        customItem.target = self
+        customItem.isEnabled = spriteAnimator.rotationEnabled
+        intervalSub.addItem(customItem)
+        let intervalItem = NSMenuItem(title: "⏱️ Rotation Interval", action: nil, keyEquivalent: "")
+        intervalItem.submenu = intervalSub
+        petSelectionSub.addItem(intervalItem)
+
+        petSelectionSub.addItem(NSMenuItem.separator())
+
+        let historySubmenu = NSMenu()
+        if spriteAnimator.characterHistory.isEmpty {
+            let emptyItem = NSMenuItem(title: "No history yet", action: nil, keyEquivalent: "")
+            emptyItem.isEnabled = false
+            historySubmenu.addItem(emptyItem)
+        } else {
+            for character in spriteAnimator.characterHistory.prefix(20) {
+                let item = NSMenuItem(title: "\(character.displayName) — \(character.category)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
+                item.target = self
+                item.representedObject = character
+                if character == spriteAnimator.currentPokemon { item.state = .on }
+                historySubmenu.addItem(item)
+            }
+        }
+        let historyMenuItem = NSMenuItem(title: "📜 History", action: nil, keyEquivalent: "")
+        historyMenuItem.submenu = historySubmenu
+        petSelectionSub.addItem(historyMenuItem)
+
         let petSelectionMI = NSMenuItem(title: "🐾 Pet Selection", action: nil, keyEquivalent: "")
         petSelectionMI.submenu = petSelectionSub
         menu.addItem(petSelectionMI)
@@ -870,79 +931,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let needyMI = NSMenuItem(title: "🐾 Pet Care Level", action: nil, keyEquivalent: "")
         needyMI.submenu = needySub
         menu.addItem(needyMI)
-
-        let rotationSub = NSMenu()
-
-        let rotationItem = NSMenuItem(title: "Random Rotation", action: #selector(toggleRotation), keyEquivalent: "")
-        rotationItem.target = self
-        rotationItem.state = spriteAnimator.rotationEnabled ? .on : .off
-        rotationSub.addItem(rotationItem)
-
-        let smartRotationItem = NSMenuItem(title: "Smart Rotation (prefer favorites)", action: #selector(toggleSmartRotation), keyEquivalent: "")
-        smartRotationItem.target = self
-        smartRotationItem.state = spriteAnimator.smartRotationEnabled ? .on : .off
-        smartRotationItem.isEnabled = spriteAnimator.rotationEnabled
-        rotationSub.addItem(smartRotationItem)
-
-        let categoryOnlyItem = NSMenuItem(title: "Rotate Within Category Only", action: #selector(toggleCategoryOnly), keyEquivalent: "")
-        categoryOnlyItem.target = self
-        categoryOnlyItem.state = spriteAnimator.categoryOnlyEnabled ? .on : .off
-        categoryOnlyItem.isEnabled = spriteAnimator.rotationEnabled
-        rotationSub.addItem(categoryOnlyItem)
-
-        rotationSub.addItem(NSMenuItem.separator())
-
-        let intervalSub = NSMenu()
-        let intervals: [(String, TimeInterval)] = [
-            ("15 seconds", 15),
-            ("30 seconds", 30),
-            ("1 minute", 60),
-            ("5 minutes", 300),
-            ("10 minutes", 600),
-            ("30 minutes", 1800),
-            ("1 hour", 3600),
-        ]
-        for (label, interval) in intervals {
-            let item = NSMenuItem(title: label, action: #selector(setRotationInterval(_:)), keyEquivalent: "")
-            item.target = self
-            item.tag = Int(interval)
-            if spriteAnimator.rotationInterval == interval { item.state = .on }
-            item.isEnabled = spriteAnimator.rotationEnabled
-            intervalSub.addItem(item)
-        }
-        intervalSub.addItem(NSMenuItem.separator())
-        let customItem = NSMenuItem(title: "Custom...", action: #selector(setCustomRotationInterval), keyEquivalent: "")
-        customItem.target = self
-        customItem.isEnabled = spriteAnimator.rotationEnabled
-        intervalSub.addItem(customItem)
-        let intervalItem = NSMenuItem(title: "Rotation Interval", action: nil, keyEquivalent: "")
-        intervalItem.submenu = intervalSub
-        rotationSub.addItem(intervalItem)
-
-        let rotationMenuItem = NSMenuItem(title: "Rotation", action: nil, keyEquivalent: "")
-        rotationMenuItem.submenu = rotationSub
-        menu.addItem(rotationMenuItem)
-
-        // History submenu
-        let historySubmenu = NSMenu()
-        if spriteAnimator.characterHistory.isEmpty {
-            let emptyItem = NSMenuItem(title: "No history yet", action: nil, keyEquivalent: "")
-            emptyItem.isEnabled = false
-            historySubmenu.addItem(emptyItem)
-        } else {
-            for character in spriteAnimator.characterHistory.prefix(20) {
-                let item = NSMenuItem(title: "\(character.displayName) — \(character.category)", action: #selector(selectCharacter(_:)), keyEquivalent: "")
-                item.target = self
-                item.representedObject = character
-                if character == spriteAnimator.currentPokemon {
-                    item.state = .on
-                }
-                historySubmenu.addItem(item)
-            }
-        }
-        let historyMenuItem = NSMenuItem(title: "History", action: nil, keyEquivalent: "")
-        historyMenuItem.submenu = historySubmenu
-        menu.addItem(historyMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
