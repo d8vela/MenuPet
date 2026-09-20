@@ -720,7 +720,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let selectedPets = manager.selectedPets
         if selectedPets.isEmpty {
-            addFranchiseItems(to: petSelectionSub, action: #selector(selectCharacter(_:)))
+            let chooseSub = buildFranchiseMenu(action: #selector(selectCharacter(_:)))
+            let chooseItem = NSMenuItem(title: "🐾 Select First Pet ▸", action: nil, keyEquivalent: "")
+            chooseItem.submenu = chooseSub
+            petSelectionSub.addItem(chooseItem)
         } else {
             for pet in selectedPets {
                 let item = NSMenuItem(title: "\(pet.emoji) \(pet.displayName)\(manager.primaryPet == pet ? " ★" : "")", action: nil, keyEquivalent: "")
