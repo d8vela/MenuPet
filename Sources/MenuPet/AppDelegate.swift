@@ -351,8 +351,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let aiSuffix = LLMService.shared.statusEnabled ? " AI" : ""
 
-        if manager.isMultiPetMode {
+        if manager.petCount > 1 {
             let headerItem = NSMenuItem(title: "🐾 Multi-Pet\(aiSuffix) Mode (\(manager.petCount) pets)", action: nil, keyEquivalent: "")
+            headerItem.isEnabled = false
+            menu.addItem(headerItem)
+        } else if manager.petCount == 1 {
+            let headerItem = NSMenuItem(title: "🐾 Single Pet\(aiSuffix) Mode (1 pet)", action: nil, keyEquivalent: "")
             headerItem.isEnabled = false
             menu.addItem(headerItem)
         } else {
@@ -367,7 +371,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
 
         if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
-            if manager.isMultiPetMode {
+            if !manager.selectedPets.isEmpty {
                 for pet in manager.selectedPets {
                     let cached = LLMService.shared.getCachedStatus(for: pet)
                     let statusItem = NSMenuItem(title: "  \(pet.emoji) \(cached ?? "Loading...")", action: nil, keyEquivalent: "")
@@ -385,26 +389,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                             item.title = "  \(pet.emoji) \(status)"
                                         }
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                let cached = LLMService.shared.getCachedStatus(for: spriteAnimator.currentPokemon)
-                let statusItem = NSMenuItem(title: "  💬 \(cached ?? "Loading status...")", action: nil, keyEquivalent: "")
-                statusItem.tag = 310
-                statusItem.isEnabled = false
-                menu.addItem(statusItem)
-                if cached == nil {
-                    let char = spriteAnimator.currentPokemon
-                    let pet = PetState.shared
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        LLMService.shared.generateStatus(for: char, petState: pet) { status in
-                            self.spriteAnimator.llmStatus = status
-                            if let menu = self.statusItem.menu {
-                                for item in menu.items where item.tag == 310 {
-                                    item.title = "  💬 \(status)"
                                 }
                             }
                         }
@@ -452,7 +436,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         cpuItem.tag = 100
         menu.addItem(cpuItem)
 
-        if manager.isMultiPetMode {
+        if !manager.selectedPets.isEmpty {
             let summary = multiPetSummaryText()
             let summaryItem = NSMenuItem(title: "\(summary)", action: nil, keyEquivalent: "")
             summaryItem.tag = 200
@@ -477,50 +461,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let statusMenuItem = NSMenuItem(title: "📋 Pet Status", action: nil, keyEquivalent: "")
             statusMenuItem.submenu = statusSub
             menu.addItem(statusMenuItem)
-        } else {
-            let petStatus = NSMenuItem(title: "Pet: \(PetState.shared.moodEmoji) \(PetState.shared.mood) \(PetState.shared.stageEmoji)", action: nil, keyEquivalent: "")
-            petStatus.tag = 200
-            menu.addItem(petStatus)
 
-            let stageItem = NSMenuItem(title: "  \(PetState.shared.stageEmoji) Stage: \(PetState.shared.stageName) (\(Int(PetState.shared.careScore))%)", action: nil, keyEquivalent: "")
-            stageItem.tag = 205
-            stageItem.isEnabled = false
-            menu.addItem(stageItem)
-
-            let hungerItem = NSMenuItem(title: "  🍕 Hunger: \(Int(PetState.shared.hunger))%", action: nil, keyEquivalent: "")
-            hungerItem.tag = 201
-            hungerItem.isEnabled = false
-            menu.addItem(hungerItem)
-
-            let happyItem = NSMenuItem(title: "  😊 Happy: \(Int(PetState.shared.happiness))%", action: nil, keyEquivalent: "")
-            happyItem.tag = 202
-            happyItem.isEnabled = false
-            menu.addItem(happyItem)
-
-            let hygieneItem = NSMenuItem(title: "  🧼 Clean: \(Int(PetState.shared.hygiene))%", action: nil, keyEquivalent: "")
-            hygieneItem.tag = 204
-            hygieneItem.isEnabled = false
-            menu.addItem(hygieneItem)
-
-            let energyItem = NSMenuItem(title: "  ⚡ Energy: \(Int(PetState.shared.energy))%", action: nil, keyEquivalent: "")
-            energyItem.tag = 203
-            energyItem.isEnabled = false
-            menu.addItem(energyItem)
-
-            menu.addItem(NSMenuItem.separator())
-
-            let singleCustomItem = NSMenuItem(title: "  ✨ Custom Action...", action: #selector(customAction), keyEquivalent: "")
-            singleCustomItem.target = self
-            menu.addItem(singleCustomItem)
-
-            if LLMService.shared.statusEnabled {
-                let singleChatItem = NSMenuItem(title: "  💬 Chat with Pet", action: #selector(openChat), keyEquivalent: "")
-                singleChatItem.target = self
-                menu.addItem(singleChatItem)
-            }
-        }
-
-        if manager.isMultiPetMode {
             let feedCount = countActionsFor("feed")
             if feedCount > 0 {
                 let feedItem = NSMenuItem(title: "🍕 Feed All (\(feedCount))", action: #selector(feedPet), keyEquivalent: "")
@@ -545,38 +486,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 sleepItem.target = self
                 menu.addItem(sleepItem)
             }
-        } else {
-            let feedItem = NSMenuItem(title: "🍕 Feed All", action: #selector(feedPet), keyEquivalent: "")
-            feedItem.target = self
-            menu.addItem(feedItem)
-
-            let playItem = NSMenuItem(title: "🎾 Play All", action: #selector(playWithPet), keyEquivalent: "")
-            playItem.target = self
-            menu.addItem(playItem)
-
-            let cleanItem = NSMenuItem(title: "🧼 Clean All", action: #selector(cleanPet), keyEquivalent: "")
-            cleanItem.target = self
-            menu.addItem(cleanItem)
-
-            let sleepItem = NSMenuItem(title: "😴 Sleep All", action: #selector(letPetSleep), keyEquivalent: "")
-            sleepItem.target = self
-            menu.addItem(sleepItem)
-        }
-
-        if !manager.isMultiPetMode {
-            if PetState.shared.isDisobedient {
-                let disobeyItem = NSMenuItem(title: "😡 \(PetState.shared.disobedienceMessage)", action: nil, keyEquivalent: "")
-                disobeyItem.isEnabled = false
-                menu.addItem(disobeyItem)
-
-                let disciplineItem = NSMenuItem(title: "👋 🫏 Discipline", action: #selector(disciplinePet), keyEquivalent: "")
-                disciplineItem.target = self
-                menu.addItem(disciplineItem)
-            }
-
-            let obedienceItem = NSMenuItem(title: "  🎓 Obedience: \(Int(PetState.shared.obedience))%", action: nil, keyEquivalent: "")
-            obedienceItem.isEnabled = false
-            menu.addItem(obedienceItem)
         }
 
         // ===== Unified Pet Selection =====
