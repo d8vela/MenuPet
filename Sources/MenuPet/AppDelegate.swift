@@ -538,10 +538,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             menu.addItem(sleepItem)
         }
 
-        let customActionItem = NSMenuItem(title: "✨ Custom Action...", action: #selector(customAction), keyEquivalent: "")
-        customActionItem.target = self
-        menu.addItem(customActionItem)
-
         let chatItem: NSMenuItem
         if manager.isMultiPetMode {
             chatItem = NSMenuItem(title: "💬 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
@@ -1908,6 +1904,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private var customActionTextField: NSTextField?
+    private var customActionPet: SelectableCharacter?
+    private var chatPet: SelectableCharacter?
 
     @objc func customAction() {
         guard LLMService.shared.statusEnabled else { return }
@@ -2038,6 +2036,99 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         textView.window?.makeFirstResponder(textView)
+    }
+
+    func openChatWith(pet: SelectableCharacter) {
+        guard LLMService.shared.statusEnabled else { return }
+
+        if let existing = chatWindow {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        chatPet = pet
+
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 450, height: 550), styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
+        panel.title = "Chat with \(pet.emoji) \(pet.displayName)"
+        panel.center()
+        panel.isReleasedWhenClosed = false
+        panel.minSize = NSSize(width: 350, height: 300)
+        chatWindow = panel
+
+        let scrollView = NSScrollView(frame: NSRect(x: 0, y: 50, width: 450, height: 460))
+        scrollView.hasVerticalScroller = true
+        scrollView.autoresizingMask = [.width, .height]
+        scrollView.borderType = .noBorder
+        scrollView.drawsBackground = false
+
+        let contentSize = scrollView.contentSize
+        let textView = ChatTextView(frame: NSRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height))
+        textView.minSize = NSSize(width: 0, height: 0)
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.textContainer?.containerSize = NSSize(width: contentSize.width, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.widthTracksTextView = true
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.font = NSFont.systemFont(ofSize: 13)
+        textView.textContainerInset = NSSize(width: 10, height: 10)
+        textView.textContainer?.lineFragmentPadding = 0
+        scrollView.documentView = textView
+        panel.contentView?.addSubview(scrollView)
+        chatTextView = scrollView
+
+        let inputField = ChatInputField(frame: NSRect(x: 10, y: 10, width: 350, height: 24))
+        inputField.placeholderString = "Say something to \(pet.displayName)..."
+        inputField.isEditable = true
+        inputField.isSelectable = true
+        inputField.allowsEditingTextAttributes = true
+        inputField.autoresizingMask = [.width]
+        panel.contentView?.addSubview(inputField)
+        chatInputField = inputField
+
+        let sendButton = NSButton(title: "Send", target: self, action: #selector(sendChatMessageForPet))
+        sendButton.frame = NSRect(x: 370, y: 9, width: 60, height: 26)
+        sendButton.keyEquivalent = "\r"
+        sendButton.autoresizingMask = [.minXMargin]
+        panel.contentView?.addSubview(sendButton)
+
+        let clearButton = NSButton(title: "Clear", target: self, action: #selector(clearChat))
+        clearButton.frame = NSRect(x: 10, y: 0, width: 50, height: 0)
+        clearButton.isHidden = true
+        panel.contentView?.addSubview(clearButton)
+
+        chatHistory = []
+        appendToChat(system: "\(pet.displayName) has joined the chat. Say hello!")
+
+        panel.initialFirstResponder = textView
+        panel.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        textView.window?.makeFirstResponder(textView)
+    }
+
+    @objc func sendChatMessageForPet() {
+        guard let inputField = chatInputField, !inputField.stringValue.isEmpty, let pet = chatPet else { return }
+        let userMessage = inputField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !userMessage.isEmpty else { return }
+        inputField.stringValue = ""
+
+        appendToChat(user: userMessage)
+        chatHistory.append(["role": "user", "content": userMessage])
+
+        appendToChat(system: "Thinking...")
+        LLMService.shared.chat(character: pet, messages: chatHistory) { [weak self] result in
+            guard let self = self else { return }
+            self.removeLastSystemMessage()
+            switch result {
+            case .success(let response):
+                self.appendToChat(pet: response)
+                self.chatHistory.append(["role": "assistant", "content": response])
+            case .failure(let error):
+                self.appendToChat(system: "Error: \(error.localizedDescription)")
+            }
+        }
     }
 
     @objc func sendChatMessage() {
@@ -2222,6 +2313,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         addItem("  👋 Discipline", action: #selector(disciplineSinglePet(_:)), needsAttention: petState.isDisobedient)
 
+        sub.addItem(NSMenuItem.separator())
+
+        let customItem = NSMenuItem(title: "  ✨ Custom Action...", action: #selector(customActionForPet(_:)), keyEquivalent: "")
+        customItem.target = self
+        customItem.representedObject = pet
+        sub.addItem(customItem)
+
+        if LLMService.shared.statusEnabled {
+            let chatItem = NSMenuItem(title: "  💬 Chat with \(pet.displayName)", action: #selector(chatWithSinglePet(_:)), keyEquivalent: "")
+            chatItem.target = self
+            chatItem.representedObject = pet
+            sub.addItem(chatItem)
+        }
+
         return sub
     }
 
@@ -2258,6 +2363,64 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         _ = MultiPetManager.shared.state(for: pet).discipline()
         LLMService.shared.invalidateCache(for: pet)
         refreshPetSubmenu(pet)
+    }
+
+    @objc func customActionForPet(_ sender: NSMenuItem) {
+        guard LLMService.shared.statusEnabled, let pet = sender.representedObject as? SelectableCharacter else { return }
+        customActionPet = pet
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 500, height: 150), styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
+        panel.title = "Custom Action — \(pet.emoji) \(pet.displayName)"
+        panel.center()
+        panel.isReleasedWhenClosed = false
+
+        let label = NSTextField(labelWithString: "Describe what you want to do to \(pet.displayName):")
+        label.frame = NSRect(x: 20, y: 115, width: 460, height: 20)
+        label.font = NSFont.systemFont(ofSize: 12)
+        label.textColor = .labelColor
+        panel.contentView?.addSubview(label)
+
+        let textField = NSTextField(frame: NSRect(x: 20, y: 80, width: 460, height: 24))
+        textField.placeholderString = "e.g. give a bath, tell a joke, tickle"
+        textField.isEditable = true
+        textField.isSelectable = true
+        panel.contentView?.addSubview(textField)
+        customActionTextField = textField
+
+        let pasteButton = NSButton(title: "📋 Paste from Clipboard", target: self, action: #selector(pasteCustomAction))
+        pasteButton.frame = NSRect(x: 20, y: 50, width: 160, height: 24)
+        panel.contentView?.addSubview(pasteButton)
+
+        let okButton = NSButton(title: "Send", target: self, action: #selector(sendCustomActionForPet))
+        okButton.frame = NSRect(x: 320, y: 20, width: 80, height: 30)
+        okButton.keyEquivalent = "\r"
+        panel.contentView?.addSubview(okButton)
+
+        let cancelButton = NSButton(title: "Cancel", target: panel, action: #selector(NSPanel.close))
+        cancelButton.frame = NSRect(x: 410, y: 20, width: 80, height: 30)
+        cancelButton.keyEquivalent = "\u{1b}"
+        panel.contentView?.addSubview(cancelButton)
+
+        panel.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        textField.window?.makeKeyAndOrderFront(nil)
+        textField.becomeFirstResponder()
+    }
+
+    @objc func sendCustomActionForPet() {
+        if let textField = customActionTextField, !textField.stringValue.isEmpty, let pet = customActionPet {
+            MultiPetManager.shared.state(for: pet).lastAction = textField.stringValue
+            LLMService.shared.invalidateCache(for: pet)
+            buildMenu()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { MultiPetManager.shared.state(for: pet).lastAction = nil }
+        }
+        customActionTextField?.window?.close()
+        customActionTextField = nil
+        customActionPet = nil
+    }
+
+    @objc func chatWithSinglePet(_ sender: NSMenuItem) {
+        guard let pet = sender.representedObject as? SelectableCharacter, LLMService.shared.statusEnabled else { return }
+        openChatWith(pet: pet)
     }
 
     private func refreshPetSubmenu(_ char: SelectableCharacter) {
