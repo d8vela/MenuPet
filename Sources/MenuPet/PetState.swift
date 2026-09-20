@@ -3,6 +3,39 @@ import Foundation
 class PetState {
     static let shared = PetState()
 
+    enum NeedyLevel: Int, CaseIterable {
+        case easy = 0
+        case relaxed = 1
+        case normal = 2
+        case demanding = 3
+        case needy = 4
+
+        var multiplier: Double {
+            switch self {
+            case .easy: return 0.25
+            case .relaxed: return 0.5
+            case .normal: return 1.0
+            case .demanding: return 2.0
+            case .needy: return 4.0
+            }
+        }
+
+        var label: String {
+            switch self {
+            case .easy: return "🟢 Easy"
+            case .relaxed: return "🔵 Relaxed"
+            case .normal: return "⚪ Normal"
+            case .demanding: return "🟠 Demanding"
+            case .needy: return "🔴 Needy"
+            }
+        }
+
+        static var current: NeedyLevel {
+            get { NeedyLevel(rawValue: UserDefaults.standard.integer(forKey: "petNeedyLevel")) ?? .normal }
+            set { UserDefaults.standard.set(newValue.rawValue, forKey: "petNeedyLevel") }
+        }
+    }
+
     var hunger: Double = 100
     var happiness: Double = 100
     var energy: Double = 100
@@ -149,13 +182,14 @@ class PetState {
     }
 
     func decay(personality: CharacterPersonality = .default) {
-        hunger = max(0, hunger - 0.5 * personality.hungerRate)
-        happiness = max(0, happiness - 0.3 * personality.happinessRate)
-        energy = max(0, energy - 0.2 * personality.energyRate)
-        hygiene = max(0, hygiene - 0.4 * personality.hygieneRate)
+        let needy = NeedyLevel.current.multiplier
+        hunger = max(0, hunger - 0.5 * personality.hungerRate * needy)
+        happiness = max(0, happiness - 0.3 * personality.happinessRate * needy)
+        energy = max(0, energy - 0.2 * personality.energyRate * needy)
+        hygiene = max(0, hygiene - 0.4 * personality.hygieneRate * needy)
 
-        if hunger < 20 { happiness = max(0, happiness - 0.5 * personality.hungerRate) }
-        if hygiene < 20 { happiness = max(0, happiness - 0.3 * personality.hygieneRate) }
+        if hunger < 20 { happiness = max(0, happiness - 0.5 * personality.hungerRate * needy) }
+        if hygiene < 20 { happiness = max(0, happiness - 0.3 * personality.hygieneRate * needy) }
 
         let avg = (hunger + happiness + energy + hygiene) / 4.0
         if avg >= 70 {

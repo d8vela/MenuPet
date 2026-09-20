@@ -858,6 +858,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         speedItem.tag = 150
         menu.addItem(speedItem)
 
+        let needySub = NSMenu()
+        let currentLevel = PetState.NeedyLevel.current
+        for level in PetState.NeedyLevel.allCases {
+            let item = NSMenuItem(title: level.label, action: #selector(setNeedyLevel(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = level
+            item.state = level == currentLevel ? .on : .off
+            needySub.addItem(item)
+        }
+        let needyMI = NSMenuItem(title: "🐾 Needy Level", action: nil, keyEquivalent: "")
+        needyMI.submenu = needySub
+        menu.addItem(needyMI)
+
         let rotationSub = NSMenu()
 
         let rotationItem = NSMenuItem(title: "Random Rotation", action: #selector(toggleRotation), keyEquivalent: "")
@@ -1384,6 +1397,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             currentDelay += typingDuration + pauseBetween
         }
+    }
+
+    @objc func setNeedyLevel(_ sender: NSMenuItem) {
+        guard let level = sender.representedObject as? PetState.NeedyLevel else { return }
+        PetState.NeedyLevel.current = level
+        buildMenu()
     }
 
     @objc func toggleRotation() {
