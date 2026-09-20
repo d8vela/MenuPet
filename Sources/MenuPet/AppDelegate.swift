@@ -340,8 +340,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(NSMenuItem(title: "MenuPet", action: nil, keyEquivalent: ""))
 
+        let aiSuffix = LLMService.shared.statusEnabled ? " AI" : ""
+
         if manager.isMultiPetMode {
-            let headerItem = NSMenuItem(title: "🐾 Multi-Pet Mode (\(manager.petCount) pets)", action: nil, keyEquivalent: "")
+            let headerItem = NSMenuItem(title: "🐾 Multi-Pet\(aiSuffix) Mode (\(manager.petCount) pets)", action: nil, keyEquivalent: "")
             headerItem.isEnabled = false
             menu.addItem(headerItem)
         } else {
@@ -1037,8 +1039,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             } else if item.tag == 150 {
                 item.title = "Speed: \(spriteAnimator.speedLabel)"
             } else if item.tag == 300 {
+                let aiSuffix = LLMService.shared.statusEnabled ? " AI" : ""
                 if manager.isMultiPetMode {
-                    item.title = "🐾 Multi-Pet Mode (\(manager.petCount) pets)"
+                    item.title = "🐾 Multi-Pet\(aiSuffix) Mode (\(manager.petCount) pets)"
                 } else {
                     item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)"
                 }
