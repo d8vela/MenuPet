@@ -914,12 +914,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         petSelectionMI.submenu = petSelectionSub
         menu.addItem(petSelectionMI)
 
-        menu.addItem(NSMenuItem.separator())
-
-        let speedItem = NSMenuItem(title: "Speed: \(spriteAnimator.speedLabel)", action: nil, keyEquivalent: "")
-        speedItem.tag = 150
-        menu.addItem(speedItem)
-
         let needySub = NSMenu()
         let currentLevel = PetState.NeedyLevel.current
         for level in PetState.NeedyLevel.allCases {
@@ -932,6 +926,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let needyMI = NSMenuItem(title: "🐾 Pet Care Level", action: nil, keyEquivalent: "")
         needyMI.submenu = needySub
         menu.addItem(needyMI)
+
+        let speedItem = NSMenuItem(title: "Speed: \(spriteAnimator.speedLabel)", action: nil, keyEquivalent: "")
+        speedItem.tag = 150
+        menu.addItem(speedItem)
 
         menu.addItem(NSMenuItem.separator())
 
