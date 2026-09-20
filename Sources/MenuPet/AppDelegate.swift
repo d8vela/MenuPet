@@ -1067,7 +1067,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for item in menu.items {
             if let submenu = item.submenu {
                 updateCheckmarks(in: submenu)
-            } else if let character = item.representedObject as? SelectableCharacter {
+            } else if let character = item.representedObject as? SelectableCharacter, item.action == #selector(selectCharacter(_:)) || item.action == #selector(togglePetSelection(_:)) || item.action == #selector(swapPetCharacter(_:)) {
                 if manager.isMultiPetMode {
                     item.state = manager.isSelected(character) ? .on : .off
                 } else {
