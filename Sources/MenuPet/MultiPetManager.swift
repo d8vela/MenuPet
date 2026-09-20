@@ -149,7 +149,6 @@ class MultiPetManager {
         petStates.removeAll()
         recordSelection()
         save()
-        onSelectionChanged?()
     }
 
     func recordSelection() {
