@@ -1011,6 +1011,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 spriteAnimator.setPokemon(primary)
             }
         } else {
+            manager.addPet(character)
             spriteAnimator.setPokemon(character)
         }
         spriteAnimator.resetRotationTimer()
