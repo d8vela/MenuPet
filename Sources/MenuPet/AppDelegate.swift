@@ -491,6 +491,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             energyItem.tag = 203
             energyItem.isEnabled = false
             menu.addItem(energyItem)
+
+            menu.addItem(NSMenuItem.separator())
+
+            let singleCustomItem = NSMenuItem(title: "  ✨ Custom Action...", action: #selector(customAction), keyEquivalent: "")
+            singleCustomItem.target = self
+            menu.addItem(singleCustomItem)
+
+            if LLMService.shared.statusEnabled {
+                let singleChatItem = NSMenuItem(title: "  💬 Chat with Pet", action: #selector(openChat), keyEquivalent: "")
+                singleChatItem.target = self
+                menu.addItem(singleChatItem)
+            }
         }
 
         menu.addItem(NSMenuItem.separator())
