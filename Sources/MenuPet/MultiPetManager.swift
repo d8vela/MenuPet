@@ -17,6 +17,8 @@ class MultiPetManager {
     var petRotationSettings: [String: PetRotationSettings] = [:]
     var petHistory: [String: [SelectableCharacter]] = [:]
     let maxHistoryPerPet = 20
+    var selectionHistory: [[String]] = []
+    let maxSelectionHistory = 20
 
     let maxPets = 8
 
@@ -79,6 +81,7 @@ class MultiPetManager {
             selectedPets.append(character)
             _ = state(for: character)
         }
+        recordSelection()
         save()
         onSelectionChanged?()
     }
@@ -88,6 +91,7 @@ class MultiPetManager {
         guard selectedPets.count < maxPets else { return }
         selectedPets.append(character)
         _ = state(for: character)
+        recordSelection()
         save()
         onSelectionChanged?()
     }
@@ -142,6 +146,28 @@ class MultiPetManager {
     func clearAll() {
         selectedPets.removeAll()
         petStates.removeAll()
+        recordSelection()
+        save()
+        onSelectionChanged?()
+    }
+
+    func recordSelection() {
+        guard selectedPets.count > 1 else { return }
+        let ids = selectedPets.map { $0.identifier }.sorted()
+        selectionHistory.removeAll { $0.sorted() == ids }
+        selectionHistory.insert(ids, at: 0)
+        if selectionHistory.count > maxSelectionHistory {
+            selectionHistory = Array(selectionHistory.prefix(maxSelectionHistory))
+        }
+    }
+
+    func restoreSelection(_ identifiers: [String]) {
+        guard let characters = [String](identifiers).compactMap({ SelectableCharacter.from(identifier: $0) }) as [SelectableCharacter]? else { return }
+        guard !characters.isEmpty else { return }
+        selectedPets = characters
+        for pet in selectedPets {
+            _ = state(for: pet)
+        }
         save()
         onSelectionChanged?()
     }
@@ -241,6 +267,7 @@ class MultiPetManager {
             historyData[id] = chars.map { $0.identifier }
         }
         UserDefaults.standard.set(historyData, forKey: "petHistory")
+        UserDefaults.standard.set(selectionHistory, forKey: "petSelectionHistory")
     }
 
     private func load() {
@@ -264,6 +291,10 @@ class MultiPetManager {
             for (id, identifiers) in historyData {
                 petHistory[id] = identifiers.compactMap { SelectableCharacter.from(identifier: $0) }
             }
+        }
+
+        if let savedSelectionHistory = UserDefaults.standard.array(forKey: "petSelectionHistory") as? [[String]] {
+            selectionHistory = savedSelectionHistory
         }
     }
 }

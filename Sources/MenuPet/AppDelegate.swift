@@ -908,6 +908,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let clearItem = NSMenuItem(title: "Clear All Pets", action: #selector(clearAllPets), keyEquivalent: "")
             clearItem.target = self
             petSelectionSub.addItem(clearItem)
+
+            let selHistory = manager.selectionHistory
+            if !selHistory.isEmpty {
+                petSelectionSub.addItem(NSMenuItem.separator())
+                let histSub = NSMenu()
+                for identifiers in selHistory {
+                    let characters = identifiers.compactMap { SelectableCharacter.from(identifier: $0) }
+                    guard !characters.isEmpty else { continue }
+                    let label = characters.map { "\($0.emoji)\($0.displayName)" }.joined(separator: " ")
+                    let item = NSMenuItem(title: label, action: #selector(restorePetSelection(_:)), keyEquivalent: "")
+                    item.target = self
+                    item.representedObject = identifiers
+                    histSub.addItem(item)
+                }
+                let histMI = NSMenuItem(title: "📜 Selection History", action: nil, keyEquivalent: "")
+                histMI.submenu = histSub
+                petSelectionSub.addItem(histMI)
+            }
         }
 
         let petSelectionMI = NSMenuItem(title: "🐾 Pet Selection", action: nil, keyEquivalent: "")
@@ -1148,6 +1166,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func clearAllPets() {
         MultiPetManager.shared.clearAll()
         spriteAnimator.setPokemon(.pokemon(.jigglypuff))
+        buildMenu()
+    }
+
+    @objc func restorePetSelection(_ sender: NSMenuItem) {
+        guard let identifiers = sender.representedObject as? [String] else { return }
+        let manager = MultiPetManager.shared
+        manager.restoreSelection(identifiers)
+        if let primary = manager.primaryPet {
+            spriteAnimator.setPokemon(primary)
+        }
         buildMenu()
     }
 
