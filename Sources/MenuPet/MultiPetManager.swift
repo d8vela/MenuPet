@@ -3,8 +3,20 @@ import Foundation
 class MultiPetManager {
     static let shared = MultiPetManager()
 
+    struct PetRotationSettings {
+        var enabled: Bool
+        var interval: TimeInterval
+        var smartRotation: Bool
+        var categoryOnly: Bool
+
+        static let `default` = PetRotationSettings(enabled: false, interval: 300, smartRotation: false, categoryOnly: false)
+    }
+
     private(set) var selectedPets: [SelectableCharacter] = []
     private var petStates: [String: PetState] = [:]
+    var petRotationSettings: [String: PetRotationSettings] = [:]
+    var petHistory: [String: [SelectableCharacter]] = [:]
+    let maxHistoryPerPet = 20
 
     let maxPets = 8
 
@@ -28,6 +40,30 @@ class MultiPetManager {
         let state = PetState()
         petStates[id] = state
         return state
+    }
+
+    func rotationSettings(for character: SelectableCharacter) -> PetRotationSettings {
+        return petRotationSettings[character.identifier] ?? .default
+    }
+
+    func setRotation(_ settings: PetRotationSettings, for character: SelectableCharacter) {
+        petRotationSettings[character.identifier] = settings
+        save()
+    }
+
+    func addToHistory(_ character: SelectableCharacter, pet: SelectableCharacter) {
+        let id = pet.identifier
+        if petHistory[id] == nil { petHistory[id] = [] }
+        petHistory[id]?.removeAll { $0 == character }
+        petHistory[id]?.insert(character, at: 0)
+        if (petHistory[id]?.count ?? 0) > maxHistoryPerPet {
+            petHistory[id] = Array(petHistory[id]!.prefix(maxHistoryPerPet))
+        }
+        save()
+    }
+
+    func history(for character: SelectableCharacter) -> [SelectableCharacter] {
+        return petHistory[character.identifier] ?? []
     }
 
     func isSelected(_ character: SelectableCharacter) -> Bool {
@@ -188,6 +224,23 @@ class MultiPetManager {
         let ids = selectedPets.map { $0.identifier }
         UserDefaults.standard.set(ids, forKey: "multiPetSelectedPets")
         UserDefaults.standard.set(petOrders, forKey: "multiPetOrders")
+
+        var rotationData: [String: [String: Any]] = [:]
+        for (id, settings) in petRotationSettings {
+            rotationData[id] = [
+                "enabled": settings.enabled,
+                "interval": settings.interval,
+                "smartRotation": settings.smartRotation,
+                "categoryOnly": settings.categoryOnly
+            ]
+        }
+        UserDefaults.standard.set(rotationData, forKey: "petRotationSettings")
+
+        var historyData: [String: [String]] = [:]
+        for (id, chars) in petHistory {
+            historyData[id] = chars.map { $0.identifier }
+        }
+        UserDefaults.standard.set(historyData, forKey: "petHistory")
     }
 
     private func load() {
@@ -195,6 +248,22 @@ class MultiPetManager {
         selectedPets = ids.compactMap { SelectableCharacter.from(identifier: $0) }
         if let orders = UserDefaults.standard.dictionary(forKey: "multiPetOrders") as? [String: Int] {
             petOrders = orders
+        }
+
+        if let rotationData = UserDefaults.standard.dictionary(forKey: "petRotationSettings") as? [String: [String: Any]] {
+            for (id, data) in rotationData {
+                let enabled = data["enabled"] as? Bool ?? false
+                let interval = data["interval"] as? TimeInterval ?? 300
+                let smart = data["smartRotation"] as? Bool ?? false
+                let catOnly = data["categoryOnly"] as? Bool ?? false
+                petRotationSettings[id] = PetRotationSettings(enabled: enabled, interval: interval, smartRotation: smart, categoryOnly: catOnly)
+            }
+        }
+
+        if let historyData = UserDefaults.standard.dictionary(forKey: "petHistory") as? [String: [String]] {
+            for (id, identifiers) in historyData {
+                petHistory[id] = identifiers.compactMap { SelectableCharacter.from(identifier: $0) }
+            }
         }
     }
 }
