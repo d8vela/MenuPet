@@ -153,8 +153,8 @@ class MultiPetManager {
 
     func recordSelection() {
         guard selectedPets.count > 1 else { return }
-        let ids = selectedPets.map { $0.identifier }.sorted()
-        selectionHistory.removeAll { $0.sorted() == ids }
+        let ids = selectedPets.map { $0.identifier }
+        selectionHistory.removeAll { $0 == ids }
         selectionHistory.insert(ids, at: 0)
         if selectionHistory.count > maxSelectionHistory {
             selectionHistory = Array(selectionHistory.prefix(maxSelectionHistory))
