@@ -511,8 +511,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        menu.addItem(NSMenuItem.separator())
-
         if manager.isMultiPetMode {
             let feedCount = countActionsFor("feed")
             if feedCount > 0 {
