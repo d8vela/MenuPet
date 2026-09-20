@@ -833,24 +833,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 petMenu.addItem(NSMenuItem.separator())
 
                 let rotSettings = manager.rotationSettings(for: pet)
+                let rotSub = NSMenu()
+
                 let rotToggle = NSMenuItem(title: rotSettings.enabled ? "🔄 Rotation: ON" : "🔄 Rotation: OFF", action: #selector(togglePetRotation(_:)), keyEquivalent: "")
                 rotToggle.target = self
                 rotToggle.representedObject = pet
-                petMenu.addItem(rotToggle)
+                rotSub.addItem(rotToggle)
 
                 let smartRot = NSMenuItem(title: "🧠 Smart Rotation", action: #selector(togglePetSmartRotation(_:)), keyEquivalent: "")
                 smartRot.target = self
                 smartRot.representedObject = pet
                 smartRot.state = rotSettings.smartRotation ? .on : .off
                 smartRot.isEnabled = rotSettings.enabled
-                petMenu.addItem(smartRot)
+                rotSub.addItem(smartRot)
 
                 let catOnly = NSMenuItem(title: "📂 Category Only", action: #selector(togglePetCategoryOnly(_:)), keyEquivalent: "")
                 catOnly.target = self
                 catOnly.representedObject = pet
                 catOnly.state = rotSettings.categoryOnly ? .on : .off
                 catOnly.isEnabled = rotSettings.enabled
-                petMenu.addItem(catOnly)
+                rotSub.addItem(catOnly)
+
+                rotSub.addItem(NSMenuItem.separator())
 
                 let petIntervalSub = NSMenu()
                 let intervals: [(String, TimeInterval)] = [
@@ -868,7 +872,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 let intervalItem = NSMenuItem(title: "⏱️ Interval", action: nil, keyEquivalent: "")
                 intervalItem.submenu = petIntervalSub
-                petMenu.addItem(intervalItem)
+                rotSub.addItem(intervalItem)
+
+                let rotMI = NSMenuItem(title: "🔄 Rotation", action: nil, keyEquivalent: "")
+                rotMI.submenu = rotSub
+                petMenu.addItem(rotMI)
 
                 petMenu.addItem(NSMenuItem.separator())
 
