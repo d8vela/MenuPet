@@ -66,6 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var swarmChatTextView: NSScrollView?
     var swarmChatInputField: NSTextField?
     var petSubmenus: [SelectableCharacter: NSMenu] = [:]
+    var menuNeedsRebuild = false
 
     let pokemonList: [PokemonCharacter] = [
         .jigglypuff, .pikachu, .psyduck, .snorlax, .charmander, .bulbasaur, .squirtle,
@@ -288,7 +289,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         MultiPetManager.shared.onSelectionChanged = { [weak self] in
-            DispatchQueue.main.async { self?.buildMenu() }
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.menuNeedsRebuild = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self = self, self.menuNeedsRebuild else { return }
+                    self.menuNeedsRebuild = false
+                    self.buildMenu()
+                }
+            }
         }
 
         if let button = statusItem.button {
@@ -600,6 +609,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         func buildFranchiseMenu(action: Selector) -> NSMenu {
             let result = NSMenu()
+            addFranchiseItems(to: result, action: action)
+            return result
+        }
+
+        func addFranchiseItems(to target: NSMenu, action: Selector) {
             let gMenu = NSMenu()
 
             let pokémonSub = NSMenu()
@@ -786,22 +800,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
             let gamesMI = NSMenuItem(title: "🎮 Video Games", action: nil, keyEquivalent: "")
             gamesMI.submenu = gMenu
-            result.addItem(gamesMI)
+            target.addItem(gamesMI)
             let animeMI = NSMenuItem(title: "⛩️ Anime & Manga", action: nil, keyEquivalent: "")
             animeMI.submenu = animeMenu
-            result.addItem(animeMI)
+            target.addItem(animeMI)
             let tvMI = NSMenuItem(title: "🎬 Movies & TV", action: nil, keyEquivalent: "")
             tvMI.submenu = tvMenu
-            result.addItem(tvMI)
-            return result
+            target.addItem(tvMI)
         }
 
         let selectedPets = manager.selectedPets
         if selectedPets.isEmpty {
-            let franchiseMenu = buildFranchiseMenu(action: #selector(selectCharacter(_:)))
-            for item in franchiseMenu.items {
-                petSelectionSub.addItem(item)
-            }
+            addFranchiseItems(to: petSelectionSub, action: #selector(selectCharacter(_:)))
         } else {
             for pet in selectedPets {
                 let item = NSMenuItem(title: "\(pet.emoji) \(pet.displayName)\(manager.primaryPet == pet ? " ★" : "")", action: nil, keyEquivalent: "")
