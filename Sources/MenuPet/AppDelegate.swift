@@ -904,6 +904,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         openCompanionItem.target = self
         companionSub.addItem(openCompanionItem)
 
+        companionSub.addItem(NSMenuItem.separator())
+
+        let githubItem = NSMenuItem(title: "Companion App Info", action: #selector(openCompanionGitHub), keyEquivalent: "")
+        githubItem.target = self
+        companionSub.addItem(githubItem)
+
         let companionMenuItem = NSMenuItem(title: "📱 Companion App", action: nil, keyEquivalent: "")
         companionMenuItem.submenu = companionSub
         menu.addItem(companionMenuItem)
@@ -1774,6 +1780,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func openInBrowser() {
         if let ip = getLocalIPAddress(), let url = URL(string: "http://\(ip):18920/pet/ping") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    @objc func openCompanionGitHub() {
+        if let url = URL(string: "https://github.com/d8vela/MenuPet#android-companion-app") {
             NSWorkspace.shared.open(url)
         }
     }
