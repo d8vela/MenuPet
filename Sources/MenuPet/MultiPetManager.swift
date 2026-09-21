@@ -173,35 +173,31 @@ class MultiPetManager {
     }
 
     func feedAll() -> [SelectableCharacter] {
-        let affected = selectedPets.filter { state(for: $0).hunger < 40 }
-        for pet in affected {
+        for pet in selectedPets {
             state(for: pet).feed(personality: pet.personality)
         }
-        return affected
+        return selectedPets
     }
  
     func playAll() -> [SelectableCharacter] {
-        let affected = selectedPets.filter { state(for: $0).happiness < 40 }
-        for pet in affected {
+        for pet in selectedPets {
             state(for: pet).play(personality: pet.personality)
         }
-        return affected
+        return selectedPets
     }
  
     func cleanAll() -> [SelectableCharacter] {
-        let affected = selectedPets.filter { state(for: $0).hygiene < 40 }
-        for pet in affected {
+        for pet in selectedPets {
             state(for: pet).clean()
         }
-        return affected
+        return selectedPets
     }
  
     func sleepAll() -> [SelectableCharacter] {
-        let affected = selectedPets.filter { state(for: $0).energy < 40 }
-        for pet in affected {
+        for pet in selectedPets {
             state(for: pet).sleep()
         }
-        return affected
+        return selectedPets
     }
 
     func decayAll() {
