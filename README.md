@@ -7,24 +7,36 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 ## Features
 
 - **140+ characters** across 26 categories — Pokémon, Mario, Mario Kart, Zelda, Kirby, Dragon Ball, Naruto, Metal Slug, Contra, TMNT, Ghibli, Marvel, DC, Batman, Star Wars, Street Fighter, Mortal Kombat, Overwatch, Simpsons, Minions, Gundam, Labubu, King of the Hill, Family Guy, Futurama, Transformers
+- **Multi-pet mode** — select up to 8 pets, each with independent stats, care, and actions
 - **CPU-reactive animation** — sprite speed adjusts based on system load (sleeping → walking → jogging → sprinting → overdrive)
 - **Tamagotchi pet care** — Feed, Play, Clean, Sleep your pet; stats decay over time
+- **Pet care levels** — 5 needy levels (Easy → Relaxed → Normal → Demanding → Needy) that adjust decay rates
 - **Pet evolution** — 5 stages based on care quality: Neglected → Baby → Normal → Happy → Champion
 - **Visual evolution effects** — sparkles for well-cared pets, darker colors and shadows for neglected ones
 - **Need indicators** — thought bubbles and status bar icons appear when your pet needs attention
+- **Per-pet settings** — each pet has its own rotation, history, custom actions, and chat
+- **Character swap** — replace any selected pet with a different character via franchise hierarchy
+- **Reorder pets** — change the display order of your pets
+- **Selection history** — quickly restore previous pet combinations
 - **Random rotation** — automatically cycles to a random character with configurable interval (0.01s to hours)
 - **Smart rotation** — prefer characters you interact with most
 - **Category rotation** — rotate only within the current character's category
 - **Google image search** — search for any character directly from the menu
 - **Character history** — quickly access recently viewed characters
+- **Swarm chat** — group chat with all your pets at once, with overlapping typing indicators
 - **Auto-update** — checks for new releases on startup and daily
 - **AI-powered status** — connect to OpenAI GPT, Anthropic Claude, Google Gemini, OpenRouter, or OpenCode Zen for dynamic pet expressions that react to your actions
+- **1:1 chat** — private chat with individual pets
+- **Custom actions** — send any action to individual pets
 - **Transformers mode** — 14 Transformers characters with robot ↔ vehicle transformation
+- **Companion server** — built-in HTTP server for companion apps
 - **Run at Startup** — option to launch automatically when you log in
 - **Lightweight** — pure Swift, no dependencies, minimal resource usage
 - **Menu bar only** — lives in your menu bar, no dock icon
 
 ## Download
+
+### macOS App
 
 **[Click here to download MenuPet.dmg](https://github.com/d8vela/MenuPet/releases/latest)** (macOS 13.0+)
 
@@ -32,6 +44,32 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 2. Open the downloaded `MenuPet.dmg`
 3. Drag **MenuPet.app** into your **Applications** folder
 4. Open MenuPet from Applications (right-click → Open the first time to bypass Gatekeeper)
+
+### Android Companion App
+
+**[Click here to download MenuPetCompanion.apk](https://github.com/d8vela/MenuPet/releases/latest)** (Android 6.0+)
+
+The companion app connects to your Mac over local WiFi, letting you control your pets from your phone.
+
+1. Download the `MenuPetCompanion.apk` file from the latest release
+2. On your Android device, go to **Settings → Security** and enable **Install from unknown sources** (or **Install unknown apps** for your file manager/browser)
+3. Open the downloaded `.apk` file and tap **Install**
+4. Open **MenuPet Companion** from your app drawer
+
+**Connecting to your Mac:**
+
+1. Make sure MenuPet is running on your Mac and the built-in server is started (**Companion → Start Server**)
+2. Open MenuPet Companion on your Android device
+3. The app will scan your local network for MenuPet — tap **Connect** when your Mac appears
+4. You can also manually enter the IP address and port shown in **Companion → IP:Port** on your Mac
+
+**Features:**
+- Feed, Play, Clean, and Sleep your pets remotely
+- Switch between characters from your phone
+- View pet stats and status in real time
+- Multi-pet support — manage all selected pets
+- Swarm chat — talk to your entire pet group
+- Built on Flutter with Material Design UI
 
 ## Build from source
 
@@ -132,8 +170,10 @@ You can use any OpenAI-compatible server instead of a cloud provider:
 
 ## Requirements
 
-- macOS 13.0+
-- Swift 5.9+
+- macOS 13.0+ (MenuPet)
+- Android 6.0+ (MenuPet Companion)
+- Swift 5.9+ (building from source)
+- Flutter 3.x (building companion from source)
 
 ## License
 
