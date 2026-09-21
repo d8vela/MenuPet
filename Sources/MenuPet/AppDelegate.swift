@@ -1785,7 +1785,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func openCompanionGitHub() {
-        if let url = URL(string: "https://github.com/d8vela/MenuPet/releases/latest") {
+        if let url = URL(string: "https://github.com/d8vela/MenuPet#android-companion-app") {
             NSWorkspace.shared.open(url)
         }
     }
