@@ -25,6 +25,7 @@ class PetServer {
     private var appDelegate: AppDelegate? {
         NSApp.delegate as? AppDelegate
     }
+    private var allRenderLock = NSLock()
 
     private func onMainThreadSync<T>(_ block: () -> T) -> T {
         if Thread.isMainThread {
@@ -442,7 +443,13 @@ class PetServer {
         case ("GET", "/pet/all"):
             let targetH = Double(queryParams["height"] ?? "160") ?? 160
             let renderer = SpriteRenderer()
-            var pets: [[String: Any]] = []
+
+            struct PetSnapshot {
+                var data: [String: Any]
+                var charId: String
+            }
+            var snapshots: [PetSnapshot] = []
+
             DispatchQueue.main.sync {
                 let manager = MultiPetManager.shared
                 if manager.selectedPets.isEmpty {
@@ -465,23 +472,11 @@ class PetServer {
                         "obedience": Int(pet.obedience),
                         "isPrimary": true
                     ]
-                    let images = (self.appDelegate?.spriteAnimator ?? nil) != nil
-                        ? self.appDelegate!.spriteAnimator.renderAllFramesHighRes(targetHeight: CGFloat(targetH))
-                        : (0..<4).map { renderer.renderFrameHighRes(character: character, frame: $0, targetHeight: CGFloat(targetH)) }
-                    var frames: [[String: Any]] = []
-                    for (i, image) in images.enumerated() {
-                        if let tiffData = image.tiffRepresentation,
-                           let bitmap = NSBitmapImageRep(data: tiffData),
-                           let pngData = bitmap.representation(using: .png, properties: [:]) {
-                            frames.append(["index": i, "base64": pngData.base64EncodedString()])
-                        }
-                    }
-                    singlePet["frames"] = frames
-                    pets.append(singlePet)
+                    snapshots.append(PetSnapshot(data: singlePet, charId: character.identifier))
                 } else {
                     for (idx, selChar) in manager.selectedPets.enumerated() {
                         let s = manager.state(for: selChar)
-                        var petData: [String: Any] = [
+                        let petData: [String: Any] = [
                             "character": selChar.identifier,
                             "displayName": selChar.displayName,
                             "category": selChar.category,
@@ -500,19 +495,28 @@ class PetServer {
                             "obedience": Int(s.obedience),
                             "isPrimary": idx == 0
                         ]
-                        var frames: [[String: Any]] = []
-                        let images = (0..<4).map { renderer.renderFrameHighRes(character: selChar, frame: $0, targetHeight: CGFloat(targetH)) }
-                        for (i, image) in images.enumerated() {
-                            if let tiffData = image.tiffRepresentation,
-                               let bitmap = NSBitmapImageRep(data: tiffData),
-                               let pngData = bitmap.representation(using: .png, properties: [:]) {
-                                frames.append(["index": i, "base64": pngData.base64EncodedString()])
-                            }
-                        }
-                        petData["frames"] = frames
-                        pets.append(petData)
+                        snapshots.append(PetSnapshot(data: petData, charId: selChar.identifier))
                     }
                 }
+            }
+
+            var pets: [[String: Any]] = []
+            for var snap in snapshots {
+                guard let selChar = SelectableCharacter.from(identifier: snap.charId) else {
+                    pets.append(snap.data)
+                    continue
+                }
+                let images = (0..<4).map { renderer.renderFrameHighRes(character: selChar, frame: $0, targetHeight: CGFloat(targetH)) }
+                var frames: [[String: Any]] = []
+                for (i, image) in images.enumerated() {
+                    if let tiffData = image.tiffRepresentation,
+                       let bitmap = NSBitmapImageRep(data: tiffData),
+                       let pngData = bitmap.representation(using: .png, properties: [:]) {
+                        frames.append(["index": i, "base64": pngData.base64EncodedString()])
+                    }
+                }
+                snap.data["frames"] = frames
+                pets.append(snap.data)
             }
             return (200, ["pets": pets, "count": pets.count], nil, nil)
 
