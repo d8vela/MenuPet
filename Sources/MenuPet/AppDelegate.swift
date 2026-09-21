@@ -436,31 +436,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         cpuItem.tag = 100
         menu.addItem(cpuItem)
 
-        if !manager.selectedPets.isEmpty {
+            if !manager.selectedPets.isEmpty {
             let summary = multiPetSummaryText()
             let summaryItem = NSMenuItem(title: "\(summary)", action: nil, keyEquivalent: "")
             summaryItem.tag = 200
             summaryItem.isEnabled = false
             menu.addItem(summaryItem)
-
-            let statusSub = NSMenu()
-            petSubmenus.removeAll()
-            for pet in manager.selectedPets {
-                let petActionsSub = buildPetSubmenu(for: pet)
-                petSubmenus[pet] = petActionsSub
-                let petMenuItem = NSMenuItem(title: "\(pet.emoji) \(pet.displayName)", action: nil, keyEquivalent: "")
-                petMenuItem.submenu = petActionsSub
-                statusSub.addItem(petMenuItem)
-            }
-            if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
-                statusSub.addItem(NSMenuItem.separator())
-                let swarmItem = NSMenuItem(title: "💬 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
-                swarmItem.target = self
-                statusSub.addItem(swarmItem)
-            }
-            let statusMenuItem = NSMenuItem(title: "📋 Pet Status", action: nil, keyEquivalent: "")
-            statusMenuItem.submenu = statusSub
-            menu.addItem(statusMenuItem)
 
             let feedCount = countActionsFor("feed")
             if feedCount > 0 {
@@ -486,6 +467,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 sleepItem.target = self
                 menu.addItem(sleepItem)
             }
+
+            menu.addItem(NSMenuItem.separator())
+
+            let statusSub = NSMenu()
+            petSubmenus.removeAll()
+            for pet in manager.selectedPets {
+                let petActionsSub = buildPetSubmenu(for: pet)
+                petSubmenus[pet] = petActionsSub
+                let petMenuItem = NSMenuItem(title: "\(pet.emoji) \(pet.displayName)", action: nil, keyEquivalent: "")
+                petMenuItem.submenu = petActionsSub
+                statusSub.addItem(petMenuItem)
+            }
+            if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
+                statusSub.addItem(NSMenuItem.separator())
+                let swarmItem = NSMenuItem(title: "💬 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
+                swarmItem.target = self
+                statusSub.addItem(swarmItem)
+            }
+            let statusMenuItem = NSMenuItem(title: "📋 Pet Status", action: nil, keyEquivalent: "")
+            statusMenuItem.submenu = statusSub
+            menu.addItem(statusMenuItem)
         }
 
         // ===== Unified Pet Selection =====
