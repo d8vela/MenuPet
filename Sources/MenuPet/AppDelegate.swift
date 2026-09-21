@@ -886,6 +886,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         ipItem.isEnabled = false
         companionSub.addItem(ipItem)
 
+        let currentToken = PetServer.shared.authToken
+        let tokenLabel = currentToken.isEmpty ? "Not Set" : String(currentToken.prefix(8)) + "..."
+        let authTokenItem = NSMenuItem(title: "Auth Token: \(tokenLabel)", action: #selector(setAuthToken), keyEquivalent: "")
+        authTokenItem.target = self
+        companionSub.addItem(authTokenItem)
+
         companionSub.addItem(NSMenuItem.separator())
 
         let endpointTitle = NSMenuItem(title: "Endpoint Info", action: nil, keyEquivalent: "")
@@ -1787,6 +1793,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func openCompanionGitHub() {
         if let url = URL(string: "https://github.com/d8vela/MenuPet#android-companion-app") {
             NSWorkspace.shared.open(url)
+        }
+    }
+
+    @objc func setAuthToken() {
+        let alert = NSAlert()
+        alert.messageText = "Set Auth Token"
+        alert.informativeText = "Enter an auth token for companion app connections. Leave empty to disable auth."
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+
+        let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        textField.stringValue = PetServer.shared.authToken
+        textField.placeholderString = "Enter token (or leave empty)"
+        alert.accessoryView = textField
+
+        alert.window.initialFirstResponder = textField
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            let token = textField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+            UserDefaults.standard.set(token, forKey: "petServerAuthToken")
+            buildMenu()
         }
     }
 

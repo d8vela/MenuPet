@@ -7,11 +7,13 @@ class PetServer {
     private var serverFD: Int32 = -1
     private var running = false
     private var serverQueue = DispatchQueue(label: "com.menupet.server", qos: .userInitiated)
+    private var clientQueue = DispatchQueue(label: "com.menupet.server.client", qos: .userInitiated, attributes: .concurrent)
+    private var clientLock = NSLock()
     private var netService: NetService?
     private var requestCounts: [Int32: [Date]] = [:]
     private let rateLimitWindow: TimeInterval = 10
     private let rateLimitMax = 30
-    private var authToken: String {
+    var authToken: String {
         UserDefaults.standard.string(forKey: "petServerAuthToken") ?? ""
     }
 
@@ -157,16 +159,23 @@ class PetServer {
 
         if method == "OPTIONS" {
             let header = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: http://localhost:18920\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Authorization\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
-            let data = header.data(using: .utf8)!
-            _ = data.withUnsafeBytes { ptr in write(fd, ptr.baseAddress!, ptr.count) }
+            if let data = header.data(using: .utf8) {
+                data.withUnsafeBytes { ptr in
+                    guard let baseAddress = ptr.baseAddress else { return }
+                    _ = write(fd, baseAddress, ptr.count)
+                }
+            }
             close(fd)
             return
         }
 
         let now = Date()
+        clientLock.lock()
         requestCounts[fd, default: []].append(now)
         requestCounts[fd] = requestCounts[fd]?.filter { now.timeIntervalSince($0) < rateLimitWindow } ?? []
-        if (requestCounts[fd]?.count ?? 0) > rateLimitMax {
+        let count = requestCounts[fd]?.count ?? 0
+        clientLock.unlock()
+        if count > rateLimitMax {
             sendRawResponse(fd: fd, status: 429, json: ["error": "Rate limit exceeded"])
             close(fd)
             return
@@ -532,8 +541,9 @@ class PetServer {
         if let headerData = header.data(using: .utf8) {
             var fullData = headerData
             fullData.append(jsonData)
-            _ = fullData.withUnsafeBytes { ptr in
-                write(fd, ptr.baseAddress!, ptr.count)
+            fullData.withUnsafeBytes { ptr in
+                guard let baseAddress = ptr.baseAddress else { return }
+                _ = write(fd, baseAddress, ptr.count)
             }
         }
     }
@@ -543,8 +553,9 @@ class PetServer {
         if let headerData = header.data(using: .utf8) {
             var fullData = headerData
             fullData.append(data)
-            _ = fullData.withUnsafeBytes { ptr in
-                write(fd, ptr.baseAddress!, ptr.count)
+            fullData.withUnsafeBytes { ptr in
+                guard let baseAddress = ptr.baseAddress else { return }
+                _ = write(fd, baseAddress, ptr.count)
             }
         }
     }
