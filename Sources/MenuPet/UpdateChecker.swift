@@ -98,7 +98,11 @@ class UpdateChecker {
         
         let dmgPath = tempDir.appendingPathComponent("MenuPet.dmg")
         
-        let session = URLSession(configuration: .default, delegate: DownloadDelegate(progressIndicator: progressIndicator, statusLabel: statusLabel), delegateQueue: .main)
+        let delegate = DownloadDelegate(progressIndicator: progressIndicator, statusLabel: statusLabel)
+        let config = URLSessionConfiguration.default
+        config.requestCachePolicy = .reloadIgnoringLocalCacheData
+        config.urlCache = nil
+        let session = URLSession(configuration: config, delegate: delegate, delegateQueue: .main)
         let task = session.downloadTask(with: url) { [weak self] tempURL, response, error in
             guard let self = self else { return }
             
@@ -223,6 +227,7 @@ class UpdateChecker {
 class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
     private weak var progressIndicator: NSProgressIndicator?
     private weak var statusLabel: NSTextField?
+    private var totalBytes: Int64 = 0
     
     init(progressIndicator: NSProgressIndicator?, statusLabel: NSTextField?) {
         self.progressIndicator = progressIndicator
@@ -232,14 +237,20 @@ class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {}
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        totalBytes = totalBytesWritten
         DispatchQueue.main.async {
             if totalBytesExpectedToWrite > 0 {
                 let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
                 self.progressIndicator?.doubleValue = progress
-                self.statusLabel?.stringValue = "\(Int(progress))%"
+                let downloaded = ByteCountFormatter.string(fromByteCount: totalBytesWritten, countStyle: .file)
+                let total = ByteCountFormatter.string(fromByteCount: totalBytesExpectedToWrite, countStyle: .file)
+                self.statusLabel?.stringValue = "\(downloaded) / \(total) (\(Int(progress))%)"
             } else {
-                self.progressIndicator?.isIndeterminate = true
-                self.statusLabel?.stringValue = "Downloading..."
+                self.progressIndicator?.isIndeterminate = false
+                self.progressIndicator?.minValue = 0
+                self.progressIndicator?.maxValue = 0
+                let downloaded = ByteCountFormatter.string(fromByteCount: totalBytesWritten, countStyle: .file)
+                self.statusLabel?.stringValue = "Downloading... \(downloaded)"
             }
         }
     }
