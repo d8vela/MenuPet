@@ -1184,7 +1184,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.contentView?.addSubview(scrollView)
         swarmChatTextView = scrollView
 
-        let inputField = ChatInputField(frame: NSRect(x: 10, y: 10, width: 389, height: 23))
+        let inputField = ChatInputField(frame: NSRect(x: 10, y: 10, width: 379, height: 31))
         inputField.placeholderString = "Say something to the group..."
         inputField.isEditable = true
         inputField.isSelectable = true
@@ -1194,13 +1194,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         swarmChatInputField = inputField
 
         let sendButton = NSButton(title: "Send", target: self, action: #selector(sendSwarmMessage))
-        sendButton.frame = NSRect(x: 404, y: 9, width: 60, height: 26)
+        sendButton.frame = NSRect(x: 399, y: 9, width: 60, height: 26)
         sendButton.keyEquivalent = "\r"
         sendButton.autoresizingMask = [.minXMargin]
         panel.contentView?.addSubview(sendButton)
 
         let diceButton = NSButton(title: "🎲", target: self, action: #selector(triggerRandomInteraction))
-        diceButton.frame = NSRect(x: 468, y: 9, width: 30, height: 26)
+        diceButton.frame = NSRect(x: 463, y: 9, width: 30, height: 26)
         diceButton.bezelStyle = .inline
         diceButton.autoresizingMask = [.minXMargin]
         diceButton.toolTip = "Random Pet Action"
