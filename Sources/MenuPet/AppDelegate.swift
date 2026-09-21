@@ -370,7 +370,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(NSMenuItem.separator())
 
-        if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
+        if LLMService.shared.statusEnabled {
             if !manager.selectedPets.isEmpty {
                 for pet in manager.selectedPets {
                     let cached = LLMService.shared.getCachedStatus(for: pet)
@@ -820,30 +820,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             additionalItem.submenu = additionalSub
             markHeaders(additionalSub)
             petSelectionSub.addItem(additionalItem)
+        }
 
+        petSelectionSub.addItem(NSMenuItem.separator())
+
+        let clearItem = NSMenuItem(title: "Clear All Pets", action: #selector(clearAllPets), keyEquivalent: "")
+        clearItem.target = self
+        petSelectionSub.addItem(clearItem)
+
+        let selHistory = manager.selectionHistory
+        if !selHistory.isEmpty {
             petSelectionSub.addItem(NSMenuItem.separator())
-
-            let clearItem = NSMenuItem(title: "Clear All Pets", action: #selector(clearAllPets), keyEquivalent: "")
-            clearItem.target = self
-            petSelectionSub.addItem(clearItem)
-
-            let selHistory = manager.selectionHistory
-            if !selHistory.isEmpty {
-                petSelectionSub.addItem(NSMenuItem.separator())
-                let histSub = NSMenu()
-                for identifiers in selHistory {
-                    let characters = identifiers.compactMap { SelectableCharacter.from(identifier: $0) }
-                    guard !characters.isEmpty else { continue }
-                    let label = characters.map { "\($0.emoji)\($0.displayName)" }.joined(separator: " ")
-                    let item = NSMenuItem(title: label, action: #selector(restorePetSelection(_:)), keyEquivalent: "")
-                    item.target = self
-                    item.representedObject = identifiers
-                    histSub.addItem(item)
-                }
-                let histMI = NSMenuItem(title: "📜 Selection History", action: nil, keyEquivalent: "")
-                histMI.submenu = histSub
-                petSelectionSub.addItem(histMI)
+            let histSub = NSMenu()
+            for identifiers in selHistory {
+                let characters = identifiers.compactMap { SelectableCharacter.from(identifier: $0) }
+                guard !characters.isEmpty else { continue }
+                let label = characters.map { "\($0.emoji)\($0.displayName)" }.joined(separator: " ")
+                let item = NSMenuItem(title: label, action: #selector(restorePetSelection(_:)), keyEquivalent: "")
+                item.target = self
+                item.representedObject = identifiers
+                histSub.addItem(item)
             }
+            let histMI = NSMenuItem(title: "📜 Selection History", action: nil, keyEquivalent: "")
+            histMI.submenu = histSub
+            petSelectionSub.addItem(histMI)
         }
 
         let petSelectionMI = NSMenuItem(title: "🐾 Pet Selection", action: nil, keyEquivalent: "")
@@ -1184,7 +1184,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.contentView?.addSubview(scrollView)
         swarmChatTextView = scrollView
 
-        let inputField = ChatInputField(frame: NSRect(x: 10, y: 10, width: 389, height: 24))
+        let inputField = ChatInputField(frame: NSRect(x: 10, y: 10, width: 389, height: 23))
         inputField.placeholderString = "Say something to the group..."
         inputField.isEditable = true
         inputField.isSelectable = true
@@ -1289,22 +1289,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func showTypingIndicator(pet: SelectableCharacter) -> String {
         guard let scrollView = swarmChatTextView, let textView = scrollView.documentView as? NSTextView else { return "" }
-        let petState = MultiPetManager.shared.state(for: pet)
-        let statusInfo = "\(petState.moodEmoji) \(petState.mood) \(petState.stageEmoji)"
-        let marker = "TYPING_\(pet.identifier)_\(UUID().uuidString.prefix(4))"
-        let text = "\(pet.emoji) \(pet.displayName) is typing... \(statusInfo) [\(marker)]\n"
+        let text = "\(pet.emoji) \(pet.displayName) is typing...\n"
         textView.textStorage?.append(NSAttributedString(string: text, attributes: [
             .font: NSFont.systemFont(ofSize: 12),
             .foregroundColor: NSColor.secondaryLabelColor
         ]))
         textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
-        return marker
+        return "\(pet.emoji) \(pet.displayName)"
     }
 
     private func removeTypingIndicator(marker: String) {
         guard let scrollView = swarmChatTextView, let textView = scrollView.documentView as? NSTextView else { return }
         let fullText = textView.string
-        guard let range = fullText.range(of: "[\(marker)]") else { return }
+        let searchText = "\(marker) is typing..."
+        guard let range = fullText.range(of: searchText) else { return }
         var start = fullText.startIndex
         if let prevNewline = fullText[..<range.lowerBound].lastIndex(of: "\n") {
             start = fullText.index(after: prevNewline)
@@ -1320,12 +1318,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func displaySwarmMessages(_ messages: [SwarmMessage], delay: TimeInterval = 1.8) {
         guard !messages.isEmpty else { return }
-        var currentDelay: TimeInterval = 0.5
-        for msg in messages {
+        for (i, msg) in messages.enumerated() {
             let pet = msg.speaker
-            let typingDuration = Double.random(in: 1.2...2.5)
-            let pauseBetween = Double.random(in: 0.8...1.5)
-            DispatchQueue.main.asyncAfter(deadline: .now() + currentDelay) { [weak self] in
+            let typingDuration = Double.random(in: 1.0...3.0)
+            let startOffset = Double.random(in: 0.2...1.5) + (Double(i) * Double.random(in: 0.1...0.6))
+            DispatchQueue.main.asyncAfter(deadline: .now() + startOffset) { [weak self] in
                 guard let self = self else { return }
                 let marker = self.showTypingIndicator(pet: pet)
                 DispatchQueue.main.asyncAfter(deadline: .now() + typingDuration) { [weak self] in
@@ -1334,7 +1331,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     self.appendToSwarmChat(pet: pet, text: msg.text)
                 }
             }
-            currentDelay += typingDuration + pauseBetween
         }
     }
 
@@ -2262,7 +2258,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         sub.addItem(NSMenuItem.separator())
 
-        addItem("  👋 Discipline", action: #selector(disciplineSinglePet(_:)), needsAttention: petState.isDisobedient)
+        addItem("  👋 Discipline", action: #selector(disciplineSinglePet(_:)), needsAttention: false)
 
         sub.addItem(NSMenuItem.separator())
 

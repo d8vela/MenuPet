@@ -94,7 +94,6 @@ class LLMService {
 
     private var cachedStatuses: [String: String] = [:]
     private var statusTimestamps: [String: Date] = [:]
-    private var inFlightRequests: Set<String> = []
     private let cacheLock = NSLock()
 
     func generateStatus(for character: SelectableCharacter, petState: PetState, completion: @escaping (String) -> Void) {
@@ -111,19 +110,11 @@ class LLMService {
             completion(cached)
             return
         }
-        if inFlightRequests.contains(charId) {
-            cacheLock.unlock()
-            return
-        }
-        inFlightRequests.insert(charId)
         cacheLock.unlock()
 
         let prompt = buildPrompt(for: character, petState: petState)
         callAPI(prompt: prompt) { [weak self] result in
             guard let self = self else { return }
-            self.cacheLock.lock()
-            self.inFlightRequests.remove(charId)
-            self.cacheLock.unlock()
             switch result {
             case .success(let status):
                 self.cacheLock.lock()
