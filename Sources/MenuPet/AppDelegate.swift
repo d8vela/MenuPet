@@ -1263,6 +1263,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    private func scrollToBottom(_ scrollView: NSScrollView) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            let docView = scrollView.documentView
+            let contentHeight = docView?.bounds.height ?? 0
+            let scrollHeight = scrollView.contentSize.height
+            let point = NSPoint(x: 0, y: max(0, contentHeight - scrollHeight))
+            docView?.scroll(point)
+        }
+    }
+
     private func appendToSwarmChat(user: String) {
         guard let scrollView = swarmChatTextView, let textView = scrollView.documentView as? NSTextView else { return }
         let text = "You: \(user)\n\n"
@@ -1270,7 +1280,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .font: NSFont.systemFont(ofSize: 13),
             .foregroundColor: NSColor.labelColor
         ]))
-        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
+        scrollToBottom(scrollView)
     }
 
     private func appendToSwarmChat(pet: SelectableCharacter, text: String) {
@@ -1288,7 +1298,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .font: NSFont.systemFont(ofSize: 13),
             .foregroundColor: NSColor.systemBlue
         ]))
-        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
+        scrollToBottom(scrollView)
     }
 
     private func appendToSwarmChat(system: String) {
@@ -1308,7 +1318,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .font: NSFont.systemFont(ofSize: 12),
             .foregroundColor: NSColor.secondaryLabelColor
         ]))
-        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
+        scrollToBottom(scrollView)
         return "\(pet.emoji) \(pet.displayName)"
     }
 
@@ -1327,7 +1337,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let nsRange = NSRange(start..<end, in: fullText)
         textView.textStorage?.deleteCharacters(in: nsRange)
-        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
+        scrollToBottom(scrollView)
     }
 
     private func displaySwarmMessages(_ messages: [SwarmMessage], delay: TimeInterval = 1.8) {
@@ -2154,10 +2164,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let scrollView = chatTextView, let textView = scrollView.documentView as? NSTextView else { return }
         let text = "You: \(user)\n\n"
         textView.textStorage?.append(NSAttributedString(string: text, attributes: [
-            .font: NSFont.systemFont(ofSize: 13),
-            .foregroundColor: NSColor.labelColor
+            .font: NSFont.systemFont(ofSize: 11),
+            .foregroundColor: NSColor.secondaryLabelColor
         ]))
-        textView.scrollRangeToVisible(NSRange(location: textView.string.count, length: 0))
+        scrollToBottom(scrollView)
     }
 
     private func appendToChat(pet: String) {
