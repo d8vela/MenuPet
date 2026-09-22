@@ -10,7 +10,7 @@ class PetServer {
     private var clientQueue = DispatchQueue(label: "com.menupet.server.client", qos: .userInitiated, attributes: .concurrent)
     private var clientLock = NSLock()
     private var netService: NetService?
-    private var requestCounts: [Int32: [Date]] = [:]
+    private var requestCounts: [UInt32: [Date]] = [:]
     private let rateLimitWindow: TimeInterval = 10
     private let rateLimitMax = 30
     var authToken: String {
@@ -37,6 +37,8 @@ class PetServer {
 
     func start() {
         guard !running else { return }
+
+        signal(SIGPIPE, SIG_IGN)
 
         serverFD = socket(AF_INET, SOCK_STREAM, 0)
         guard serverFD >= 0 else {
@@ -91,7 +93,9 @@ class PetServer {
         }
         netService?.stop()
         netService = nil
+        clientLock.lock()
         requestCounts.removeAll()
+        clientLock.unlock()
     }
 
     private func acceptLoop() {
@@ -107,14 +111,17 @@ class PetServer {
                 if running { continue }
                 break
             }
+            var nosigpipe: Int32 = 1
+            setsockopt(clientFD, SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe, socklen_t(MemoryLayout<Int32>.size))
             let fd = clientFD
+            let clientIP = clientAddr.sin_addr.s_addr
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.handleClient(fd)
+                self?.handleClient(fd, clientIP: clientIP)
             }
         }
     }
 
-    private func handleClient(_ fd: Int32) {
+    private func handleClient(_ fd: Int32, clientIP: UInt32) {
         var buffer = [UInt8](repeating: 0, count: 65536)
         let bytesRead = read(fd, &buffer, buffer.count)
         guard bytesRead > 0 else {
@@ -159,12 +166,9 @@ class PetServer {
         }
 
         if method == "OPTIONS" {
-            let header = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: http://localhost:18920\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Authorization\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+            let header = "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Authorization\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
             if let data = header.data(using: .utf8) {
-                data.withUnsafeBytes { ptr in
-                    guard let baseAddress = ptr.baseAddress else { return }
-                    _ = write(fd, baseAddress, ptr.count)
-                }
+                writeAll(fd: fd, data: data)
             }
             close(fd)
             return
@@ -172,9 +176,12 @@ class PetServer {
 
         let now = Date()
         clientLock.lock()
-        requestCounts[fd, default: []].append(now)
-        requestCounts[fd] = requestCounts[fd]?.filter { now.timeIntervalSince($0) < rateLimitWindow } ?? []
-        let count = requestCounts[fd]?.count ?? 0
+        requestCounts[clientIP, default: []].append(now)
+        requestCounts[clientIP] = requestCounts[clientIP]?.filter { now.timeIntervalSince($0) < rateLimitWindow } ?? []
+        let count = requestCounts[clientIP]?.count ?? 0
+        if requestCounts.count > 128 {
+            requestCounts = requestCounts.filter { !$0.value.isEmpty && now.timeIntervalSince($0.value.last!) < rateLimitWindow }
+        }
         clientLock.unlock()
         if count > rateLimitMax {
             sendRawResponse(fd: fd, status: 429, json: ["error": "Rate limit exceeded"])
@@ -213,7 +220,7 @@ class PetServer {
     private func routeSync(method: String, path: String, body: [String: Any], queryParams: [String: String] = [:]) -> (status: Int, body: [String: Any]?, data: Data?, contentType: String?) {
         let pet = PetState.shared
         var character: SelectableCharacter = .pokemon(.pikachu)
-        DispatchQueue.main.sync {
+        onMainThreadSync {
             if let app = self.appDelegate {
                 character = app.spriteAnimator.currentPokemon
             }
@@ -244,7 +251,7 @@ class PetServer {
 
         case ("GET", "/pet/status"):
             var statusMsg = ""
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 if let app = self.appDelegate {
                     statusMsg = app.spriteAnimator.llmStatus ?? ""
                 }
@@ -253,7 +260,7 @@ class PetServer {
 
         case ("GET", "/pet/sprite"):
             var pngData: Data?
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 if let app = self.appDelegate {
                     let image = app.spriteAnimator.currentFrame
                     if let tiffData = image.tiffRepresentation,
@@ -271,7 +278,7 @@ class PetServer {
         case ("GET", "/pet/frames"):
             let targetH = Double(queryParams["height"] ?? "160") ?? 160
             var frames: [[String: Any]] = []
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 if let app = self.appDelegate {
                     let images = app.spriteAnimator.renderAllFramesHighRes(targetHeight: CGFloat(targetH))
                     for (i, image) in images.enumerated() {
@@ -286,12 +293,12 @@ class PetServer {
             return (200, ["frames": frames, "fps": 2, "count": frames.count], nil, nil)
 
         case ("POST", "/pet/feed"):
-            DispatchQueue.main.sync { pet.feed(personality: character.personality) }
+            onMainThreadSync { pet.feed(personality: character.personality) }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "hunger": Int(pet.hunger)], nil, nil)
 
         case ("POST", "/pet/feed-all"):
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 MultiPetManager.shared.feedAll()
             }
             LLMService.shared.invalidateCache()
@@ -299,12 +306,12 @@ class PetServer {
             return (200, ["ok": true, "petCount": count], nil, nil)
 
         case ("POST", "/pet/play"):
-            DispatchQueue.main.sync { pet.play(personality: character.personality) }
+            onMainThreadSync { pet.play(personality: character.personality) }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "happiness": Int(pet.happiness)], nil, nil)
 
         case ("POST", "/pet/play-all"):
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 MultiPetManager.shared.playAll()
             }
             LLMService.shared.invalidateCache()
@@ -312,12 +319,12 @@ class PetServer {
             return (200, ["ok": true, "petCount": count], nil, nil)
 
         case ("POST", "/pet/clean"):
-            DispatchQueue.main.sync { pet.clean() }
+            onMainThreadSync { pet.clean() }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "hygiene": Int(pet.hygiene)], nil, nil)
 
         case ("POST", "/pet/clean-all"):
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 MultiPetManager.shared.cleanAll()
             }
             LLMService.shared.invalidateCache()
@@ -325,12 +332,12 @@ class PetServer {
             return (200, ["ok": true, "petCount": count], nil, nil)
 
         case ("POST", "/pet/sleep"):
-            DispatchQueue.main.sync { pet.sleep() }
+            onMainThreadSync { pet.sleep() }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "energy": Int(pet.energy)], nil, nil)
 
         case ("POST", "/pet/sleep-all"):
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 MultiPetManager.shared.sleepAll()
             }
             LLMService.shared.invalidateCache()
@@ -339,13 +346,13 @@ class PetServer {
 
         case ("POST", "/pet/discipline"):
             var message = ""
-            DispatchQueue.main.sync { message = pet.discipline() }
+            onMainThreadSync { message = pet.discipline() }
             LLMService.shared.invalidateCache()
             return (200, ["ok": true, "message": message, "isDisobedient": pet.isDisobedient, "obedience": Int(pet.obedience)], nil, nil)
 
         case ("POST", "/pet/discipline-all"):
             var message = ""
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 let (_, result) = MultiPetManager.shared.disciplineAll()
                 message = result
             }
@@ -444,7 +451,7 @@ class PetServer {
             let targetH = Double(queryParams["height"] ?? "160") ?? 160
             let renderer = SpriteRenderer()
             var pets: [[String: Any]] = []
-            DispatchQueue.main.sync {
+            onMainThreadSync {
                 let manager = MultiPetManager.shared
                 if manager.selectedPets.isEmpty {
                     var singlePet: [String: Any] = [
@@ -534,29 +541,37 @@ class PetServer {
         switch status {
         case 200: statusText = "OK"
         case 400: statusText = "Bad Request"
+        case 401: statusText = "Unauthorized"
         case 404: statusText = "Not Found"
+        case 429: statusText = "Too Many Requests"
         case 500: statusText = "Internal Server Error"
         default: statusText = "OK"
         }
-        let header = "HTTP/1.1 \(status) \(statusText)\r\nContent-Type: application/json\r\nContent-Length: \(jsonString.utf8.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type\r\n\r\n"
+        let header = "HTTP/1.1 \(status) \(statusText)\r\nContent-Type: application/json\r\nContent-Length: \(jsonString.utf8.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Authorization\r\n\r\n"
         if let headerData = header.data(using: .utf8) {
             var fullData = headerData
             fullData.append(jsonData)
-            fullData.withUnsafeBytes { ptr in
-                guard let baseAddress = ptr.baseAddress else { return }
-                _ = write(fd, baseAddress, ptr.count)
-            }
+            writeAll(fd: fd, data: fullData)
         }
     }
 
     private func sendRawData(fd: Int32, status: Int, contentType: String, data: Data) {
-        let header = "HTTP/1.1 \(status) OK\r\nContent-Type: \(contentType)\r\nContent-Length: \(data.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type\r\n\r\n"
+        let header = "HTTP/1.1 \(status) OK\r\nContent-Type: \(contentType)\r\nContent-Length: \(data.count)\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, OPTIONS\r\nAccess-Control-Allow-Headers: Content-Type, Authorization\r\n\r\n"
         if let headerData = header.data(using: .utf8) {
             var fullData = headerData
             fullData.append(data)
-            fullData.withUnsafeBytes { ptr in
-                guard let baseAddress = ptr.baseAddress else { return }
-                _ = write(fd, baseAddress, ptr.count)
+            writeAll(fd: fd, data: fullData)
+        }
+    }
+
+    private func writeAll(fd: Int32, data: Data) {
+        data.withUnsafeBytes { ptr in
+            guard let baseAddress = ptr.baseAddress else { return }
+            var totalSent = 0
+            while totalSent < ptr.count {
+                let sent = write(fd, baseAddress.advanced(by: totalSent), ptr.count - totalSent)
+                if sent <= 0 { break }
+                totalSent += sent
             }
         }
     }

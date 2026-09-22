@@ -39,7 +39,7 @@ class MultiPetManager {
         if let existing = petStates[id] {
             return existing
         }
-        let state = PetState()
+        let state = PetState(storageKey: "petState_\(id)")
         petStates[id] = state
         return state
     }

@@ -104,6 +104,7 @@ class UpdateChecker {
         config.urlCache = nil
         let session = URLSession(configuration: config, delegate: delegate, delegateQueue: .main)
         let task = session.downloadTask(with: url) { [weak self] tempURL, response, error in
+            session.finishTasksAndInvalidate()
             guard let self = self else { return }
             
             if let error = error {
@@ -156,7 +157,16 @@ class UpdateChecker {
                 return
             }
             
-            let appInDMG = mountPoint.appendingPathComponent("MenuPet.app")
+            var appInDMG = mountPoint.appendingPathComponent("MenuPet.app")
+            if !FileManager.default.fileExists(atPath: appInDMG.path) {
+                let multiApp = mountPoint.appendingPathComponent("MultiMenuPet.app")
+                if FileManager.default.fileExists(atPath: multiApp.path) {
+                    appInDMG = multiApp
+                } else if let contents = try? FileManager.default.contentsOfDirectory(at: mountPoint, includingPropertiesForKeys: nil),
+                          let foundApp = contents.first(where: { $0.pathExtension == "app" }) {
+                    appInDMG = foundApp
+                }
+            }
             let appPath = Bundle.main.bundleURL
             
             let cpProcess = Process()

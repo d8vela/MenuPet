@@ -29,7 +29,11 @@ class SwarmChatManager {
         }
 
         isSwarmChatting = true
-        history = []
+        if Thread.isMainThread {
+            history.removeAll()
+        } else {
+            DispatchQueue.main.sync { history.removeAll() }
+        }
 
         let systemPrompt = buildSwarmSystemPrompt(pets: pets)
         let userPrompt = buildSwarmUserPrompt(pets: pets, topic: topic)
@@ -45,6 +49,22 @@ class SwarmChatManager {
         }
     }
 
+    private func appendHistory(_ msg: SwarmMessage) {
+        if Thread.isMainThread {
+            history.append(msg)
+            if history.count > maxHistory {
+                history.removeFirst(history.count - maxHistory)
+            }
+        } else {
+            DispatchQueue.main.sync {
+                history.append(msg)
+                if history.count > maxHistory {
+                    history.removeFirst(history.count - maxHistory)
+                }
+            }
+        }
+    }
+
     func sendUserMessage(
         _ text: String,
         completion: @escaping ([SwarmMessage]) -> Void
@@ -57,7 +77,7 @@ class SwarmChatManager {
 
         isSwarmChatting = true
 
-        history.append(SwarmMessage(
+        appendHistory(SwarmMessage(
             speaker: .pokemon(.pokeball),
             text: text,
             timestamp: Date(),
@@ -68,7 +88,13 @@ class SwarmChatManager {
         var messages: [[String: String]] = [
             ["role": "system", "content": systemPrompt]
         ]
-        for msg in history.suffix(20) {
+        let currentHistory: [SwarmMessage]
+        if Thread.isMainThread {
+            currentHistory = history
+        } else {
+            currentHistory = DispatchQueue.main.sync { history }
+        }
+        for msg in currentHistory.suffix(20) {
             if msg.isUser {
                 messages.append(["role": "user", "content": "[User]: \(msg.text)"])
             } else {
@@ -88,7 +114,7 @@ class SwarmChatManager {
             callSinglePetChat(messages: petMessages) { [weak self] response in
                 guard let self = self else { return }
                 let msg = SwarmMessage(speaker: pet, text: response, timestamp: Date(), isUser: false)
-                self.history.append(msg)
+                self.appendHistory(msg)
                 newMessages.append(msg)
                 responded += 1
                 if responded >= petsToRespond.count {
@@ -171,9 +197,7 @@ class SwarmChatManager {
             var newAccumulated = accumulated
             newAccumulated.append(msg)
 
-            DispatchQueue.main.async {
-                self.history.append(msg)
-            }
+            self.appendHistory(msg)
 
             var nextMessages = messages
             nextMessages.append(["role": "assistant", "content": "\(pet.displayName): \(response)"])
@@ -215,9 +239,7 @@ class SwarmChatManager {
             var newAccumulated = accumulated
             newAccumulated.append(msg)
 
-            DispatchQueue.main.async {
-                self.history.append(msg)
-            }
+            self.appendHistory(msg)
 
             var nextMessages = messages
             nextMessages.append(["role": "assistant", "content": "\(currentPet.displayName): \(response)"])

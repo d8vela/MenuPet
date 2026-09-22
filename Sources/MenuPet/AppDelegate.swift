@@ -376,6 +376,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let cached = LLMService.shared.getCachedStatus(for: pet)
                     let statusItem = NSMenuItem(title: "  \(pet.emoji) \(cached ?? "Loading...")", action: nil, keyEquivalent: "")
                     statusItem.tag = 310
+                    statusItem.representedObject = pet.identifier
                     statusItem.isEnabled = false
                     menu.addItem(statusItem)
                     if cached == nil {
@@ -383,10 +384,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         let petState = manager.state(for: char)
                         DispatchQueue.global(qos: .userInitiated).async {
                             LLMService.shared.generateStatus(for: char, petState: petState) { status in
-                                if let menu = self.statusItem.menu {
-                                    for item in menu.items where item.tag == 310 {
-                                        if item.title.contains(pet.displayName) {
-                                            item.title = "  \(pet.emoji) \(status)"
+                                DispatchQueue.main.async {
+                                    if let menu = self.statusItem.menu {
+                                        for item in menu.items where item.tag == 310 {
+                                            if (item.representedObject as? String) == char.identifier || item.title.hasPrefix("  \(char.emoji)") {
+                                                item.title = "  \(char.emoji) \(status)"
+                                            }
                                         }
                                     }
                                 }
@@ -995,9 +998,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 } else {
                     item.title = "\(spriteAnimator.currentPokemon.emoji) \(spriteAnimator.currentPokemon.displayName) — \(spriteAnimator.currentPokemon.category)"
                 }
-            }
-            if let submenu = item.submenu {
-                updateCheckmarks(in: submenu)
             }
         }
     }
@@ -2477,50 +2477,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let cleanCount = countActionsFor("clean")
         let sleepCount = countActionsFor("sleep")
 
-        for item in menu.items {
-            if item.title.hasPrefix("🍕 Feed All"), item.tag != 100 {
-                menu.removeItem(item)
-                if feedCount > 0 {
-                    let feedItem = NSMenuItem(title: "🍕 Feed All (\(feedCount))", action: #selector(feedPet), keyEquivalent: "")
-                    feedItem.target = self
-                    let idx = menu.index(of: item) ?? menu.items.count
-                    menu.insertItem(feedItem, at: idx)
-                }
-                break
-            }
-        }
+        updateActionButton(prefix: "🍕 Feed All", title: "🍕 Feed All (\(feedCount))", count: feedCount, in: menu)
+        updateActionButton(prefix: "🎾 Play All", title: "🎾 Play All (\(playCount))", count: playCount, in: menu)
+        updateActionButton(prefix: "🧼 Clean All", title: "🧼 Clean All (\(cleanCount))", count: cleanCount, in: menu)
+        updateActionButton(prefix: "😴 Sleep All", title: "😴 Sleep All (\(sleepCount))", count: sleepCount, in: menu)
+    }
 
-        for item in menu.items where item.title.hasPrefix("🎾 Play All") {
-            menu.removeItem(item)
-            if playCount > 0 {
-                let playItem = NSMenuItem(title: "🎾 Play All (\(playCount))", action: #selector(playWithPet), keyEquivalent: "")
-                playItem.target = self
-                let idx = menu.index(of: item) ?? menu.items.count
-                menu.insertItem(playItem, at: idx)
+    private func updateActionButton(prefix: String, title: String, count: Int, in menu: NSMenu) {
+        if let idx = menu.items.firstIndex(where: { $0.title.hasPrefix(prefix) && $0.tag != 100 }) {
+            if count > 0 {
+                menu.items[idx].title = title
+            } else {
+                menu.removeItem(at: idx)
             }
-            break
-        }
-
-        for item in menu.items where item.title.hasPrefix("🧼 Clean All") {
-            menu.removeItem(item)
-            if cleanCount > 0 {
-                let cleanItem = NSMenuItem(title: "🧼 Clean All (\(cleanCount))", action: #selector(cleanPet), keyEquivalent: "")
-                cleanItem.target = self
-                let idx = menu.index(of: item) ?? menu.items.count
-                menu.insertItem(cleanItem, at: idx)
-            }
-            break
-        }
-
-        for item in menu.items where item.title.hasPrefix("😴 Sleep All") {
-            menu.removeItem(item)
-            if sleepCount > 0 {
-                let sleepItem = NSMenuItem(title: "😴 Sleep All (\(sleepCount))", action: #selector(letPetSleep), keyEquivalent: "")
-                sleepItem.target = self
-                let idx = menu.index(of: item) ?? menu.items.count
-                menu.insertItem(sleepItem, at: idx)
-            }
-            break
         }
     }
 

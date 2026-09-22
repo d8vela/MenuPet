@@ -23,8 +23,11 @@ class CPUMonitor {
         var cpuInfo: processor_info_array_t?
         var numCPUInfo: mach_msg_type_number_t = 0
 
-        let result = host_processor_info(mach_host_self(), PROCESSOR_CPU_LOAD_INFO,
+        let hostPort = mach_host_self()
+        let result = host_processor_info(hostPort, PROCESSOR_CPU_LOAD_INFO,
                                          &numCPUs, &cpuInfo, &numCPUInfo)
+        mach_port_deallocate(mach_task_self_, hostPort)
+
         guard result == KERN_SUCCESS, let info = cpuInfo else { return }
 
         defer {
@@ -45,12 +48,18 @@ class CPUMonitor {
             idleTicks += idle
         }
 
+        guard previousTotal > 0, totalTicks >= previousTotal, idleTicks >= previousIdle else {
+            previousTotal = totalTicks
+            previousIdle = idleTicks
+            return
+        }
+
         let totalDiff = totalTicks - previousTotal
         let idleDiff = idleTicks - previousIdle
 
         if totalDiff > 0 {
             currentCPU = Double(totalDiff - idleDiff) / Double(totalDiff) * 100.0
-            currentCPU = min(currentCPU, 100.0)
+            currentCPU = min(max(currentCPU, 0.0), 100.0)
         }
 
         previousTotal = totalTicks

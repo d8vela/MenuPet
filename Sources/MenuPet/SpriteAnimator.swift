@@ -37,19 +37,32 @@ class SpriteAnimator {
     var llmStatus: String?
     var speedLabel: String = "Idle"
 
+    private var cachedCurrentFrame: NSImage?
+
+    func invalidateFrameCache() {
+        cachedCurrentFrame = nil
+    }
+
     var currentFrame: NSImage {
+        if let cached = cachedCurrentFrame {
+            return cached
+        }
+        let frame: NSImage
         let manager = MultiPetManager.shared
         if manager.isMultiPetMode {
-            return renderMultiPetFrame()
+            frame = renderMultiPetFrame()
+        } else {
+            let ps = PetState.shared
+            if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
+                frame = spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: currentFrameIndex, petState: ps)
+            } else if isTransformerCharacter(currentPokemon) {
+                frame = spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex, petState: ps)
+            } else {
+                frame = spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex, petState: ps)
+            }
         }
-        let ps = PetState.shared
-        if isTransformerCharacter(currentPokemon) && (isTransformingToVehicle || isTransformingToRobot || isInVehicleMode) {
-            return spriteRenderer.renderFrame(character: currentPokemon, frame: transformFrameIndex, sparkleFrame: currentFrameIndex, petState: ps)
-        }
-        if isTransformerCharacter(currentPokemon) {
-            return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex % 2, sparkleFrame: currentFrameIndex, petState: ps)
-        }
-        return spriteRenderer.renderFrame(character: currentPokemon, frame: currentFrameIndex, petState: ps)
+        cachedCurrentFrame = frame
+        return frame
     }
 
     private func renderMultiPetFrame() -> NSImage {
@@ -106,6 +119,7 @@ class SpriteAnimator {
         let isNowTransformer = isTransformerCharacter(pokemon)
 
         currentPokemon = pokemon
+        cachedCurrentFrame = nil
         selectionCounts[pokemon, default: 0] += 1
         addToHistory(pokemon)
         UserDefaults.standard.set(pokemon.identifier, forKey: "lastSelectedCharacter")
@@ -127,6 +141,7 @@ class SpriteAnimator {
         isTransformingToRobot = false
         isInVehicleMode = false
         transformFrameIndex = 0
+        cachedCurrentFrame = nil
     }
 
     private func scheduleNextTransformation() {
@@ -158,6 +173,7 @@ class SpriteAnimator {
                     self.startVehicleHold()
                     self.onTransformStateChanged?()
                 }
+                self.cachedCurrentFrame = nil
                 self.onFrameAdvanced?()
             }
         }
@@ -192,6 +208,7 @@ class SpriteAnimator {
                     self.scheduleNextTransformation()
                     self.onTransformStateChanged?()
                 }
+                self.cachedCurrentFrame = nil
                 self.onFrameAdvanced?()
             }
         }
@@ -317,34 +334,7 @@ class SpriteAnimator {
     }
 
     private func startRotation() {
-        let allCharacters: [SelectableCharacter] =
-            PokemonCharacter.allCases.map { .pokemon($0) } +
-            MarioItem.allCases.map { .marioItem($0) } +
-            MarioKartCharacter.allCases.map { .marioKart($0) } +
-            ContraCharacter.allCases.map { .contra($0) } +
-            TMNTCharacter.allCases.map { .tmnt($0) } +
-            StreetFighterCharacter.allCases.map { .streetFighter($0) } +
-            MetalSlugCharacter.allCases.map { .metalSlug($0) } +
-            OverwatchCharacter.allCases.map { .overwatch($0) } +
-            KirbyCharacter.allCases.map { .kirby($0) } +
-            ZeldaCharacter.allCases.map { .zelda($0) } +
-            MegaManCharacter.allCases.map { .megaMan($0) } +
-            MarvelCharacter.allCases.map { .marvel($0) } +
-            DCCharacter.allCases.map { .dc($0) } +
-            NarutoCharacter.allCases.map { .naruto($0) } +
-            SimpsonsCharacter.allCases.map { .simpsons($0) } +
-            MortalKombatCharacter.allCases.map { .mortalKombat($0) } +
-            MinionsCharacter.allCases.map { .minions($0) } +
-            DragonBallCharacter.allCases.map { .dragonBall($0) } +
-            GhibliCharacter.allCases.map { .ghibli($0) } +
-            GundamCharacter.allCases.map { .gundam($0) } +
-            StarWarsCharacter.allCases.map { .starWars($0) } +
-            LabubuCharacter.allCases.map { .labubu($0) } +
-            KingOfTheHillCharacter.allCases.map { .kingOfTheHill($0) } +
-            FamilyGuyCharacter.allCases.map { .familyGuy($0) } +
-            FuturamaCharacter.allCases.map { .futurama($0) } +
-            BatmanCharacter.allCases.map { .batman($0) } +
-            TransformersCharacter.allCases.map { .transformers($0) }
+        let allCharacters = SelectableCharacter.allCharacters
 
         rotationTimer = Timer.scheduledTimer(withTimeInterval: rotationInterval, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -364,7 +354,7 @@ class SpriteAnimator {
                 }
                 attempts += 1
             }
-            self.selectionCounts.removeAll()
+            self.cachedCurrentFrame = nil
             self.currentPokemon = next
             self.addToHistory(next)
             UserDefaults.standard.set(next.identifier, forKey: "lastSelectedCharacter")
@@ -467,6 +457,7 @@ class SpriteAnimator {
 
     private func advanceFrame() {
         currentFrameIndex = (currentFrameIndex + 1) % 4
+        cachedCurrentFrame = nil
         DispatchQueue.main.async {
             self.onFrameAdvanced?()
         }

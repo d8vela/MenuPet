@@ -193,4 +193,33 @@ enum SelectableCharacter: Equatable, Hashable {
         case .transformers: return "Transformers"
         }
     }
+
+    static let allCharacters: [SelectableCharacter] =
+        PokemonCharacter.allCases.map { .pokemon($0) } +
+        MarioItem.allCases.map { .marioItem($0) } +
+        MarioKartCharacter.allCases.map { .marioKart($0) } +
+        ContraCharacter.allCases.map { .contra($0) } +
+        TMNTCharacter.allCases.map { .tmnt($0) } +
+        StreetFighterCharacter.allCases.map { .streetFighter($0) } +
+        MetalSlugCharacter.allCases.map { .metalSlug($0) } +
+        OverwatchCharacter.allCases.map { .overwatch($0) } +
+        KirbyCharacter.allCases.map { .kirby($0) } +
+        ZeldaCharacter.allCases.map { .zelda($0) } +
+        MegaManCharacter.allCases.map { .megaMan($0) } +
+        MarvelCharacter.allCases.map { .marvel($0) } +
+        DCCharacter.allCases.map { .dc($0) } +
+        NarutoCharacter.allCases.map { .naruto($0) } +
+        SimpsonsCharacter.allCases.map { .simpsons($0) } +
+        MortalKombatCharacter.allCases.map { .mortalKombat($0) } +
+        MinionsCharacter.allCases.map { .minions($0) } +
+        DragonBallCharacter.allCases.map { .dragonBall($0) } +
+        GhibliCharacter.allCases.map { .ghibli($0) } +
+        GundamCharacter.allCases.map { .gundam($0) } +
+        StarWarsCharacter.allCases.map { .starWars($0) } +
+        LabubuCharacter.allCases.map { .labubu($0) } +
+        KingOfTheHillCharacter.allCases.map { .kingOfTheHill($0) } +
+        FamilyGuyCharacter.allCases.map { .familyGuy($0) } +
+        FuturamaCharacter.allCases.map { .futurama($0) } +
+        BatmanCharacter.allCases.map { .batman($0) } +
+        TransformersCharacter.allCases.map { .transformers($0) }
 }

@@ -30,6 +30,10 @@ class SpriteRenderer {
             }
         }
 
+        if minY > maxY || minX > maxX {
+            minX = 0; maxX = 15; minY = 0; maxY = 15
+        }
+
         let contentRows = CGFloat(maxY - minY + 1)
         let contentCols = CGFloat(maxX - minX + 1)
         let ps: CGFloat = 2
@@ -55,16 +59,20 @@ class SpriteRenderer {
         let pet = petState ?? PetState.shared
         let brightness = pet.brightnessModifier
         let saturation = pet.saturationModifier
+        let needsColorMod = brightness != 1.0 || saturation != 1.0
+        let satFactor = CGFloat(saturation)
+        let briFactor = CGFloat(brightness)
 
-        for y in 0..<frameHeight {
-            for x in 0..<frameWidth {
+        for y in minY...maxY {
+            for x in minX...maxX {
                 var color = pixels[y][x]
-                if color != NSColor.clear && (brightness != 1.0 || saturation != 1.0) {
+                guard color != NSColor.clear && color.alphaComponent > 0 else { continue }
+                if needsColorMod {
                     if let rgb = color.usingColorSpace(.genericRGB) {
                         var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
                         rgb.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-                        s = min(1.0, s * CGFloat(saturation))
-                        b = min(1.0, b * CGFloat(brightness))
+                        s = min(1.0, s * satFactor)
+                        b = min(1.0, b * briFactor)
                         color = NSColor(hue: h, saturation: s, brightness: b, alpha: a)
                     }
                 }
@@ -124,6 +132,10 @@ class SpriteRenderer {
             }
         }
 
+        if minY > maxY || minX > maxX {
+            minX = 0; maxX = 15; minY = 0; maxY = 15
+        }
+
         let contentRows = CGFloat(maxY - minY + 1)
         let contentCols = CGFloat(maxX - minX + 1)
         let ps: CGFloat = 2
@@ -148,16 +160,20 @@ class SpriteRenderer {
         let pet = petState ?? PetState.shared
         let brightness = pet.brightnessModifier
         let saturation = pet.saturationModifier
+        let needsColorMod = brightness != 1.0 || saturation != 1.0
+        let satFactor = CGFloat(saturation)
+        let briFactor = CGFloat(brightness)
 
-        for y in 0..<frameHeight {
-            for x in 0..<frameWidth {
+        for y in minY...maxY {
+            for x in minX...maxX {
                 var color = pixels[y][x]
-                if color != NSColor.clear && (brightness != 1.0 || saturation != 1.0) {
+                guard color != NSColor.clear && color.alphaComponent > 0 else { continue }
+                if needsColorMod {
                     if let rgb = color.usingColorSpace(.genericRGB) {
                         var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
                         rgb.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-                        s = min(1.0, s * CGFloat(saturation))
-                        b = min(1.0, b * CGFloat(brightness))
+                        s = min(1.0, s * satFactor)
+                        b = min(1.0, b * briFactor)
                         color = NSColor(hue: h, saturation: s, brightness: b, alpha: a)
                     }
                 }

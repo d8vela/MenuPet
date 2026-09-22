@@ -116,7 +116,10 @@ class PetState {
     var showSparkles: Bool { stage >= 3 }
     var showShadow: Bool { stage <= 1 }
 
-    init() {
+    let storageKey: String
+
+    init(storageKey: String = "petState") {
+        self.storageKey = storageKey
         load()
     }
 
@@ -217,6 +220,7 @@ class PetState {
     }
 
     func save() {
+        lastModified = Date().timeIntervalSince1970
         let dict: [String: Double] = [
             "hunger": hunger,
             "happiness": happiness,
@@ -227,12 +231,12 @@ class PetState {
             "obedience": obedience,
             "isDisobedient": isDisobedient ? 1 : 0
         ]
-        UserDefaults.standard.set(dict, forKey: "petState")
-        UserDefaults.standard.set(disobedienceMessage, forKey: "disobedienceMessage")
+        UserDefaults.standard.set(dict, forKey: storageKey)
+        UserDefaults.standard.set(disobedienceMessage, forKey: "\(storageKey)_disobedienceMessage")
     }
 
     func load() {
-        guard let dict = UserDefaults.standard.dictionary(forKey: "petState") as? [String: Double] else { return }
+        guard let dict = UserDefaults.standard.dictionary(forKey: storageKey) as? [String: Double] else { return }
         hunger = dict["hunger"] ?? 100
         happiness = dict["happiness"] ?? 100
         energy = dict["energy"] ?? 100
@@ -241,6 +245,6 @@ class PetState {
         stage = Int(dict["stage"] ?? 2)
         obedience = dict["obedience"] ?? 80
         isDisobedient = (dict["isDisobedient"] ?? 0) == 1
-        disobedienceMessage = UserDefaults.standard.string(forKey: "disobedienceMessage") ?? ""
+        disobedienceMessage = UserDefaults.standard.string(forKey: "\(storageKey)_disobedienceMessage") ?? ""
     }
 }
