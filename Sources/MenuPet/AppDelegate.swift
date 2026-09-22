@@ -300,6 +300,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        let manager = MultiPetManager.shared
+        if manager.selectedPets.isEmpty {
+            manager.addPet(spriteAnimator.currentPokemon)
+        }
+
         if let button = statusItem.button {
             button.image = spriteAnimator.currentFrame
             button.imagePosition = .imageOnly
@@ -371,8 +376,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
 
         if LLMService.shared.statusEnabled {
-            if !manager.selectedPets.isEmpty {
-                for pet in manager.selectedPets {
+            var statusPets: [SelectableCharacter] = manager.selectedPets
+            if statusPets.isEmpty {
+                statusPets = [spriteAnimator.currentPokemon]
+            }
+            if !statusPets.isEmpty {
+                for pet in statusPets {
                     let cached = LLMService.shared.getCachedStatus(for: pet)
                     let statusItem = NSMenuItem(title: "  \(pet.emoji) \(cached ?? "Loading...")", action: nil, keyEquivalent: "")
                     statusItem.tag = 310
