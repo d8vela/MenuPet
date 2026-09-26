@@ -278,7 +278,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         spriteAnimator = SpriteAnimator(cpuMonitor: cpuMonitor)
         spriteAnimator.setOnPokemonChanged { [weak self] in
             DispatchQueue.main.async {
-                self?.buildMenu()
+                guard let self = self else { return }
+                self.statusItem.button?.image = self.spriteAnimator.currentFrame
+                self.updateMenu()
+                if let menu = self.statusItem.menu {
+                    self.updateCheckmarks(in: menu)
+                }
             }
         }
         spriteAnimator.onFrameAdvanced = { [weak self] in
@@ -479,10 +484,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 sleepItem.target = self
                 menu.addItem(sleepItem)
             }
+            let careCount = countActionsFor("feed") + countActionsFor("play") + countActionsFor("clean") + countActionsFor("sleep")
+            if careCount > 0 {
+                let careItem = NSMenuItem(title: "✨ Care All (\(careCount))", action: #selector(careAllPets), keyEquivalent: "")
+                careItem.target = self
+                menu.addItem(careItem)
+            }
 
             menu.addItem(NSMenuItem.separator())
 
             let statusSub = NSMenu()
+
+            let scores = manager.selectedPets.map { manager.state(for: $0).careScore }
+            let nScores = Double(scores.count)
+            let recipSumScores = scores.reduce(0) { $0 + 1.0 / max($1, 0.01) }
+            let hMean = nScores / recipSumScores
+            let recipVals = scores.map { 1.0 / max($0, 0.01) }
+            let recipMean = recipSumScores / nScores
+            let recipVar = recipVals.reduce(0) { $0 + pow($1 - recipMean, 2) } / max(nScores - 1, 1)
+            let hSE = pow(hMean, 2) * sqrt(recipVar / nScores)
+            let avgHeader = NSMenuItem(title: "📊 Avg Care: \(Int(hMean))% ± \(Int(hSE))% (\(scores.count) pets)", action: nil, keyEquivalent: "")
+            avgHeader.isEnabled = false
+            statusSub.addItem(avgHeader)
+
+            let states = manager.selectedPets.map { manager.state(for: $0) }
+            let n = Double(states.count)
+            func harmMeanDeltaSE(_ values: [Double]) -> (mean: Double, se: Double) {
+                let recipSum = values.reduce(0) { $0 + 1.0 / max($1, 0.01) }
+                let h = n / recipSum
+                let recipVals = values.map { 1.0 / max($0, 0.01) }
+                let recipMean = recipSum / n
+                let recipVar = recipVals.reduce(0) { $0 + pow($1 - recipMean, 2) } / max(n - 1, 1)
+                let se = pow(h, 2) * sqrt(recipVar / n)
+                return (h, se)
+            }
+            let (hM, hS) = harmMeanDeltaSE(states.map { $0.hunger })
+            let (pM, pS) = harmMeanDeltaSE(states.map { $0.happiness })
+            let (cM, cS) = harmMeanDeltaSE(states.map { $0.hygiene })
+            let (eM, eS) = harmMeanDeltaSE(states.map { $0.energy })
+            let avgLine = NSMenuItem(title: "  🍕\(Int(hM))%±\(Int(hS)) 😊\(Int(pM))%±\(Int(pS)) 🧼\(Int(cM))%±\(Int(cS)) ⚡\(Int(eM))%±\(Int(eS))", action: nil, keyEquivalent: "")
+            avgLine.isEnabled = false
+            statusSub.addItem(avgLine)
+            statusSub.addItem(NSMenuItem.separator())
+
             petSubmenus.removeAll()
             for pet in manager.selectedPets {
                 let petActionsSub = buildPetSubmenu(for: pet)
@@ -491,6 +535,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 petMenuItem.submenu = petActionsSub
                 statusSub.addItem(petMenuItem)
             }
+
+            statusSub.addItem(NSMenuItem.separator())
+
+            let feedAllItem = NSMenuItem(title: "🍕 Feed All (\(feedCount))", action: #selector(feedPet), keyEquivalent: "")
+            feedAllItem.target = self
+            feedAllItem.isEnabled = feedCount > 0
+            statusSub.addItem(feedAllItem)
+
+            let playAllItem = NSMenuItem(title: "🎾 Play All (\(playCount))", action: #selector(playWithPet), keyEquivalent: "")
+            playAllItem.target = self
+            playAllItem.isEnabled = playCount > 0
+            statusSub.addItem(playAllItem)
+
+            let cleanAllItem = NSMenuItem(title: "🧼 Clean All (\(cleanCount))", action: #selector(cleanPet), keyEquivalent: "")
+            cleanAllItem.target = self
+            cleanAllItem.isEnabled = cleanCount > 0
+            statusSub.addItem(cleanAllItem)
+
+            let sleepAllItem = NSMenuItem(title: "😴 Sleep All (\(sleepCount))", action: #selector(letPetSleep), keyEquivalent: "")
+            sleepAllItem.target = self
+            sleepAllItem.isEnabled = sleepCount > 0
+            statusSub.addItem(sleepAllItem)
+
+            let careAllItem = NSMenuItem(title: "✨ Care All (\(careCount))", action: #selector(careAllPets), keyEquivalent: "")
+            careAllItem.target = self
+            careAllItem.isEnabled = careCount > 0
+            statusSub.addItem(careAllItem)
+
             if LLMService.shared.statusEnabled && !LLMService.shared.apiKey.isEmpty {
                 statusSub.addItem(NSMenuItem.separator())
                 let swarmItem = NSMenuItem(title: "💬 Swarm Chat", action: #selector(openSwarmChat), keyEquivalent: "")
@@ -1110,8 +1182,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func clearAllPets() {
+        let firstPet = MultiPetManager.shared.selectedPets.first ?? spriteAnimator.currentPokemon
         MultiPetManager.shared.clearAll()
-        spriteAnimator.setPokemon(.pokemon(.jigglypuff))
+        MultiPetManager.shared.addPet(firstPet)
+        spriteAnimator.setPokemon(firstPet)
         buildMenu()
     }
 
@@ -1474,59 +1548,57 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func checkForUpdates() {
-        UpdateChecker.shared.onUpdateAvailable = { [weak self] version, downloadURL in
-            DispatchQueue.main.async {
+        UpdateChecker.shared.checkForUpdates { [weak self] result in
+            switch result {
+            case .upToDate:
                 let alert = NSAlert()
-                alert.messageText = "Update Available"
-                alert.informativeText = "A new version (v\(version)) is available. Would you like to download and install it?"
-                alert.addButton(withTitle: "Install Update")
-                alert.addButton(withTitle: "Cancel")
-                
-                if alert.runModal() == .alertFirstButtonReturn {
-                    self?.downloadAndInstall(from: downloadURL)
-                }
+                alert.messageText = "No Updates Available"
+                alert.informativeText = "You're running the latest version (v\(UpdateChecker.shared.currentVersion))."
+                alert.alertStyle = .informational
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            case .updateAvailable(let version, let downloadURL):
+                self?.promptToInstallUpdate(version: version, downloadURL: downloadURL)
+            case .failed(let message):
+                let alert = NSAlert()
+                alert.messageText = "Update Check Failed"
+                alert.informativeText = message
+                alert.alertStyle = .warning
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
             }
         }
-        
-        UpdateChecker.shared.onCheckComplete = { available, message in
-            DispatchQueue.main.async {
-                if !available {
-                    let alert = NSAlert()
-                    alert.messageText = "No Updates Available"
-                    alert.informativeText = "You're running the latest version (v\(UpdateChecker.shared.currentVersion))."
-                    alert.alertStyle = .informational
-                    alert.addButton(withTitle: "OK")
-                    alert.runModal()
-                }
-            }
-        }
-        
-        UpdateChecker.shared.checkForUpdates()
     }
-    
+
     private func checkForUpdatesInBackground() {
-        UpdateChecker.shared.onUpdateAvailable = { [weak self] version, downloadURL in
-            DispatchQueue.main.async {
-                let alert = NSAlert()
-                alert.messageText = "Update Available"
-                alert.informativeText = "A new version (v\(version)) is available. Would you like to download and install it?"
-                alert.addButton(withTitle: "Install Update")
-                alert.addButton(withTitle: "Cancel")
-                
-                if alert.runModal() == .alertFirstButtonReturn {
-                    self?.downloadAndInstall(from: downloadURL)
-                }
-            }
+        UpdateChecker.shared.checkForUpdates { [weak self] result in
+            guard case .updateAvailable(let version, let downloadURL) = result else { return }
+            self?.promptToInstallUpdate(version: version, downloadURL: downloadURL)
         }
-        
-        UpdateChecker.shared.onCheckComplete = { available, message in
-            // Silently ignore - no alert for background checks
-        }
-        
-        UpdateChecker.shared.checkForUpdates()
     }
-    
+
+    private func promptToInstallUpdate(version: String, downloadURL: String) {
+        let alert = NSAlert()
+        alert.messageText = "Update Available"
+        alert.informativeText = "A new version (v\(version)) is available. Would you like to download and install it?"
+        alert.addButton(withTitle: "Install Update")
+        alert.addButton(withTitle: "Cancel")
+        if alert.runModal() == .alertFirstButtonReturn {
+            downloadAndInstall(from: downloadURL)
+        }
+    }
+
     private func downloadAndInstall(from url: String) {
+        guard let parsed = URL(string: url), UpdateChecker.isAllowedDownloadURL(parsed) else {
+            let alert = NSAlert()
+            alert.messageText = "Update Error"
+            alert.informativeText = "The update download URL is invalid or not from GitHub."
+            alert.alertStyle = .warning
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+            return
+        }
+
         let progressWindow = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 320, height: 140),
             styleMask: [.titled],
@@ -1910,6 +1982,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc func careAllPets() {
+        let manager = MultiPetManager.shared
+        if manager.isMultiPetMode {
+            let affected = manager.careAll()
+            for pet in affected { LLMService.shared.invalidateCache(for: pet) }
+            refreshAffectedPets(affected)
+        } else {
+            PetState.shared.feed()
+            PetState.shared.play()
+            PetState.shared.clean()
+            PetState.shared.sleep()
+            LLMService.shared.invalidateCache()
+            buildMenu()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
+        }
+    }
+
     private var customActionTextField: NSTextField?
     private var customActionPet: SelectableCharacter?
     private var chatPet: SelectableCharacter?
@@ -2277,7 +2366,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let petState = MultiPetManager.shared.state(for: pet)
         let sub = NSMenu()
 
-        let statusLine = NSMenuItem(title: "\(petState.moodEmoji) \(petState.mood) \(petState.stageEmoji) — \(petState.stageName) (\(Int(petState.careScore))%)", action: nil, keyEquivalent: "")
+        let statusLine = NSMenuItem(title: "\(petState.moodEmoji) \(petState.mood) — Stage \(petState.stage) \(petState.stageEmoji) \(petState.stageName) (\(Int(petState.careScore))%)", action: nil, keyEquivalent: "")
         statusLine.isEnabled = false
         sub.addItem(statusLine)
 

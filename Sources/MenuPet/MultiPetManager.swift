@@ -200,6 +200,17 @@ class MultiPetManager {
         return selectedPets
     }
 
+    func careAll() -> [SelectableCharacter] {
+        for pet in selectedPets {
+            let s = state(for: pet)
+            s.feed(personality: pet.personality)
+            s.play(personality: pet.personality)
+            s.clean()
+            s.sleep()
+        }
+        return selectedPets
+    }
+
     func decayAll() {
         for pet in selectedPets {
             let s = state(for: pet)

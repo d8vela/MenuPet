@@ -56,15 +56,11 @@ class CPUMonitor {
 
         let totalDiff = totalTicks - previousTotal
         let idleDiff = idleTicks - previousIdle
-
-        if totalDiff > 0 {
-            currentCPU = Double(totalDiff - idleDiff) / Double(totalDiff) * 100.0
-            currentCPU = min(max(currentCPU, 0.0), 100.0)
-        }
-
         previousTotal = totalTicks
         previousIdle = idleTicks
 
+        guard totalDiff > 0, idleDiff <= totalDiff else { return }
+        currentCPU = Double(totalDiff - idleDiff) / Double(totalDiff) * 100.0
         onCPUUpdate?(currentCPU)
     }
 }

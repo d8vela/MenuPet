@@ -105,6 +105,7 @@ class SpriteAnimator {
     init(cpuMonitor: CPUMonitor) {
         self.cpuMonitor = cpuMonitor
         loadHistory()
+        loadSelectionCounts()
         startAnimation()
         if rotationEnabled {
             startRotation()
@@ -121,6 +122,7 @@ class SpriteAnimator {
         currentPokemon = pokemon
         cachedCurrentFrame = nil
         selectionCounts[pokemon, default: 0] += 1
+        saveSelectionCounts()
         addToHistory(pokemon)
         UserDefaults.standard.set(pokemon.identifier, forKey: "lastSelectedCharacter")
 
@@ -282,6 +284,23 @@ class SpriteAnimator {
     private func loadHistory() {
         if let saved = UserDefaults.standard.stringArray(forKey: "characterHistory") {
             characterHistory = saved.compactMap { SelectableCharacter.from(identifier: $0) }
+        }
+    }
+
+    private func saveSelectionCounts() {
+        var stored: [String: Int] = [:]
+        for (character, count) in selectionCounts {
+            stored[character.identifier] = count
+        }
+        UserDefaults.standard.set(stored, forKey: "selectionCounts")
+    }
+
+    private func loadSelectionCounts() {
+        guard let stored = UserDefaults.standard.dictionary(forKey: "selectionCounts") as? [String: Int] else { return }
+        for (identifier, count) in stored {
+            if let character = SelectableCharacter.from(identifier: identifier), count > 0 {
+                selectionCounts[character] = count
+            }
         }
     }
 
