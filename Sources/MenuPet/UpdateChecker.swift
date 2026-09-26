@@ -347,16 +347,19 @@ class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         DispatchQueue.main.async {
-            guard totalBytesExpectedToWrite > 0 else {
+            if totalBytesExpectedToWrite > 0 {
+                let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
+                self.progressIndicator?.isIndeterminate = false
+                self.progressIndicator?.doubleValue = progress
+                let mb = Double(totalBytesWritten) / 1_048_576
+                let total = Double(totalBytesExpectedToWrite) / 1_048_576
+                self.statusLabel?.stringValue = String(format: "%.0f%% — %.1f / %.1f MB", progress, mb, total)
+            } else {
+                let mb = Double(totalBytesWritten) / 1_048_576
                 self.progressIndicator?.isIndeterminate = true
                 self.progressIndicator?.startAnimation(nil)
-                self.statusLabel?.stringValue = "Downloading..."
-                return
+                self.statusLabel?.stringValue = String(format: "Downloading... %.1f MB", mb)
             }
-            let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
-            self.progressIndicator?.isIndeterminate = false
-            self.progressIndicator?.doubleValue = progress
-            self.statusLabel?.stringValue = "\(Int(progress))%"
         }
     }
 
