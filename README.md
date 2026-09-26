@@ -18,6 +18,9 @@ A lightweight macOS menu bar app that displays animated pixel art sprites runnin
 - **Character swap** — replace any selected pet with a different character via franchise hierarchy
 - **Reorder pets** — change the display order of your pets
 - **Selection history** — quickly restore previous pet combinations
+- **Care All** — feed, play, clean, and sleep all pets at once
+- **Pet Status overview** — harmonic mean care scores with Delta-method standard error, plus per-stat averages
+- **Android widget** — home screen widget with live pet stats, action buttons, and refresh
 - **Random rotation** — automatically cycles to a random character with configurable interval (0.01s to hours)
 - **Smart rotation** — prefer characters you interact with most
 - **Category rotation** — rotate only within the current character's category
@@ -69,6 +72,8 @@ The companion app connects to your Mac over local WiFi, letting you control your
 - View pet stats and status in real time
 - Multi-pet support — manage all selected pets
 - Swarm chat — talk to your entire pet group
+- Home screen widget with live stats, action buttons, and visual press feedback
+- Resizable widget layout
 - Built on Flutter with Material Design UI
 
 ## Build from source
@@ -84,7 +89,8 @@ cp .build/release/MenuPet /usr/local/bin/
 
 - Click the menu bar icon to see CPU usage, pet status, switch characters, or adjust settings
 - **Pet Stats** — view Hunger, Happiness, Energy, and Hygiene percentages in the menu
-- **Care Actions** — use Feed, Play, Clean, Sleep to keep your pet happy
+- **Care Actions** — use Feed, Play, Clean, Sleep to keep your pet happy; use Care All to do all at once
+- **Pet Status submenu** — per-pet stats with stage info, harmonic mean care scores with Delta-method standard error, and per-stat averages across all pets
 - **Evolution** — your pet evolves through 5 stages based on how well you care for it:
   - 🥀 Neglected (care score <20%) — dark, desaturated sprite with shadow
   - 🥚 Baby (20-39%) — slightly dimmed appearance
@@ -120,7 +126,7 @@ Only the worst stat is shown — if both hunger and energy are low, whichever is
 
 - Enable AI status from the **AI Status** submenu
 - Choose a provider (OpenAI GPT, Anthropic Claude, Google Gemini, OpenRouter, OpenCode Zen) and enter your API key
-- Your pet will display a dynamic status message that changes based on its mood and your actions
+- Your pet will display a dynamic status message that changes based on its mood and your actions — works in both single and multi-pet mode
 - Chat with your pet using the **Chat with Pet** feature
 - Use **Custom Action** to send any action to your pet
 - Status refreshes every 15 minutes, or immediately when you feed/play/clean/sleep
