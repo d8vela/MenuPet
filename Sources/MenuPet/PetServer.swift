@@ -525,7 +525,7 @@ class PetServer {
             return (200, ["pets": pets, "count": pets.count], nil, nil)
 
         case ("GET", "/pet/ping"):
-            return (200, ["pong": true, "version": "1.1.0"], nil, nil)
+            return (200, ["pong": true, "version": "1.1.1"], nil, nil)
 
         default:
             return (404, ["error": "Not found"], nil, nil)
