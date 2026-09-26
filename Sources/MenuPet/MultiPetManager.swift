@@ -116,6 +116,16 @@ class MultiPetManager {
             if let order = petOrders.removeValue(forKey: old.identifier) {
                 petOrders[new.identifier] = order
             }
+            if let rotSettings = petRotationSettings.removeValue(forKey: old.identifier) {
+                petRotationSettings[new.identifier] = rotSettings
+            }
+            let oldRotKey = "lastRotation_\(old.identifier)"
+            let newRotKey = "lastRotation_\(new.identifier)"
+            let lastRot = UserDefaults.standard.double(forKey: oldRotKey)
+            if lastRot > 0 {
+                UserDefaults.standard.set(lastRot, forKey: newRotKey)
+            }
+            UserDefaults.standard.removeObject(forKey: oldRotKey)
             save()
             onSelectionChanged?()
         }

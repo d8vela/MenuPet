@@ -901,6 +901,52 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             petSelectionSub.addItem(NSMenuItem.separator())
 
+            let allRotSub = NSMenu()
+            let anyRotating = manager.selectedPets.contains { manager.rotationSettings(for: $0).enabled }
+            let allRotToggle = NSMenuItem(title: anyRotating ? "🔄 Rotation: ON (All)" : "🔄 Rotation: OFF (All)", action: #selector(toggleAllPetRotation(_:)), keyEquivalent: "")
+            allRotToggle.target = self
+            allRotSub.addItem(allRotToggle)
+
+            allRotSub.addItem(NSMenuItem.separator())
+
+            let allSmartRot = NSMenuItem(title: "🧠 Smart Rotation (All)", action: #selector(toggleAllSmartRotation(_:)), keyEquivalent: "")
+            allSmartRot.target = self
+            allSmartRot.state = manager.selectedPets.allSatisfy({ manager.rotationSettings(for: $0).smartRotation }) ? .on : .off
+            allSmartRot.isEnabled = anyRotating
+            allRotSub.addItem(allSmartRot)
+
+            let allCatOnly = NSMenuItem(title: "📂 Category Only (All)", action: #selector(toggleAllCategoryOnly(_:)), keyEquivalent: "")
+            allCatOnly.target = self
+            allCatOnly.state = manager.selectedPets.allSatisfy({ manager.rotationSettings(for: $0).categoryOnly }) ? .on : .off
+            allCatOnly.isEnabled = anyRotating
+            allRotSub.addItem(allCatOnly)
+
+            allRotSub.addItem(NSMenuItem.separator())
+
+            let allIntervalSub = NSMenu()
+            let allIntervals: [(String, TimeInterval)] = [
+                ("15 seconds", 15), ("30 seconds", 30), ("1 minute", 60),
+                ("5 minutes", 300), ("10 minutes", 600), ("30 minutes", 1800), ("1 hour", 3600),
+            ]
+            for (label, interval) in allIntervals {
+                let item = NSMenuItem(title: label, action: #selector(setAllPetRotationInterval(_:)), keyEquivalent: "")
+                item.target = self
+                item.tag = Int(interval)
+                item.isEnabled = anyRotating
+                let allSame = manager.selectedPets.allSatisfy { manager.rotationSettings(for: $0).interval == interval }
+                item.state = allSame ? .on : .off
+                allIntervalSub.addItem(item)
+            }
+            let allIntervalItem = NSMenuItem(title: "⏱️ Interval (All)", action: nil, keyEquivalent: "")
+            allIntervalItem.submenu = allIntervalSub
+            allRotSub.addItem(allIntervalItem)
+
+            let allRotItem = NSMenuItem(title: "🔄 Rotation ▸", action: nil, keyEquivalent: "")
+            allRotItem.submenu = allRotSub
+            petSelectionSub.addItem(allRotItem)
+
+            petSelectionSub.addItem(NSMenuItem.separator())
+
             let additionalSub = buildFranchiseMenu(action: #selector(togglePetSelection(_:)))
             let additionalItem = NSMenuItem(title: "🐾 Select Additional Pets", action: nil, keyEquivalent: "")
             additionalItem.submenu = additionalSub
@@ -1453,6 +1499,125 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var settings = manager.rotationSettings(for: pet)
         settings.enabled = !settings.enabled
         manager.setRotation(settings, for: pet)
+
+        if settings.enabled {
+            startPerPetRotation(for: pet, settings: settings)
+        } else {
+            stopPerPetRotation(for: pet)
+        }
+        buildMenu()
+    }
+
+    private var globalRotationTimer: Timer?
+
+    private func startPerPetRotation(for pet: SelectableCharacter, settings: MultiPetManager.PetRotationSettings) {
+        ensureGlobalRotationTimer()
+    }
+
+    private func stopPerPetRotation(for pet: SelectableCharacter) {
+        let manager = MultiPetManager.shared
+        let anyEnabled = manager.selectedPets.contains { manager.rotationSettings(for: $0).enabled }
+        if !anyEnabled {
+            globalRotationTimer?.invalidate()
+            globalRotationTimer = nil
+        }
+    }
+
+    private func ensureGlobalRotationTimer() {
+        guard globalRotationTimer == nil else { return }
+        let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            let manager = MultiPetManager.shared
+            let now = Date()
+            var swapped = false
+            for pet in manager.selectedPets {
+                let settings = manager.rotationSettings(for: pet)
+                guard settings.enabled else { continue }
+                let lastKey = "lastRotation_\(pet.identifier)"
+                let lastRotation = UserDefaults.standard.double(forKey: lastKey)
+                let elapsed = now.timeIntervalSince1970 - lastRotation
+                guard elapsed >= settings.interval else { continue }
+
+                let allChars = SelectableCharacter.allCharacters
+                let pool: [SelectableCharacter]
+                if settings.categoryOnly {
+                    pool = allChars.filter { $0.category == pet.category }
+                } else {
+                    pool = allChars
+                }
+                guard let newChar = pool.randomElement(), newChar != pet else { continue }
+                UserDefaults.standard.set(now.timeIntervalSince1970, forKey: lastKey)
+                manager.swapCharacter(from: pet, to: newChar)
+                if self.spriteAnimator.currentPokemon == pet {
+                    self.spriteAnimator.setPokemon(newChar)
+                }
+                swapped = true
+            }
+
+            if swapped {
+                DispatchQueue.main.async { self.buildMenu() }
+            }
+
+            let anyEnabled = manager.selectedPets.contains { manager.rotationSettings(for: $0).enabled }
+            if !anyEnabled {
+                self.globalRotationTimer?.invalidate()
+                self.globalRotationTimer = nil
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        globalRotationTimer = timer
+    }
+
+    @objc func toggleAllPetRotation(_ sender: NSMenuItem) {
+        let manager = MultiPetManager.shared
+        let anyEnabled = manager.selectedPets.contains { manager.rotationSettings(for: $0).enabled }
+        let newState = !anyEnabled
+        for pet in manager.selectedPets {
+            var settings = manager.rotationSettings(for: pet)
+            settings.enabled = newState
+            manager.setRotation(settings, for: pet)
+            if newState {
+                startPerPetRotation(for: pet, settings: settings)
+            } else {
+                stopPerPetRotation(for: pet)
+            }
+        }
+        buildMenu()
+    }
+
+    @objc func toggleAllSmartRotation(_ sender: NSMenuItem) {
+        let manager = MultiPetManager.shared
+        let current = manager.selectedPets.allSatisfy { manager.rotationSettings(for: $0).smartRotation }
+        for pet in manager.selectedPets {
+            var settings = manager.rotationSettings(for: pet)
+            settings.smartRotation = !current
+            manager.setRotation(settings, for: pet)
+        }
+        buildMenu()
+    }
+
+    @objc func toggleAllCategoryOnly(_ sender: NSMenuItem) {
+        let manager = MultiPetManager.shared
+        let current = manager.selectedPets.allSatisfy { manager.rotationSettings(for: $0).categoryOnly }
+        for pet in manager.selectedPets {
+            var settings = manager.rotationSettings(for: pet)
+            settings.categoryOnly = !current
+            manager.setRotation(settings, for: pet)
+        }
+        buildMenu()
+    }
+
+    @objc func setAllPetRotationInterval(_ sender: NSMenuItem) {
+        let interval = TimeInterval(sender.tag)
+        let manager = MultiPetManager.shared
+        for pet in manager.selectedPets {
+            var settings = manager.rotationSettings(for: pet)
+            settings.interval = interval
+            manager.setRotation(settings, for: pet)
+            if settings.enabled {
+                startPerPetRotation(for: pet, settings: settings)
+            }
+        }
         buildMenu()
     }
 
@@ -1481,6 +1646,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var settings = manager.rotationSettings(for: pet)
         settings.interval = interval
         manager.setRotation(settings, for: pet)
+        if settings.enabled {
+            startPerPetRotation(for: pet, settings: settings)
+        }
         buildMenu()
     }
 
@@ -1931,12 +2099,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if manager.isMultiPetMode {
             let affected = manager.feedAll()
             for pet in affected { LLMService.shared.invalidateCache(for: pet) }
-            refreshAffectedPets(affected)
+            buildMenu()
         } else {
             PetState.shared.feed(personality: spriteAnimator.currentPokemon.personality)
             LLMService.shared.invalidateCache()
             buildMenu()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
         }
     }
 
@@ -1945,12 +2112,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if manager.isMultiPetMode {
             let affected = manager.playAll()
             for pet in affected { LLMService.shared.invalidateCache(for: pet) }
-            refreshAffectedPets(affected)
+            buildMenu()
         } else {
             PetState.shared.play(personality: spriteAnimator.currentPokemon.personality)
             LLMService.shared.invalidateCache()
             buildMenu()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
         }
     }
 
@@ -1959,12 +2125,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if manager.isMultiPetMode {
             let affected = manager.cleanAll()
             for pet in affected { LLMService.shared.invalidateCache(for: pet) }
-            refreshAffectedPets(affected)
+            buildMenu()
         } else {
             PetState.shared.clean()
             LLMService.shared.invalidateCache()
             buildMenu()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
         }
     }
 
@@ -1973,12 +2138,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if manager.isMultiPetMode {
             let affected = manager.sleepAll()
             for pet in affected { LLMService.shared.invalidateCache(for: pet) }
-            refreshAffectedPets(affected)
+            buildMenu()
         } else {
             PetState.shared.sleep()
             LLMService.shared.invalidateCache()
             buildMenu()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
         }
     }
 
@@ -1987,7 +2151,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if manager.isMultiPetMode {
             let affected = manager.careAll()
             for pet in affected { LLMService.shared.invalidateCache(for: pet) }
-            refreshAffectedPets(affected)
+            buildMenu()
         } else {
             PetState.shared.feed()
             PetState.shared.play()
@@ -1995,7 +2159,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             PetState.shared.sleep()
             LLMService.shared.invalidateCache()
             buildMenu()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in self?.buildMenu() }
         }
     }
 
@@ -2430,28 +2593,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let pet = sender.representedObject as? SelectableCharacter else { return }
         MultiPetManager.shared.state(for: pet).feed(personality: pet.personality)
         LLMService.shared.invalidateCache(for: pet)
-        refreshPetSubmenu(pet)
+        buildMenu()
     }
 
     @objc func playSinglePet(_ sender: NSMenuItem) {
         guard let pet = sender.representedObject as? SelectableCharacter else { return }
         MultiPetManager.shared.state(for: pet).play(personality: pet.personality)
         LLMService.shared.invalidateCache(for: pet)
-        refreshPetSubmenu(pet)
+        buildMenu()
     }
 
     @objc func cleanSinglePet(_ sender: NSMenuItem) {
         guard let pet = sender.representedObject as? SelectableCharacter else { return }
         MultiPetManager.shared.state(for: pet).clean()
         LLMService.shared.invalidateCache(for: pet)
-        refreshPetSubmenu(pet)
+        buildMenu()
     }
 
     @objc func sleepSinglePet(_ sender: NSMenuItem) {
         guard let pet = sender.representedObject as? SelectableCharacter else { return }
         MultiPetManager.shared.state(for: pet).sleep()
         LLMService.shared.invalidateCache(for: pet)
-        refreshPetSubmenu(pet)
+        buildMenu()
     }
 
     @objc func disciplineSinglePet(_ sender: NSMenuItem) {
