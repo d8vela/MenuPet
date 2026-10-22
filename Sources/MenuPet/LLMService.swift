@@ -21,22 +21,22 @@ enum LLMProvider: String, CaseIterable {
 
     var defaultModel: String {
         switch self {
-        case .openai: return "gpt-4o-mini"
-        case .anthropic: return "claude-3-haiku-20240307"
-        case .gemini: return "gemini-2.0-flash"
-        case .openrouter: return "openai/gpt-4o-mini"
-        case .openCodeZen: return "gpt-4o-mini"
+        case .openai: return "gpt-6-luna"
+        case .anthropic: return "claude-haiku-5-5"
+        case .gemini: return "gemini-3.5-flash-lite"
+        case .openrouter: return "openai/gpt-6-luna"
+        case .openCodeZen: return "gpt-6-luna"
         case .custom: return ""
         }
     }
 
     var knownModels: [String] {
         switch self {
-        case .openai: return ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo", "o1-mini", "o1-preview"]
-        case .anthropic: return ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229", "claude-3-5-sonnet-20241022"]
-        case .gemini: return ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]
-        case .openrouter: return ["openai/gpt-4o-mini", "openai/gpt-4o", "anthropic/claude-3-haiku", "anthropic/claude-3-sonnet", "xiaomi/mimo-v2.5", "google/gemini-2.0-flash"]
-        case .openCodeZen: return ["gpt-4o-mini", "gpt-4o"]
+        case .openai: return ["gpt-6-luna", "gpt-6.1-sol", "gpt-6-sol", "gpt-6-astra", "gpt-5.6-luna", "gpt-5.6-terra", "gpt-5.6-sol", "gpt-5.5", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5-mini", "gpt-5-nano"]
+        case .anthropic: return ["claude-haiku-5-5", "claude-haiku-4-5-20251001", "claude-sonnet-5-5", "claude-sonnet-4-6", "claude-opus-5-5", "claude-opus-4-8"]
+        case .gemini: return ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.1-flash-lite", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro"]
+        case .openrouter: return ["openai/gpt-6-luna", "openai/gpt-6.1-sol", "anthropic/claude-haiku-5-5", "anthropic/claude-sonnet-5-5", "google/gemini-3.5-flash-lite", "google/gemini-3.8-flash"]
+        case .openCodeZen: return ["gpt-6-luna", "gpt-6.1-sol"]
         case .custom: return []
         }
     }
@@ -82,6 +82,9 @@ class LLMService {
         get {
             let saved = UserDefaults.standard.string(forKey: "llmModel") ?? ""
             if saved.isEmpty { return provider.defaultModel }
+            if !provider.knownModels.isEmpty && !provider.knownModels.contains(saved) {
+                return provider.defaultModel
+            }
             return saved
         }
         set { UserDefaults.standard.set(newValue, forKey: "llmModel") }

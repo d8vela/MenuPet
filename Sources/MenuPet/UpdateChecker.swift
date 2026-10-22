@@ -136,6 +136,17 @@ class UpdateChecker {
         let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: queue)
         downloadSession = session
 
+        var request = URLRequest(url: url)
+        request.httpMethod = "HEAD"
+        URLSession.shared.dataTask(with: request) { [weak self] _, response, error in
+            guard let self = self else { return }
+            let totalBytes = (response as? HTTPURLResponse)?.expectedContentLength ?? -1
+            DispatchQueue.main.async {
+                delegate.setExpectedBytes(totalBytes)
+                session.downloadTask(with: url).resume()
+            }
+        }.resume()
+
         delegate.onComplete = { [weak self] fileURL, error in
             guard let self = self else { return }
             session.finishTasksAndInvalidate()
@@ -172,8 +183,6 @@ class UpdateChecker {
                 }
             }
         }
-
-        session.downloadTask(with: url).resume()
     }
 
     /// Returns an error message, or nil when the running bundle was replaced.
@@ -301,12 +310,17 @@ class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
     private weak var progressIndicator: NSProgressIndicator?
     private weak var statusLabel: NSTextField?
     private var finished = false
+    private var knownTotalBytes: Int64 = -1
 
     var onComplete: ((URL?, Error?) -> Void)?
 
     init(progressIndicator: NSProgressIndicator?, statusLabel: NSTextField?) {
         self.progressIndicator = progressIndicator
         self.statusLabel = statusLabel
+    }
+
+    func setExpectedBytes(_ bytes: Int64) {
+        knownTotalBytes = bytes
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
@@ -347,12 +361,13 @@ class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         DispatchQueue.main.async {
-            if totalBytesExpectedToWrite > 0 {
-                let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite) * 100
+            let expected = totalBytesExpectedToWrite > 0 ? totalBytesExpectedToWrite : self.knownTotalBytes
+            if expected > 0 {
+                let progress = Double(totalBytesWritten) / Double(expected) * 100
                 self.progressIndicator?.isIndeterminate = false
-                self.progressIndicator?.doubleValue = progress
+                self.progressIndicator?.doubleValue = min(progress, 100)
                 let mb = Double(totalBytesWritten) / 1_048_576
-                let total = Double(totalBytesExpectedToWrite) / 1_048_576
+                let total = Double(expected) / 1_048_576
                 self.statusLabel?.stringValue = String(format: "%.0f%% — %.1f / %.1f MB", progress, mb, total)
             } else {
                 let mb = Double(totalBytesWritten) / 1_048_576

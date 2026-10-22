@@ -1158,7 +1158,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             manager.addPet(character)
             spriteAnimator.setPokemon(character)
         }
-        spriteAnimator.resetRotationTimer()
         buildMenu()
     }
 
